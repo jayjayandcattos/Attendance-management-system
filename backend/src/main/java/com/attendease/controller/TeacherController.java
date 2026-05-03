@@ -650,6 +650,10 @@ public class TeacherController {
                 .subject(body.containsKey("subject") ? body.get("subject").toString() : null)
                 .content(body.get("content").toString())
                 .parentId(body.containsKey("parentId") ? Long.valueOf(body.get("parentId").toString()) : null)
+                .attachmentPath(body.containsKey("attachmentUrl") ? body.get("attachmentUrl").toString() : null)
+                .attachmentName(body.containsKey("attachmentName") ? body.get("attachmentName").toString() : null)
+                .attachmentType(body.containsKey("attachmentType") ? body.get("attachmentType").toString() : null)
+                .attachmentSize(body.containsKey("attachmentSize") ? Long.valueOf(body.get("attachmentSize").toString()) : null)
                 .build();
         msg = messageRepository.save(java.util.Objects.requireNonNull(msg));
         auditService.log(teacher, "send_dm", "message", msg.getId(), request);
@@ -669,6 +673,10 @@ public class TeacherController {
                 .course(course).sender(teacher)
                 .content(body.get("content").toString())
                 .parentId(body.containsKey("parentId") ? Long.valueOf(body.get("parentId").toString()) : null)
+                .attachmentPath(body.containsKey("attachmentUrl") ? body.get("attachmentUrl").toString() : null)
+                .attachmentName(body.containsKey("attachmentName") ? body.get("attachmentName").toString() : null)
+                .attachmentType(body.containsKey("attachmentType") ? body.get("attachmentType").toString() : null)
+                .attachmentSize(body.containsKey("attachmentSize") ? Long.valueOf(body.get("attachmentSize").toString()) : null)
                 .build();
         msg = courseMessageRepository.save(java.util.Objects.requireNonNull(msg));
         return ResponseEntity.ok(ApiResponse.success("Group message sent", msg));
@@ -725,6 +733,10 @@ public class TeacherController {
             item.put("content", m.getContent());
             item.put("createdAt", m.getCreatedAt());
             item.put("parentId", m.getParentId());
+            item.put("attachmentPath", m.getAttachmentPath());
+            item.put("attachmentName", m.getAttachmentName());
+            item.put("attachmentType", m.getAttachmentType());
+            item.put("attachmentSize", m.getAttachmentSize());
             item.put("sender", sender);
             return item;
         }).toList();
@@ -821,6 +833,37 @@ public class TeacherController {
         Long userId = Long.valueOf(body.get("userId").toString());
         messageRepository.markAsRead(userId, teacher.getId());
         return ResponseEntity.ok(ApiResponse.success("Messages marked as read", null));
+    }
+
+    @PostMapping("/messages/upload")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> uploadMessageFile(
+            @RequestParam("file") MultipartFile file,
+            @AuthenticationPrincipal User teacher) throws IOException {
+        if (file == null || file.isEmpty()) {
+            throw new BadRequestException("Please select a file to upload");
+        }
+
+        String uploadDir = "uploads/messages";
+        Path uploadPath = Paths.get(uploadDir);
+        Files.createDirectories(uploadPath);
+
+        String contentType = file.getContentType();
+        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        Files.copy(file.getInputStream(), uploadPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+
+        String attachmentType = "file";
+        if (contentType != null) {
+            if (contentType.startsWith("image/")) attachmentType = "image";
+            else if (contentType.startsWith("video/")) attachmentType = "video";
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("url", "/uploads/messages/" + fileName);
+        result.put("name", file.getOriginalFilename());
+        result.put("type", attachmentType);
+        result.put("size", file.getSize());
+
+        return ResponseEntity.ok(ApiResponse.success("File uploaded", result));
     }
 
     // Delete message for everyone (only sender can do this)

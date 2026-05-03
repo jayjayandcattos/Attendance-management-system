@@ -890,6 +890,10 @@ textarea.form-input {
   min-width: 0;
 }
 
+.chat-header-main > div {
+  min-width: 0;
+}
+
 .chat-header h3 {
   font-size: 0.98rem;
   font-weight: 800;
@@ -966,7 +970,7 @@ textarea.form-input {
   align-items: center;
   gap: 0.5rem;
   min-width: 0;
-  max-width: 500px;
+  max-width: 700px;
   width: fit-content;
 }
 
@@ -977,7 +981,7 @@ textarea.form-input {
 .chat-bubble {
   width: fit-content;
   min-width: 100px;
-  max-width: 85%;
+  max-width: 95%;
   padding: 0.85rem 1.2rem;
   border-radius: 18px;
   border: 1px solid var(--border-glass);
@@ -1275,6 +1279,42 @@ textarea.form-input {
   justify-content: center;
   flex-shrink: 0;
   transition: all 0.2s ease;
+}
+
+.chat-file-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: var(--bg-glass);
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.chat-file-btn:hover {
+  background: var(--accent-blue);
+  color: #ffffff;
+}
+
+.bubble-attachment {
+  margin-top: 8px;
+}
+
+.bubble-attachment-image {
+  max-width: 100%;
+  border-radius: 8px;
+  display: block;
+  cursor: pointer;
+}
+
+.bubble-attachment-video {
+  max-width: 100%;
+  border-radius: 8px;
+  display: block;
 }
 
 .message-send-btn:hover {

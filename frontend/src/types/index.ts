@@ -82,6 +82,10 @@ export interface Message {
   content: string;
   isRead: boolean;
   createdAt: string;
+  attachmentPath?: string;
+  attachmentName?: string;
+  attachmentType?: 'image' | 'video' | 'file';
+  attachmentSize?: number;
 }
 
 export interface AuditLog {

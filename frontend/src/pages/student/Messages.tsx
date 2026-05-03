@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { MessageSquare, X, Send, Users, Plus, Search, ArrowLeft, Trash2, Smile, Reply, MoreVertical, CornerUpLeft, ChevronDown, ChevronRight } from 'lucide-react';
+import { MessageSquare, X, Send, Users, Plus, Search, ArrowLeft, Trash2, Smile, Reply, MoreVertical, CornerUpLeft, ChevronDown, ChevronRight, Paperclip, Image, File } from 'lucide-react';
 import DashboardLayout from '../../components/DashboardLayout';
 import Avatar from '../../components/Avatar';
 import { studentApi } from '../../api';
@@ -43,10 +43,13 @@ const StudentMessages: React.FC = () => {
   const [replyingTo, setReplyingTo] = useState<{ id: number; content: string; sender: string } | null>(null);
   const [showGroups, setShowGroups] = useState(true);
   const [showDms, setShowDms] = useState(true);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploadingFile, setUploadingFile] = useState(false);
 
   const chatRef = useRef<HTMLDivElement>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const contextMenuRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isTeacherRole = (role?: string) => {
     const raw = (role || '').toLowerCase();
@@ -83,6 +86,12 @@ const StudentMessages: React.FC = () => {
     if (!value) return undefined;
     if (value.startsWith('http://') || value.startsWith('https://')) return value;
     return `http://${window.location.hostname}:8080${value.startsWith('/') ? value : `/${value}`}`;
+  };
+
+  const getAttachmentUrl = (path?: string | null) => {
+    if (!path) return undefined;
+    if (path.startsWith('http://') || path.startsWith('https://')) return path;
+    return `http://${window.location.hostname}:8080${path.startsWith('/') ? path : `/${path}`}`;
   };
 
   const getMessageReactionKey = (messageId: number) => {
@@ -257,6 +266,16 @@ const StudentMessages: React.FC = () => {
     }).catch(() => { });
   }, []);
 
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setSelectedFile(file);
+    // Reset input so re-selecting same file triggers change
+    e.target.value = '';
+  };
+
+  const clearSelectedFile = () => setSelectedFile(null);
+
   useEffect(() => {
     if (pollRef.current) clearInterval(pollRef.current);
 
@@ -281,12 +300,38 @@ const StudentMessages: React.FC = () => {
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     const content = newMsg.trim();
-    if (!content || sending) return;
+    if ((!content && !selectedFile) || sending || uploadingFile) return;
 
     setSending(true);
     try {
-      const payload: any = { content };
+      let attachmentUrl: string | null = null;
+      let attachmentType: string | null = null;
+      let attachmentName: string | null = null;
+      let attachmentSize: number | null = null;
+
+      // Upload file first if selected
+      if (selectedFile) {
+        setUploadingFile(true);
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        const uploadRes = await studentApi.uploadMessageFile(formData);
+        const fileData = uploadRes.data?.data;
+        if (fileData) {
+          attachmentUrl = fileData.url;
+          attachmentType = fileData.type;
+          attachmentName = fileData.name;
+          attachmentSize = fileData.size;
+        }
+        setUploadingFile(false);
+      }
+
+      const payload: any = {};
+      if (content) payload.content = content;
       if (replyingTo) payload.parentId = replyingTo.id;
+      if (attachmentUrl) payload.attachmentUrl = attachmentUrl;
+      if (attachmentType) payload.attachmentType = attachmentType;
+      if (attachmentName) payload.attachmentName = attachmentName;
+      if (attachmentSize) payload.attachmentSize = attachmentSize;
 
       if (viewMode === 'group' && selectedCourse) {
         payload.courseId = selectedCourse;
@@ -298,6 +343,7 @@ const StudentMessages: React.FC = () => {
 
       setNewMsg('');
       setReplyingTo(null);
+      setSelectedFile(null);
       refreshConversations();
 
       if (viewMode === 'group' && selectedCourse) {
@@ -312,6 +358,7 @@ const StudentMessages: React.FC = () => {
       showApiError(err);
     } finally {
       setSending(false);
+      setUploadingFile(false);
     }
   };
 
@@ -411,16 +458,18 @@ const StudentMessages: React.FC = () => {
     return tB - tA;
   });
 
-  const activeTitle = viewMode === 'group'
-    ? courses.find((c) => c.id === selectedCourse)?.courseName || 'Course Chat'
-    : selectedUserName || 'Direct Message';
-
-  const activeSubtitle = viewMode === 'group' ? 'Course Community' : 'Direct Message';
-
   const activeCourseIdx = viewMode === 'group' && selectedCourse != null
     ? courses.findIndex((c) => c.id === selectedCourse)
     : -1;
   const activeCourse = activeCourseIdx >= 0 ? courses[activeCourseIdx] : null;
+
+  const activeTitle = viewMode === 'group'
+    ? activeCourse
+      ? `${activeCourse.courseCode || ''}${activeCourse.section ? ' - ' + activeCourse.section : ''} - ${activeCourse.courseName || 'Course Chat'}`
+      : 'Course Chat'
+    : selectedUserName || 'Direct Message';
+
+  const activeSubtitle = viewMode === 'group' ? 'Course Community' : 'Direct Message';
 
   return (
     <DashboardLayout role="student">
@@ -610,7 +659,46 @@ const StudentMessages: React.FC = () => {
                                 <div className="bubble-sender">{senderFirst} {senderLast}</div>
                               )}
 
-                              <div className="bubble-content">{m.content}</div>
+                              {m.content && <div className="bubble-content">{m.content}</div>}
+
+                              {m.attachmentPath && (
+                                <div className="bubble-attachment">
+                                  {m.attachmentType === 'image' ? (
+                                    <img
+                                      src={getAttachmentUrl(m.attachmentPath)}
+                                      alt={m.attachmentName || 'Image'}
+                                      className="bubble-attachment-image"
+                                      loading="lazy"
+                                      onClick={() => window.open(getAttachmentUrl(m.attachmentPath), '_blank')}
+                                      style={{ cursor: 'pointer', maxWidth: '100%', borderRadius: 8, display: 'block' }}
+                                    />
+                                  ) : m.attachmentType === 'video' ? (
+                                    <video
+                                      src={getAttachmentUrl(m.attachmentPath)}
+                                      controls
+                                      className="bubble-attachment-video"
+                                      style={{ maxWidth: '100%', borderRadius: 8, display: 'block' }}
+                                      preload="metadata"
+                                    />
+                                  ) : (
+                                    <a
+                                      href={getAttachmentUrl(m.attachmentPath)}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="bubble-attachment-file"
+                                      style={{
+                                        display: 'flex', alignItems: 'center', gap: 8,
+                                        padding: '8px 12px', borderRadius: 8,
+                                        background: 'var(--bg-tertiary)', color: 'var(--text-primary)',
+                                        textDecoration: 'none', fontSize: '0.875rem'
+                                      }}
+                                    >
+                                      <File size={20} />
+                                      <span>{m.attachmentName || 'File'}</span>
+                                    </a>
+                                  )}
+                                </div>
+                              )}
 
                               <div className="bubble-footer">
                                 <span className="bubble-time">
@@ -696,15 +784,49 @@ const StudentMessages: React.FC = () => {
                       </button>
                     </div>
                   )}
+                  {selectedFile && (
+                    <div className="reply-preview">
+                      <div className="reply-preview-content">
+                        {selectedFile.type.startsWith('image/') ? <Image size={14} /> : <File size={14} />}
+                        <div>
+                          <div className="reply-preview-sender">Attachment</div>
+                          <div className="reply-preview-text">{selectedFile.name}</div>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        className="reply-preview-close"
+                        onClick={clearSelectedFile}
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  )}
                   <div className="chat-input-row">
+                    <button
+                      type="button"
+                      className="btn-icon-primary chat-file-btn"
+                      onClick={() => fileInputRef.current?.click()}
+                      title="Attach file"
+                      style={{ flexShrink: 0 }}
+                    >
+                      <Paperclip size={18} />
+                    </button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*,video/*"
+                      style={{ display: 'none' }}
+                      onChange={handleFileSelect}
+                    />
                     <input
                       className="form-input"
                       placeholder="Type a message..."
                       value={newMsg}
                       onChange={(e) => setNewMsg(e.target.value)}
                     />
-                    <button className="btn btn-primary message-send-btn" type="submit" disabled={!newMsg.trim() || sending}>
-                      <Send size={18} />
+                    <button className="btn btn-primary message-send-btn" type="submit" disabled={(!newMsg.trim() && !selectedFile) || sending || uploadingFile}>
+                      {uploadingFile ? <div className="spinner-small" /> : <Send size={18} />}
                     </button>
                   </div>
                 </form>

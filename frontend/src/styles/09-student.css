@@ -223,19 +223,26 @@
   transition: opacity 0.2s ease;
   padding: 0.35rem 0.5rem;
   border-radius: 20px;
+  position: absolute;
+  top: -14px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.chat-message-row:hover .message-actions {
+  pointer-events: auto;
+  opacity: 1;
 }
 
 .message-actions.mine {
   background: rgba(37, 99, 235, 0.12);
   flex-direction: row-reverse;
+  right: 0;
 }
 
 .message-actions.theirs {
   background: rgba(148, 163, 184, 0.15);
-}
-
-.chat-message-row:hover .message-actions {
-  opacity: 1;
+  left: 0;
 }
 
 .message-action-btn {

@@ -389,6 +389,10 @@ public class StudentController {
                                 .subject(body.containsKey("subject") ? body.get("subject").toString() : null)
                                 .content(body.get("content").toString())
                                 .parentId(body.containsKey("parentId") ? Long.valueOf(body.get("parentId").toString()) : null)
+                                .attachmentPath(body.containsKey("attachmentUrl") ? body.get("attachmentUrl").toString() : null)
+                                .attachmentName(body.containsKey("attachmentName") ? body.get("attachmentName").toString() : null)
+                                .attachmentType(body.containsKey("attachmentType") ? body.get("attachmentType").toString() : null)
+                                .attachmentSize(body.containsKey("attachmentSize") ? Long.valueOf(body.get("attachmentSize").toString()) : null)
                                 .build();
                 return ResponseEntity.ok(ApiResponse.success("Message sent", messageRepository.save(msg)));
         }
@@ -411,12 +415,16 @@ public class StudentController {
                         sender.put("role", m.getSender().getRole());
                         sender.put("avatarUrl", m.getSender().getAvatar());
 
-                        Map<String, Object> item = new HashMap<>();
-                        item.put("id", m.getId());
-                        item.put("content", m.getContent());
-                        item.put("createdAt", m.getCreatedAt());
-                        item.put("parentId", m.getParentId());
-                        item.put("sender", sender);
+                Map<String, Object> item = new HashMap<>();
+                                        item.put("id", m.getId());
+                                        item.put("content", m.getContent());
+                                        item.put("createdAt", m.getCreatedAt());
+                                        item.put("parentId", m.getParentId());
+                                        item.put("attachmentPath", m.getAttachmentPath());
+                                        item.put("attachmentName", m.getAttachmentName());
+                                        item.put("attachmentType", m.getAttachmentType());
+                                        item.put("attachmentSize", m.getAttachmentSize());
+                                        item.put("sender", sender);
                         return item;
                 }).toList();
 
@@ -486,6 +494,37 @@ public class StudentController {
                 Long userId = Long.valueOf(body.get("userId").toString());
                 messageRepository.markAsRead(userId, student.getId());
                 return ResponseEntity.ok(ApiResponse.success("Messages marked as read", null));
+        }
+
+        @PostMapping("/messages/upload")
+        public ResponseEntity<ApiResponse<Map<String, Object>>> uploadMessageFile(
+                        @RequestParam("file") MultipartFile file,
+                        @AuthenticationPrincipal User student) throws IOException {
+                if (file == null || file.isEmpty()) {
+                        throw new BadRequestException("Please select a file to upload");
+                }
+
+                String uploadDir = "uploads/messages";
+                Path uploadPath = Paths.get(uploadDir);
+                Files.createDirectories(uploadPath);
+
+                String contentType = file.getContentType();
+                String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                Files.copy(file.getInputStream(), uploadPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+
+                String attachmentType = "file";
+                if (contentType != null) {
+                        if (contentType.startsWith("image/")) attachmentType = "image";
+                        else if (contentType.startsWith("video/")) attachmentType = "video";
+                }
+
+                Map<String, Object> result = new HashMap<>();
+                result.put("url", "/uploads/messages/" + fileName);
+                result.put("name", file.getOriginalFilename());
+                result.put("type", attachmentType);
+                result.put("size", file.getSize());
+
+                return ResponseEntity.ok(ApiResponse.success("File uploaded", result));
         }
 
         // Delete message for everyone (only sender can do this)
@@ -559,6 +598,10 @@ public class StudentController {
                                 .course(course).sender(student)
                                 .content(body.get("content").toString())
                                 .parentId(body.containsKey("parentId") ? Long.valueOf(body.get("parentId").toString()) : null)
+                                .attachmentPath(body.containsKey("attachmentUrl") ? body.get("attachmentUrl").toString() : null)
+                                .attachmentName(body.containsKey("attachmentName") ? body.get("attachmentName").toString() : null)
+                                .attachmentType(body.containsKey("attachmentType") ? body.get("attachmentType").toString() : null)
+                                .attachmentSize(body.containsKey("attachmentSize") ? Long.valueOf(body.get("attachmentSize").toString()) : null)
                                 .build();
                 return ResponseEntity.ok(ApiResponse.success("Message sent", courseMessageRepository.save(msg)));
         }

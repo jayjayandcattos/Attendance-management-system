@@ -84,6 +84,7 @@ export const teacherApi = {
 
   sendMessage: (data: any) => api.post('/teacher/messages/send', data),
   sendGroupMessage: (data: any) => api.post('/teacher/messages/group', data),
+  uploadMessageFile: (data: FormData) => api.post('/teacher/messages/upload', data),
   getGroupMessages: (courseId: number) => api.get(`/teacher/messages/group/${courseId}`),
   getDmMessages: (userId: number) => api.get('/teacher/messages/dm', { params: { userId } }),
   getConversations: () => api.get('/teacher/messages/conversations'),
@@ -129,6 +130,7 @@ export const studentApi = {
   getContacts: () => api.get('/student/messages/contacts'),
   markDmRead: (userId: number) => api.post('/student/messages/dm/read', { userId }),
   sendGroupMessage: (data: any) => api.post('/student/messages/group', data),
+  uploadMessageFile: (data: FormData) => api.post('/student/messages/upload', data),
   deleteMessage: (id: number) => api.delete(`/student/messages/${id}`),
   hideMessage: (id: number) => api.post(`/student/messages/${id}/hide`),
   deleteGroupMessage: (id: number) => api.delete(`/student/messages/group/${id}`),

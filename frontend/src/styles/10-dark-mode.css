@@ -678,9 +678,21 @@ html.dark .messages-search {
   border-color: #334155;
 }
 
+html.dark .messages-search::placeholder {
+  color: #64748b;
+}
+
 html.dark .chat-header {
   background: #0f172a;
   border-bottom-color: #1e293b;
+}
+
+html.dark .chat-header h3 {
+  color: #f1f5f9 !important;
+}
+
+html.dark .chat-header p {
+  color: #94a3b8 !important;
 }
 
 html.dark .chat-input {
@@ -705,7 +717,7 @@ html.dark .channel-meta {
 }
 
 html.dark .messages-sidebar-label {
-  color: #64748b;
+  color: #94a3b8;
 }
 
 html.dark .chat-bubble.theirs {

@@ -49,4 +49,16 @@ public class Message {
 
     @Column(name = "parent_id")
     private Long parentId;
+
+    @Column(name = "attachment_path")
+    private String attachmentPath;
+
+    @Column(name = "attachment_name")
+    private String attachmentName;
+
+    @Column(name = "attachment_type")
+    private String attachmentType;
+
+    @Column(name = "attachment_size")
+    private Long attachmentSize;
 }
