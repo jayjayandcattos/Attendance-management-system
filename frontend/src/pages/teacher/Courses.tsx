@@ -22,6 +22,7 @@ import DashboardLayout from '../../components/DashboardLayout';
 import { teacherApi } from '../../api';
 import { useAuth } from '../../auth/AuthContext';
 import { showAlert, showConfirm, showApiError } from '../../utils/feedback';
+import { getCourseBg, adjustColor } from '../../utils/courseBg';
 
 
 const DAYS = [
@@ -47,26 +48,12 @@ const COURSE_GRADIENTS = [
 
 const CATEGORY_LABELS = ['ONGOING', 'SOCIAL SCIENCES', 'LEADERSHIP', 'ENGINEERING', 'COMPUTER SCIENCE', 'BUSINESS', 'EDUCATION', 'GENERAL'];
 
-const getGradient = (idx: number) => COURSE_GRADIENTS[idx % COURSE_GRADIENTS.length];
 const getCategory = (idx: number) => CATEGORY_LABELS[idx % CATEGORY_LABELS.length];
 
 function formatTime12(t: string): string {
   if (!t) return '';
   const [h, m] = t.split(':').map(Number);
   return `${h % 12 || 12}:${m.toString().padStart(2, '0')} ${h >= 12 ? 'PM' : 'AM'}`;
-}
-
-function adjustColor(hex: string, amount: number): string {
-  try {
-    const h = hex.replace('#', '');
-    const num = parseInt(h, 16);
-    let r = Math.min(255, ((num >> 16) & 0xff) + amount);
-    let g = Math.min(255, ((num >> 8) & 0xff) + amount);
-    let b = Math.min(255, (num & 0xff) + amount);
-    return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
-  } catch {
-    return hex;
-  }
 }
 
 const BG_COLORS = ['#3b82f6', '#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', '#f59e0b', '#10b981', '#06b6d4', '#475569'];
@@ -79,27 +66,6 @@ const BG_IMAGES = [
   'e9a477fe6444851b976195d99fd45349.jpg', 'f271614b55f4c150ca1e1517c6486b2d.jpg', 'f9780f1993b3a4a6d643c3ddccc6e300.jpg',
   'ff9235cd827885e439aef1bb9e153754.jpg'
 ];
-
-const getCourseBg = (val: string, idx: number) => {
-  if (!val) return { background: getGradient(idx) };
-  if (val.startsWith('#')) return {
-    background: `linear-gradient(135deg, ${val}, ${adjustColor(val, 30)})`,
-    backgroundColor: val
-  };
-  if (val.startsWith('http') || val.startsWith('/bg/') || val.startsWith('data:')) return {
-    backgroundImage: `url("${val}")`,
-    backgroundSize: '100% 100%',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center'
-  };
-  if (val.includes('.') || val.includes('/') || val.includes(':')) return {
-    backgroundImage: `url("${val}")`,
-    backgroundSize: '100% 100%',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center'
-  };
-  return { background: val };
-};
 
 const TeacherCourses: React.FC = () => {
   const navigate = useNavigate();

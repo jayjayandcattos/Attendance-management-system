@@ -1,6 +1,14 @@
 spring:
   application:
     name: attendease-backend
+  
+  devtools:
+    restart:
+      enabled: true
+      additional-paths: src/main/java
+      exclude: static/**,public/**,templates/**
+    livereload:
+      enabled: true
 
   jackson:
     serialization:

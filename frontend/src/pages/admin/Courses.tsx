@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import DashboardLayout from '../../components/DashboardLayout';
 import { adminApi } from '../../api';
 import { Search, X, ChevronRight, Check, AlertTriangle } from 'lucide-react';
+import { getCourseBg } from '../../utils/courseBg';
 
 const AdminCourses: React.FC = () => {
   const [courses, setCourses] = useState<any[]>([]);
@@ -169,7 +170,7 @@ const AdminCourses: React.FC = () => {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                           <div className="shadow-sm" style={{
                             width: 40, height: 40, borderRadius: 12,
-                            background: c.coverColor || 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                            ...getCourseBg(c.coverColor, 0),
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             color: 'white', fontWeight: 800, fontSize: '0.9rem', flexShrink: 0
                           }}>

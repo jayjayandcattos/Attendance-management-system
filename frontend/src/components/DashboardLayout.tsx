@@ -1,10 +1,10 @@
 import React, { useRef, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { 
-  User, 
-  Settings, 
-  Shield, 
-  X, 
+import {
+  User,
+  Settings,
+  Shield,
+  X,
   AlertCircle,
   ChevronRight,
   LogOut
@@ -92,8 +92,8 @@ const navSections: Record<string, NavSection[]> = {
   ],
 };
 
-const DashboardLayout: React.FC<DashboardLayoutProps> = ({ 
-  children, 
+const DashboardLayout: React.FC<DashboardLayoutProps> = ({
+  children,
   role,
   searchQuery,
   onSearchChange,
@@ -435,25 +435,25 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         >
           <X size={24} />
         </button>
-        <div className="sidebar-brand" style={{ 
-          padding: '1.5rem 0 0.5rem 0', 
+        <div className="sidebar-brand" style={{
+          padding: '1.5rem 0 0.5rem 0',
           margin: '-1rem -1rem 0.5rem -1rem',
-          display: 'flex', 
+          display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
           overflow: 'hidden',
           width: 'calc(100% + 2rem)'
         }}>
-          <img 
-            src={theme === 'dark' ? "/WHITEMODE.png" : "/logo.png"} 
-            alt="System Logo" 
-            style={{ 
-              width: '140px', 
-              height: 'auto', 
+          <img
+            src={theme === 'dark' ? "/WHITEMODE.png" : "/logo.png"}
+            alt="System Logo"
+            style={{
+              width: '140px',
+              height: 'auto',
               objectFit: 'contain',
               display: 'block'
-            }} 
+            }}
           />
         </div>
         <nav className="sidebar-nav">
@@ -486,10 +486,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       </aside>
 
       <div className="main-container">
-        <TopNavbar 
-          searchQuery={searchQuery} 
-          onSearchChange={onSearchChange} 
-          actions={actions} 
+        <TopNavbar
+          searchQuery={searchQuery}
+          onSearchChange={onSearchChange}
+          actions={actions}
           onProfileClick={() => setShowProfile(true)}
           onLogoutClick={() => setShowLogout(true)}
           onMenuClick={() => setSidebarOpen(true)}
@@ -500,30 +500,30 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
       {/* Logout Confirmation Modal */}
       {showLogout && (
-        <div className="modal-overlay animate-fade-in" style={{ 
-          zIndex: 20000, 
-          position: 'fixed', 
-          top: 0, 
-          left: 0, 
-          width: '100vw', 
-          height: '100vh', 
-          display: 'flex', 
-          alignItems: 'center', 
+        <div className="modal-overlay animate-fade-in" style={{
+          zIndex: 20000,
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          display: 'flex',
+          alignItems: 'center',
           justifyContent: 'center',
-          background: 'rgba(15, 23, 42, 0.4)', 
-          backdropFilter: 'blur(8px)' 
+          background: 'rgba(15, 23, 42, 0.4)',
+          backdropFilter: 'blur(8px)'
         }} onClick={() => setShowLogout(false)}>
           <div className="premium-card modal animate-scale-in" onClick={e => e.stopPropagation()} style={{ maxWidth: '400px', padding: '2.5rem', textAlign: 'center' }}>
-            <div className="logout-icon-circle" style={{ 
-              width: '64px', 
-              height: '64px', 
-              borderRadius: '50%', 
-              background: 'rgba(239, 68, 68, 0.1)', 
-              color: '#ef4444', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              margin: '0 auto 1.5rem' 
+            <div className="logout-icon-circle" style={{
+              width: '64px',
+              height: '64px',
+              borderRadius: '50%',
+              background: 'rgba(239, 68, 68, 0.1)',
+              color: '#ef4444',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1.5rem'
             }}>
               <LogOut size={32} />
             </div>
@@ -545,16 +545,16 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
       {/* Profile Edit Modal */}
       {showProfile && (
-        <div className="modal-overlay" style={{ 
-          position: 'fixed', 
-          top: 0, 
-          left: 0, 
-          width: '100vw', 
-          height: '100vh', 
-          display: 'flex', 
-          alignItems: 'center', 
+        <div className="modal-overlay" style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          display: 'flex',
+          alignItems: 'center',
           justifyContent: 'center',
-          zIndex: 10000 
+          zIndex: 10000
         }} onClick={() => setShowProfile(false)}>
           <div className="premium-card modal animate-scale-in" onClick={e => e.stopPropagation()} style={{ maxWidth: '520px', maxHeight: '90vh', display: 'flex', flexDirection: 'column', padding: '0', overflow: 'hidden' }}>
             <div className="modal-header" style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border-glass)' }}>
@@ -564,11 +564,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
             <div className="modal-scroll-area" style={{ padding: '1.5rem' }}>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <Avatar 
-                  firstName={user?.firstName} 
-                  lastName={user?.lastName} 
-                  avatarUrl={user?.avatar} 
-                  size={80} 
+                <Avatar
+                  firstName={user?.firstName}
+                  lastName={user?.lastName}
+                  avatarUrl={user?.avatar}
+                  size={80}
                   className="shadow-md"
                   style={{ marginBottom: '1rem', border: '3px solid var(--bg)', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                 />
@@ -656,17 +656,17 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                   <div className="form-group">
                     <label className="form-label" style={{ fontWeight: 700, fontSize: '0.85rem' }}>Current Password</label>
                     <input className="form-input" type="password" value={passwordForm.currentPassword}
-                        onChange={e => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })} required style={{ borderRadius: 12 }} />
+                      onChange={e => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })} required style={{ borderRadius: 12 }} />
                   </div>
                   <div className="form-group">
                     <label className="form-label" style={{ fontWeight: 700, fontSize: '0.85rem' }}>New Password</label>
                     <input className="form-input" type="password" value={passwordForm.newPassword}
-                        onChange={e => setPasswordForm({ ...passwordForm, newPassword: e.target.value })} required style={{ borderRadius: 12 }} />
+                      onChange={e => setPasswordForm({ ...passwordForm, newPassword: e.target.value })} required style={{ borderRadius: 12 }} />
                   </div>
                   <div className="form-group">
                     <label className="form-label" style={{ fontWeight: 700, fontSize: '0.85rem' }}>Confirm New Password</label>
                     <input className="form-input" type="password" value={passwordForm.confirmPassword}
-                        onChange={e => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })} required style={{ borderRadius: 12 }} />
+                      onChange={e => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })} required style={{ borderRadius: 12 }} />
                   </div>
                 </form>
               )}
@@ -674,11 +674,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
             <div className="modal-footer" style={{ padding: '1.25rem 1.5rem', borderTop: '1px solid var(--border-glass)', background: 'var(--bg-secondary)', display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
               <button type="button" className="btn btn-secondary" onClick={() => setShowProfile(false)} style={{ width: 'auto', borderRadius: 12, fontWeight: 700 }}>Cancel</button>
-              <button 
-                type="submit" 
-                form={profileTab === 'info' ? "profile-form" : "password-form"} 
-                className="btn btn-primary" 
-                style={{ width: 'auto', borderRadius: 12, fontWeight: 800, padding: '0.75rem 1.5rem', background: '#3b82f6', boxShadow: '0 4px 12px rgba(59,130,246,0.2)' }} 
+              <button
+                type="submit"
+                form={profileTab === 'info' ? "profile-form" : "password-form"}
+                className="btn btn-primary"
+                style={{ width: 'auto', borderRadius: 12, fontWeight: 800, padding: '0.75rem 1.5rem', background: '#3b82f6', boxShadow: '0 4px 12px rgba(59,130,246,0.2)' }}
                 disabled={saving}
               >
                 {saving ? 'Saving...' : 'Save Changes'}

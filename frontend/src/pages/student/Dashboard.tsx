@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { BookOpen, X, Plus, Clock, FileText, Megaphone, ClipboardList, Scan, RefreshCcw } from 'lucide-react';
 import DashboardLayout from '../../components/DashboardLayout';
+import { getCourseBg, adjustColor } from '../../utils/courseBg';
 import { Html5Qrcode } from 'html5-qrcode';
 import { useAuth } from '../../auth/AuthContext';
 import { studentApi } from '../../api';
@@ -327,7 +328,7 @@ const StudentDashboard: React.FC = () => {
                     <div
                       className="sd-course-card-top"
                       style={{ 
-                        ...getCourseBg(cd.course.coverColor, idx),
+                        ...getCourseBg(cd.course.coverColor, idx, CARD_GRADIENTS),
                         position: 'relative',
                         overflow: 'hidden'
                       }}
@@ -500,41 +501,6 @@ const StudentDashboard: React.FC = () => {
       )}
     </DashboardLayout>
   );
-};
-
-/* ── Helper: lighten a hex color ───────────────────────────── */
-function adjustColor(hex: string, amount: number): string {
-  try {
-    const h = hex.replace('#', '');
-    const num = parseInt(h, 16);
-    let r = Math.min(255, ((num >> 16) & 0xff) + amount);
-    let g = Math.min(255, ((num >> 8) & 0xff) + amount);
-    let b = Math.min(255, (num & 0xff) + amount);
-    return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
-  } catch {
-    return hex;
-  }
-}
-
-const getCourseBg = (val: string, idx: number) => {
-    if (!val) return { background: CARD_GRADIENTS[idx % CARD_GRADIENTS.length] };
-    if (val.startsWith('#')) return { 
-      background: `linear-gradient(135deg, ${val}, ${adjustColor(val, 30)})`,
-      backgroundColor: val 
-    };
-    if (val.startsWith('http') || val.startsWith('/bg/') || val.startsWith('data:')) return { 
-      backgroundImage: `url("${val}")`,
-      backgroundSize: '100% 100%',
-      backgroundRepeat: 'no-repeat',
-      backgroundPosition: 'center'
-    };
-    if (val.includes('.') || val.includes('/') || val.includes(':')) return {
-      backgroundImage: `url("${val}")`,
-      backgroundSize: '100% 100%',
-      backgroundRepeat: 'no-repeat',
-      backgroundPosition: 'center'
-    };
-    return { background: val };
 };
 
 export default StudentDashboard;

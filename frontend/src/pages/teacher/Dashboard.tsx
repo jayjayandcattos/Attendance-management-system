@@ -25,6 +25,7 @@ import DashboardLayout from '../../components/DashboardLayout';
 import { teacherApi } from '../../api';
 import { useAuth } from '../../auth/AuthContext';
 import { showAlert, showConfirm, showApiError } from '../../utils/feedback';
+import { getCourseBg, adjustColor } from '../../utils/courseBg';
 
 
 /* ── helpers ───────────────────────────────────────────────── */
@@ -51,10 +52,6 @@ const COURSE_GRADIENTS = [
 ];
 
 // Removed CATEGORY_COLORS
-
-const getGradient = (index: number) => COURSE_GRADIENTS[index % COURSE_GRADIENTS.length];
-// Removed getCategoryLabel
-
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -193,27 +190,6 @@ const TeacherDashboard: React.FC = () => {
     'f9780f1993b3a4a6d643c3ddccc6e300.jpg',
     'ff9235cd827885e439aef1bb9e153754.jpg'
   ];
-
-  const getCourseBg = (val: string, idx: number) => {
-    if (!val) return { background: getGradient(idx) };
-    if (val.startsWith('#')) return {
-      background: `linear-gradient(135deg, ${val}, ${adjustColor(val, 30)})`,
-      backgroundColor: val
-    };
-    if (val.startsWith('http') || val.startsWith('/bg/') || val.startsWith('data:')) return {
-      backgroundImage: `url("${val}")`,
-      backgroundSize: '100% 100%',
-      backgroundRepeat: 'no-repeat',
-      backgroundPosition: 'center'
-    };
-    if (val.includes('.') || val.includes('/') || val.includes(':')) return {
-      backgroundImage: `url("${val}")`,
-      backgroundSize: '100% 100%',
-      backgroundRepeat: 'no-repeat',
-      backgroundPosition: 'center'
-    };
-    return { background: val };
-  };
 
   // Courses carousel
   const coursesScrollRef = useRef<HTMLDivElement>(null);
@@ -823,19 +799,5 @@ const TeacherDashboard: React.FC = () => {
     </DashboardLayout>
   );
 };
-
-/* ── Helper: lighten a hex color ───────────────────────────── */
-function adjustColor(hex: string, amount: number): string {
-  try {
-    const h = hex.replace('#', '');
-    const num = parseInt(h, 16);
-    let r = Math.min(255, ((num >> 16) & 0xff) + amount);
-    let g = Math.min(255, ((num >> 8) & 0xff) + amount);
-    let b = Math.min(255, (num & 0xff) + amount);
-    return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
-  } catch {
-    return hex;
-  }
-}
 
 export default TeacherDashboard;

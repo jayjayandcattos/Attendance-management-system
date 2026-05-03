@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { MessageSquare, X, Send, Users, Plus, Search, ArrowLeft, Trash2, Smile, Reply, MoreVertical, CornerUpLeft } from 'lucide-react';
+import { MessageSquare, X, Send, Users, Plus, Search, ArrowLeft, Trash2, Smile, Reply, MoreVertical, CornerUpLeft, ChevronDown, ChevronRight } from 'lucide-react';
 import DashboardLayout from '../../components/DashboardLayout';
 import Avatar from '../../components/Avatar';
 import { teacherApi } from '../../api';
 import { useAuth } from '../../auth/AuthContext';
 import { showApiError, showAlert } from '../../utils/feedback';
+import { getCourseBg } from '../../utils/courseBg';
 
-const POLL_INTERVAL = 4000;
+const POLL_INTERVAL = 2000;
 const REACTION_EMOJIS = ['👍', '❤️', '😂', '🔥', '👏', '🎯'];
-const LONG_PRESS_DURATION = 500; // milliseconds
+const LONG_PRESS_DURATION = 500;
 
 type ReactionState = {
   counts: Record<string, number>;
@@ -40,6 +41,8 @@ const TeacherMessages: React.FC = () => {
   const [contextMenu, setContextMenu] = useState<{ messageId: number; x: number; y: number } | null>(null);
   const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout | null>(null);
   const [replyingTo, setReplyingTo] = useState<{ id: number; content: string; sender: string } | null>(null);
+  const [showGroups, setShowGroups] = useState(true);
+  const [showDms, setShowDms] = useState(true);
 
   const chatRef = useRef<HTMLDivElement>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -63,7 +66,7 @@ const TeacherMessages: React.FC = () => {
     const diffMs = Math.max(0, now.getTime() - date.getTime());
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMins / 60);
-    
+
     if (diffMins < 1) return 'now';
     if (diffMins < 60) return `${diffMins}m`;
     if (diffHours < 24) {
@@ -113,14 +116,12 @@ const TeacherMessages: React.FC = () => {
     setContextMenu(null);
   };
 
-  // Handle context menu
   const handleContextMenu = (e: React.MouseEvent, messageId: number) => {
     e.preventDefault();
     setContextMenu({ messageId, x: e.clientX, y: e.clientY });
     setPickerOpenFor(null);
   };
 
-  // Handle long press for mobile
   const handleTouchStart = (messageId: number) => {
     const timer = setTimeout(() => {
       const rect = document.getElementById(`msg-${messageId}`)?.getBoundingClientRect();
@@ -139,7 +140,6 @@ const TeacherMessages: React.FC = () => {
     }
   };
 
-  // Close context menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) {
@@ -198,7 +198,6 @@ const TeacherMessages: React.FC = () => {
   const loadGroupMessages = useCallback((courseId: number) => {
     teacherApi.getGroupMessages(courseId).then((res) => {
       const newMsgs = Array.isArray(res.data?.data) ? res.data.data : [];
-      // Sort messages by createdAt ascending (oldest first, newest last)
       newMsgs.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
       setMessages((prev) => {
         const linked = newMsgs.map((m: any) => {
@@ -213,13 +212,12 @@ const TeacherMessages: React.FC = () => {
         }
         return linked;
       });
-    }).catch(() => {});
+    }).catch(() => { });
   }, [scrollToBottom]);
 
   const loadDmMessages = useCallback((userId: number) => {
     teacherApi.getDmMessages(userId).then((res) => {
       const newMsgs = Array.isArray(res.data?.data) ? res.data.data : [];
-      // Sort messages by createdAt ascending (oldest first, newest last)
       newMsgs.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
       setMessages((prev) => {
         const linked = newMsgs.map((m: any) => {
@@ -234,13 +232,13 @@ const TeacherMessages: React.FC = () => {
         }
         return linked;
       });
-    }).catch(() => {});
+    }).catch(() => { });
   }, [scrollToBottom]);
 
   const refreshConversations = useCallback(() => {
     teacherApi.getConversations().then((res) => {
       setConversations(Array.isArray(res.data?.data) ? res.data.data : []);
-    }).catch(() => {});
+    }).catch(() => { });
   }, []);
 
   useEffect(() => {
@@ -251,7 +249,7 @@ const TeacherMessages: React.FC = () => {
         loadGroupMessages(selectedCourse);
       } else if (viewMode === 'dm' && selectedUser) {
         loadDmMessages(selectedUser);
-        teacherApi.markDmRead(selectedUser).catch(() => {});
+        teacherApi.markDmRead(selectedUser).catch(() => { });
       }
       refreshConversations();
     };
@@ -365,7 +363,7 @@ const TeacherMessages: React.FC = () => {
     setMessages([]);
     setPickerOpenFor(null);
     setShowChatList(false);
-    teacherApi.markDmRead(userId).catch(() => {});
+    teacherApi.markDmRead(userId).catch(() => { });
   };
 
   const query = searchQuery.trim().toLowerCase();
@@ -374,7 +372,21 @@ const TeacherMessages: React.FC = () => {
     : courses;
 
   const filteredConversations = (query
-    ? conversations.filter((conv) => (`${conv.firstName || ''} ${conv.lastName || ''} ${conv.role || ''}`).toLowerCase().includes(query))
+    ? [
+      ...conversations,
+      ...contacts
+        .filter(c => !conversations.some(conv => conv.userId === c.id))
+        .map(c => ({
+          userId: c.id,
+          firstName: c.firstName,
+          lastName: c.lastName,
+          role: c.role,
+          avatar: c.avatar,
+          lastMessage: '',
+          lastMessageTime: null,
+          unreadCount: 0
+        }))
+    ].filter((conv) => (`${conv.firstName || ''} ${conv.lastName || ''} ${conv.role || ''}`).toLowerCase().includes(query))
     : conversations
   ).sort((a: any, b: any) => {
     const tA = a.lastMessageTime ? new Date(a.lastMessageTime).getTime() : 0;
@@ -388,6 +400,11 @@ const TeacherMessages: React.FC = () => {
 
   const activeSubtitle = viewMode === 'group' ? 'Course Community' : 'Direct Message';
 
+  const activeCourseIdx = viewMode === 'group' && selectedCourse != null
+    ? courses.findIndex((c) => c.id === selectedCourse)
+    : -1;
+  const activeCourse = activeCourseIdx >= 0 ? courses[activeCourseIdx] : null;
+
   return (
     <DashboardLayout role="teacher">
       {loading ? (
@@ -397,7 +414,7 @@ const TeacherMessages: React.FC = () => {
           <aside className={`messages-sidebar ${!showChatList ? 'is-hidden-mobile' : ''}`}>
             <div className="messages-sidebar-header">
               <div className="messages-sidebar-title-row">
-                <h3>Messages</h3>
+                <h3 style={{ color: 'var(--text-primary)', margin: 0, fontSize: '1.2rem' }}>Messages</h3>
                 <button className="btn-icon-primary" onClick={() => setShowNewDM(true)} title="New Message">
                   <Plus size={18} />
                 </button>
@@ -413,28 +430,44 @@ const TeacherMessages: React.FC = () => {
               </div>
             </div>
 
-            <div className="messages-sidebar-section">
-              <div className="messages-sidebar-label">Course Groups</div>
-              {filteredCourses.map((c: any) => (
-                <div
-                  key={c.id}
-                  className={`message-channel ${viewMode === 'group' && selectedCourse === c.id ? 'active' : ''}`}
-                  onClick={() => selectCourse(c.id)}
-                >
-                  <div className="channel-avatar" style={{ background: c.coverColor || 'var(--accent-blue)' }}>
-                    {(c.courseCode || 'C').slice(0, 1).toUpperCase()}
-                  </div>
-                  <div className="channel-info">
-                    <div className="channel-name">{c.courseCode} {c.section ? `- ${c.section}` : ''}</div>
-                    <div className="channel-meta">{c.courseName}</div>
-                  </div>
+            <div className={`messages-sidebar-section section-groups ${showGroups ? 'is-expanded' : 'is-collapsed'}`}>
+              <div className="messages-sidebar-label" onClick={() => setShowGroups(!showGroups)}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  {showGroups ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                  Course Groups
                 </div>
-              ))}
-              {filteredCourses.length === 0 && <div className="messages-sidebar-empty">No matching courses.</div>}
+              </div>
+              {showGroups && (
+                <div className="messages-sidebar-content">
+                  {filteredCourses.map((c: any, idx: number) => (
+                    <div
+                      key={c.id}
+                      className={`message-channel ${viewMode === 'group' && selectedCourse === c.id ? 'active' : ''}`}
+                      onClick={() => selectCourse(c.id)}
+                    >
+                      <div className="channel-avatar" style={{ ...getCourseBg(c.coverColor, idx) }}>
+                        {(c.courseCode || 'C').slice(0, 1).toUpperCase()}
+                      </div>
+                      <div className="channel-info">
+                        <div className="channel-name">{c.courseCode} {c.section ? `- ${c.section}` : ''}</div>
+                        <div className="channel-meta">{c.courseName}</div>
+                      </div>
+                    </div>
+                  ))}
+                  {filteredCourses.length === 0 && <div className="messages-sidebar-empty">No matching courses.</div>}
+                </div>
+              )}
             </div>
 
-            <div className="messages-sidebar-section">
-              <div className="messages-sidebar-label">Direct Messages</div>
+            <div className={`messages-sidebar-section section-dms ${showDms ? 'is-expanded' : 'is-collapsed'}`}>
+              <div className="messages-sidebar-label" onClick={() => setShowDms(!showDms)}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  {showDms ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                  Direct Messages
+                </div>
+              </div>
+              {showDms && (
+                <div className="messages-sidebar-content">
                   {filteredConversations.map((conv: any) => {
                     const isUnread = conv.unreadCount > 0;
                     return (
@@ -467,7 +500,9 @@ const TeacherMessages: React.FC = () => {
                       </div>
                     );
                   })}
-              {filteredConversations.length === 0 && <div className="messages-sidebar-empty">No matching conversations.</div>}
+                  {filteredConversations.length === 0 && <div className="messages-sidebar-empty">No matching conversations.</div>}
+                </div>
+              )}
             </div>
           </aside>
 
@@ -486,7 +521,7 @@ const TeacherMessages: React.FC = () => {
                           width: 38,
                           height: 38,
                           fontSize: '0.8rem',
-                          background: courses.find((c) => c.id === selectedCourse)?.coverColor || 'var(--accent-blue)'
+                          ...getCourseBg(activeCourse?.coverColor || '', Math.max(activeCourseIdx, 0))
                         }}
                       >
                         <Users size={16} />
@@ -516,11 +551,10 @@ const TeacherMessages: React.FC = () => {
                     const reactionKey = getMessageReactionKey(m.id);
                     const reactionState = reactionsByMessage[reactionKey];
                     const reactionEntries = Object.entries(reactionState?.counts ?? {});
-                    const pickerOpen = pickerOpenFor === reactionKey;
 
                     return (
-                      <div 
-                        key={m.id} 
+                      <div
+                        key={m.id}
                         id={`msg-${m.id}`}
                         className={`chat-message-row ${isMine ? 'mine' : 'theirs'}`}
                         onContextMenu={(e) => handleContextMenu(e, m.id)}
@@ -584,7 +618,6 @@ const TeacherMessages: React.FC = () => {
                             )}
                           </div>
 
-                          {/* Action buttons - always AFTER bubble, positioned by CSS */}
                           <div className={`message-actions ${isMine ? 'mine' : 'theirs'}`}>
                             <button
                               type="button"
@@ -635,8 +668,8 @@ const TeacherMessages: React.FC = () => {
                           <div className="reply-preview-text">{replyingTo.content}</div>
                         </div>
                       </div>
-                      <button 
-                        type="button" 
+                      <button
+                        type="button"
                         className="reply-preview-close"
                         onClick={() => setReplyingTo(null)}
                       >
@@ -668,17 +701,16 @@ const TeacherMessages: React.FC = () => {
         </div>
       )}
 
-      {/* Context Menu */}
       {contextMenu && (
-        <div 
+        <div
           ref={contextMenuRef}
-          className="msg-context-menu" 
-          style={{ 
-            left: `${contextMenu.x}px`, 
-            top: `${contextMenu.y}px` 
+          className="msg-context-menu"
+          style={{
+            left: `${contextMenu.x}px`,
+            top: `${contextMenu.y}px`
           }}
         >
-          <button 
+          <button
             className="context-menu-item"
             onClick={() => {
               const message = messages.find(m => m.id === contextMenu.messageId);
@@ -691,7 +723,7 @@ const TeacherMessages: React.FC = () => {
             <Smile size={18} />
             <span>React</span>
           </button>
-          <button 
+          <button
             className="context-menu-item"
             onClick={() => handleReply(contextMenu.messageId)}
           >
@@ -700,7 +732,7 @@ const TeacherMessages: React.FC = () => {
           </button>
           {isOwnMessage(messages.find(m => m.id === contextMenu.messageId)) && (
             <>
-              <button 
+              <button
                 className="context-menu-item danger"
                 onClick={() => handleDeleteForEveryone(contextMenu.messageId)}
               >
@@ -712,7 +744,6 @@ const TeacherMessages: React.FC = () => {
         </div>
       )}
 
-      {/* Reaction Picker Overlay */}
       {pickerOpenFor && (
         <div className="reaction-picker-overlay" onClick={() => setPickerOpenFor(null)}>
           <div className="reaction-picker-popup" onClick={(e) => e.stopPropagation()}>
@@ -735,48 +766,50 @@ const TeacherMessages: React.FC = () => {
 
       {showNewDM && (
         <div className="modal-overlay" onClick={() => setShowNewDM(false)}>
-          <div className="theme-card" onClick={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: '460px', borderRadius: 24, overflow: 'hidden' }}>
-            <div className="modal-header" style={{ padding: '1.5rem', background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-glass)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 className="modal-title" style={{ margin: 0, fontWeight: 900, color: 'var(--text-primary)' }}>New Message</h3>
-              <button className="theme-btn-secondary" onClick={() => setShowNewDM(false)} style={{ border: 'none', width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}><X size={18} /></button>
+          <div className="premium-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '480px' }}>
+            <div className="premium-modal-header">
+              <h3 className="premium-modal-title">New Message</h3>
+              <button className="premium-close-btn" onClick={() => setShowNewDM(false)}><X size={18} /></button>
             </div>
 
-            <form onSubmit={sendNewDM} style={{ padding: '1.5rem' }}>
-              <div className="form-group">
-                <label className="form-label">To</label>
-                <select
-                  className="form-input"
-                  value={dmForm.receiverId}
-                  onChange={(e) => setDmForm({ ...dmForm, receiverId: e.target.value })}
-                  required
-                >
-                  <option value="">Select student/teacher...</option>
-                  {contacts.map((c: any) => (
-                    <option key={c.id} value={c.id}>
-                      {c.firstName} {c.lastName} ({isTeacherRole(c.role) ? 'Teacher' : 'Student'})
-                    </option>
-                  ))}
-                </select>
+            <form onSubmit={sendNewDM}>
+              <div className="premium-modal-body">
+                <div className="premium-form-group">
+                  <label className="premium-label">To</label>
+                  <select
+                    className="premium-select"
+                    value={dmForm.receiverId}
+                    onChange={(e) => setDmForm({ ...dmForm, receiverId: e.target.value })}
+                    required
+                  >
+                    <option value="">Select student/teacher...</option>
+                    {contacts.map((c: any) => (
+                      <option key={c.id} value={c.id}>
+                        {c.firstName} {c.lastName} ({isTeacherRole(c.role) ? 'Teacher' : 'Student'})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="premium-form-group">
+                  <label className="premium-label">Message</label>
+                  <textarea
+                    className="premium-textarea"
+                    rows={5}
+                    value={dmForm.content}
+                    onChange={(e) => setDmForm({ ...dmForm, content: e.target.value })}
+                    placeholder="Write your message here..."
+                    required
+                  />
+                </div>
               </div>
 
-              <div className="form-group">
-                <label className="form-label">Message</label>
-                <textarea
-                  className="form-input"
-                  rows={4}
-                  value={dmForm.content}
-                  onChange={(e) => setDmForm({ ...dmForm, content: e.target.value })}
-                  placeholder="Write your message..."
-                  required
-                />
-              </div>
-
-              <div className="modal-actions" style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', marginTop: '1.5rem' }}>
-                <button type="button" className="btn btn-secondary" onClick={() => setShowNewDM(false)} style={{ width: 'auto' }}>
+              <div className="premium-modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowNewDM(false)} style={{ width: 'auto', borderRadius: 12 }}>
                   Cancel
                 </button>
-                <button type="submit" className="btn btn-primary" style={{ width: 'auto' }}>
-                  <Send size={16} className="mr-2" /> Send Message
+                <button type="submit" className="btn btn-primary" style={{ width: 'auto', borderRadius: 12, padding: '0.75rem 1.5rem' }}>
+                  <Send size={16} style={{ marginRight: '8px' }} /> Send Message
                 </button>
               </div>
             </form>

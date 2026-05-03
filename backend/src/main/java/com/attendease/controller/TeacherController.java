@@ -758,6 +758,7 @@ public class TeacherController {
                 conv.put("firstName", other.getFirstName());
                 conv.put("lastName", other.getLastName());
                 conv.put("role", other.getRole());
+                conv.put("avatar", other.getAvatar());
                 conv.put("lastMessage", m.getContent());
                 conv.put("lastMessageTime", m.getCreatedAt());
                 conv.put("unreadCount", messageRepository.countBySenderIdAndReceiverIdAndIsRead(
