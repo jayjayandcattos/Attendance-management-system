@@ -1394,12 +1394,12 @@ textarea.form-input {
 /* Fullscreen Messages Layout - Absolute Full Screen */
 .messages-layout-fullscreen {
   position: fixed;
-  top: 0;
+  top: 70px;
   left: 260px;
   right: 0;
   bottom: 0;
   width: calc(100vw - 260px);
-  height: 100vh;
+  height: calc(100vh - 70px);
   display: flex;
   flex-direction: row;
   gap: 0;
@@ -1437,6 +1437,11 @@ textarea.form-input {
   border-right: 1px solid var(--border-glass);
   background: var(--bg-card);
   overflow: hidden;
+}
+
+/* Inside fullscreen layout, height is relative to parent (which is offset 70px from top) */
+.messages-layout-fullscreen .messages-sidebar {
+  height: 100%;
 }
 
 .messages-sidebar-section {
@@ -1887,6 +1892,8 @@ textarea.form-input {
   overflow-y: auto;
   overflow-x: hidden;
   padding: 2rem;
+  padding-bottom: 7rem;
+  scroll-padding-bottom: 5rem;
   background: #f8fafc;
   display: flex;
   flex-direction: column;
