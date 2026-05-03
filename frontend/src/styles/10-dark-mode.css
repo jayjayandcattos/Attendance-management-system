@@ -1,0 +1,1403 @@
+/* -- Dark Mode Implementation --------------------------------- */
+html.dark {
+  /* Main Tokens */
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-card: #1e293b;
+  --bg-glass: rgba(15, 23, 42, 0.8);
+  --border-glass: rgba(51, 65, 85, 0.5);
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --sidebar-bg: #1e293b;
+  /* Slightly lighter sidebar */
+  --sidebar-text: #94a3b8;
+  --sidebar-border: #334155;
+  --sidebar-active: rgba(59, 130, 246, 0.15);
+  --shadow-premium: 0 0 0 1px rgba(255, 255, 255, 0.05), 0 2px 4px rgba(0, 0, 0, 0.2), 0 12px 24px rgba(0, 0, 0, 0.3);
+
+  /* Compatibility with DashboardLayout variables */
+  --bg: #0f172a;
+  --border: #1e293b;
+  --code-bg: #1e293b;
+  --text: #94a3b8;
+  --text-h: #f1f5f9;
+  --accent: #3b82f6;
+  --accent-bg: rgba(59, 130, 246, 0.1);
+  --accent-border: rgba(59, 130, 246, 0.3);
+}
+
+html.dark body {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+/* Force Light Mode for Auth Pages */
+html.dark .light-theme-only .form-input,
+html.dark .light-theme-only .form-label,
+html.dark .light-theme-only .login-card,
+html.dark .light-theme-only .register-card,
+.light-theme-only .form-input,
+.light-theme-only .form-label,
+.light-theme-only .login-card,
+.light-theme-only .register-card {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #e2e8f0 !important;
+}
+
+html.dark .light-theme-only .btn-primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+  color: #fff !important;
+}
+
+html.dark .light-theme-only .btn-google-shortcut {
+  background: #ffffff !important;
+  color: #475569 !important;
+  border-color: #e2e8f0 !important;
+}
+
+html.dark .light-theme-only .login-hero__title,
+html.dark .light-theme-only .login-hero__lead,
+html.dark .light-theme-only .login-hero__badge {
+  background-color: transparent !important;
+}
+
+html.dark .light-theme-only .login-hero__title-accent {
+  color: #2563eb !important;
+}
+
+.light-theme-only .form-input::placeholder {
+  color: #94a3b8 !important;
+}
+
+.light-theme-only .form-label {
+  color: #64748b !important;
+}
+
+/* Force light theme focus for auth pages */
+html.dark .light-theme-only .form-input:focus {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #3b82f6 !important;
+}
+
+html.dark .auth-card,
+html.dark .glass-card,
+html.dark .premium-card,
+html.dark .modal,
+html.dark .stat-card,
+html.dark .stream-item {
+  background-color: var(--bg-card);
+  border-color: var(--border-glass);
+}
+
+html.dark .form-input,
+html.dark .search-input {
+  background-color: #1e293b;
+  border-color: #334155;
+  color: #fff;
+}
+
+html.dark .top-navbar {
+  background: #1e293b;
+  border-bottom-color: #334155;
+}
+
+html.dark .btn-secondary {
+  background: #1e293b;
+  color: #f1f5f9;
+  border-color: #334155;
+}
+
+html.dark .btn-secondary:hover {
+  background: #334155;
+}
+
+html.dark .sidebar-link:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+html.dark .data-table th {
+  background-color: #1e293b;
+  color: var(--text-secondary);
+}
+
+html.dark .data-table td {
+  border-bottom-color: #1e293b;
+}
+
+html.dark .data-table tr:hover td {
+  background-color: #0f172a;
+}
+
+html.dark .stat-icon.blue {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+html.dark .stat-icon.green {
+  background: rgba(16, 185, 129, 0.1);
+}
+
+html.dark .stat-icon.purple {
+  background: rgba(139, 92, 246, 0.1);
+}
+
+html.dark .stat-icon.yellow {
+  background: rgba(245, 158, 11, 0.1);
+}
+
+html.dark .stat-icon.red {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+html.dark .stat-icon.cyan {
+  background: rgba(6, 182, 212, 0.1);
+}
+
+html.dark .admin-health-badge {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+html.dark .admin-health-dot {
+  background: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
+html.dark .admin-action-card:hover {
+  background: #1e293b !important;
+  border-color: #3b82f6;
+}
+
+html.dark .admin-action-icon {
+  background: #0f172a !important;
+}
+
+html.dark .admin-health-item {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+html.dark .admin-health-item:hover {
+  background: #1e293b !important;
+  border-color: #3b82f6 !important;
+}
+
+html.dark .admin-health-bar-container {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+html.dark .admin-health-label span:last-child {
+  color: #fff !important;
+}
+
+/* -- Admin Pages Dark Mode Overrides ------------------------- */
+html.dark .admin-filter-tabs,
+html.dark .admin-search-box,
+html.dark .admin-search-wrapper,
+html.dark .adm-dropdown-btn {
+  background: #1e293b !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+html.dark .admin-filter-tab {
+  color: #94a3b8;
+}
+
+html.dark .admin-filter-tab.active {
+  background: #0f172a;
+  color: #3b82f6;
+}
+
+/* -- Teacher Dashboard Dark Mode Overrides ------------------- */
+html.dark .td-stat-icon-blue {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+html.dark .td-stat-icon-green {
+  background: rgba(16, 185, 129, 0.1);
+}
+
+html.dark .td-stat-icon-purple {
+  background: rgba(139, 92, 246, 0.1);
+}
+
+html.dark .td-stat-icon-orange {
+  background: rgba(249, 115, 22, 0.1);
+}
+
+html.dark .td-active-session-card {
+  background: #1e293b;
+  color: #f1f5f9;
+}
+
+html.dark .td-recent-item:hover {
+  background: #0f172a;
+}
+
+html.dark .td-recent-icon {
+  background: #0f172a;
+  color: #94a3b8;
+}
+
+html.dark .day-chip {
+  background: #1e293b;
+  border-color: #334155;
+  color: #94a3b8;
+}
+
+html.dark .day-chip:hover {
+  background: #0f172a;
+  border-color: #3b82f6;
+}
+
+html.dark .attendance-code-display {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+html.dark .cover-options-grid,
+html.dark .cover-upload-zone {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+html.dark .ta-stat-card,
+html.dark .ta-active-card {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+html.dark .ta-stat-icon-box {
+  background: #0f172a;
+}
+
+html.dark .ta-table-code,
+html.dark .ta-code-value {
+  background: #0f172a;
+  border-color: #334155;
+  color: #3b82f6;
+}
+
+html.dark .ta-page-btn,
+html.dark .ta-page-num {
+  background: #1e293b;
+  border-color: #334155;
+  color: #94a3b8;
+}
+
+html.dark .ta-page-num.active {
+  background: #3b82f6;
+  color: #fff;
+}
+
+html.dark .td-mini-avatar-more {
+  background: #0f172a;
+  color: #94a3b8;
+}
+
+html.dark .td-full-history-btn:hover,
+html.dark .td-nav-arrow:hover {
+  background: #0f172a;
+}
+
+html.dark .tc-tabs {
+  background: #0f172a;
+}
+
+html.dark .tc-tab.active {
+  background: #1e293b;
+  box-shadow: var(--shadow-sm);
+}
+
+html.dark .tc-view-btn.active {
+  background: #1e293b;
+  color: var(--accent-blue);
+  box-shadow: var(--shadow-sm);
+}
+
+html.dark .tc-list-item:hover {
+  background: #0f172a;
+}
+
+html.dark .tc-add-card:hover {
+  background: rgba(59, 130, 246, 0.05);
+}
+
+html.dark .tc-add-icon {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+html.dark .admin-filter-tab.active {
+  background: #3b82f6 !important;
+  color: #fff !important;
+}
+
+html.dark .admin-filter-count {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #94a3b8;
+}
+
+html.dark .admin-filter-tab.active .admin-filter-count {
+  color: #fff;
+}
+
+html.dark .admin-search-input,
+html.dark .form-input {
+  color: #f1f5f9 !important;
+}
+
+html.dark .audit-entry {
+  border-bottom-color: #1e293b !important;
+}
+
+html.dark .audit-main:hover {
+  background: rgba(255, 255, 255, 0.02) !important;
+}
+
+html.dark .audit-details {
+  background: #0f172a !important;
+  border-color: #1e293b !important;
+}
+
+html.dark .audit-metadata-box {
+  background: #000 !important;
+  border-color: #334155 !important;
+}
+
+html.dark .adm-chart-tooltip {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+  box-shadow: var(--shadow-premium) !important;
+  padding: 12px !important;
+  border-radius: 12px !important;
+}
+
+html.dark .adm-chart-tooltip-label {
+  color: #f1f5f9 !important;
+  font-weight: 700 !important;
+}
+
+html.dark .adm-dropdown-menu {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+html.dark .adm-dropdown-item {
+  color: #94a3b8;
+}
+
+html.dark .adm-dropdown-item:hover {
+  background: #334155;
+  color: #fff;
+}
+
+html.dark .adm-dropdown-item.active {
+  background: #3b82f6;
+  color: #fff;
+}
+
+html.dark .admin-pagination {
+  border-top-color: #1e293b !important;
+}
+
+html.dark .admin-pagination .btn-secondary {
+  background: #1e293b !important;
+  color: #f1f5f9 !important;
+}
+
+html.dark .admin-toast {
+  background: #1e293b !important;
+  color: #f1f5f9 !important;
+  border: 1px solid #334155 !important;
+}
+
+html.dark .audit-entry,
+html.dark .admin-audit-entry {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+html.dark .audit-entry:hover,
+html.dark .admin-audit-entry:hover {
+  background: #334155 !important;
+  border-color: #3b82f6 !important;
+}
+
+html.dark .audit-main {
+  color: #f1f5f9 !important;
+}
+
+html.dark .audit-icon-wrapper {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+html.dark .adm-icon-btn {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #94a3b8 !important;
+}
+
+html.dark .adm-icon-btn:hover {
+  background: #334155 !important;
+  color: #fff !important;
+}
+
+html.dark .adm-dropdown-item {
+  color: #f1f5f9 !important;
+}
+
+html.dark .adm-dropdown-item:hover {
+  background: #3b82f6 !important;
+  color: #fff !important;
+}
+
+/* Analytics Dropdown Z-Index Fix */
+.page-header {
+  position: relative;
+  z-index: 100 !important;
+}
+
+.adm-dropdown-menu {
+  z-index: 9999 !important;
+}
+
+.adm-dropdown-wrap {
+  position: relative;
+  z-index: 101 !important;
+}
+
+/* Profile Dropdown Dark Mode */
+html.dark .profile-dropdown {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  box-shadow: var(--shadow-premium) !important;
+}
+
+html.dark .dropdown-header {
+  border-bottom-color: #334155 !important;
+}
+
+html.dark .dropdown-divider {
+  border-top: 1px solid #334155 !important;
+}
+
+html.dark .dropdown-item {
+  color: #94a3b8 !important;
+}
+
+html.dark .dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #fff !important;
+}
+
+html.dark .dropdown-item.logout:hover {
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: #ef4444 !important;
+}
+
+html.dark .profile-name {
+  color: #fff !important;
+}
+
+html.dark .profile-role {
+  color: #94a3b8 !important;
+}
+
+/* Fix Top Navbar Z-Index for Dropdowns */
+.top-navbar {
+  z-index: 2000 !important;
+}
+
+.profile-dropdown {
+  z-index: 2100 !important;
+}
+
+.modal-overlay {
+  z-index: 10000 !important;
+}
+
+/* Profile Button Hover Dark Mode */
+html.dark .top-navbar-profile:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+html.dark .mobile-menu-btn {
+  color: #94a3b8 !important;
+}
+
+html.dark .mobile-menu-btn:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #fff !important;
+}
+
+html.dark .dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+html.dark .dropdown-item.logout:hover {
+  background: rgba(239, 68, 68, 0.1) !important;
+}
+
+/* Theme Toggle Button Dark Mode */
+html.dark .theme-toggle-btn {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #94a3b8 !important;
+}
+
+html.dark .theme-toggle-btn:hover {
+  background: #334155 !important;
+  color: #fff !important;
+}
+
+/* Audit Log Dark Mode Fixes */
+html.dark .audit-detail-item,
+html.dark .admin-audit-detail-col {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+html.dark .audit-metadata-box {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+  color: #cbd5e1 !important;
+}
+
+html.dark .audit-entry:hover {
+  background: rgba(255, 255, 255, 0.02) !important;
+}
+
+html.dark .admin-pagination {
+  border-top-color: #334155 !important;
+}
+
+html.dark .admin-audit-separator {
+  background: #334155 !important;
+}
+
+/* Global Modal Fixes */
+html.dark .modal-header {
+  border-bottom-color: #334155 !important;
+}
+
+html.dark .modal-title {
+  color: #f1f5f9 !important;
+}
+
+html.dark .modal-close {
+  color: #94a3b8 !important;
+}
+
+html.dark .modal-close:hover {
+  color: #fff !important;
+}
+
+/* Fix Native Select Dropdowns in Dark Mode */
+html.dark select,
+html.dark option {
+  color-scheme: dark !important;
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+}
+
+/* Theme-Aware Utility Classes */
+.theme-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  color: var(--text-primary);
+}
+
+.theme-secondary-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-glass);
+  color: var(--text-primary);
+}
+
+.theme-bg-secondary {
+  background: var(--bg-secondary);
+}
+
+.theme-text-primary {
+  color: var(--text-primary);
+}
+
+.theme-text-secondary {
+  color: var(--text-secondary);
+}
+
+.theme-text-muted {
+  color: var(--text-muted);
+}
+
+.theme-border {
+  border-color: var(--border-glass);
+}
+
+html.dark .tm-join-badge,
+html.dark .tm-filter-chip {
+  background: #1e293b;
+  border-color: #334155;
+  color: #94a3b8;
+}
+
+html.dark .tm-filter-chip.active {
+  background: #3b82f6;
+  color: #fff;
+}
+
+html.dark .messages-sidebar {
+  background: #0f172a;
+  border-color: #1e293b;
+}
+
+html.dark .messages-main {
+  background: #0f172a;
+}
+
+html.dark .messages-sidebar-header h3 {
+  color: #fff !important;
+}
+
+html.dark .messages-sidebar-header {
+  background: #0f172a;
+  border-bottom-color: #1e293b;
+  padding-top: 0.75rem;
+}
+
+html.dark .messages-sidebar-title-row {
+  margin-bottom: 0.5rem;
+}
+
+html.dark .messages-search {
+  background: #1e293b;
+  color: #fff;
+  border-color: #334155;
+}
+
+html.dark .chat-header {
+  background: #0f172a;
+  border-bottom-color: #1e293b;
+}
+
+html.dark .chat-input {
+  background: #0f172a;
+  border-top-color: #1e293b;
+}
+
+html.dark .message-channel:hover {
+  background: #1e293b;
+}
+
+html.dark .message-channel.active {
+  background: #1e293b;
+}
+
+html.dark .channel-name {
+  color: #fff;
+}
+
+html.dark .channel-meta {
+  color: #94a3b8;
+}
+
+html.dark .messages-sidebar-label {
+  color: #64748b;
+}
+
+html.dark .chat-bubble.theirs {
+  background: #1e293b;
+  color: #fff;
+}
+
+html.dark .bubble-content {
+  color: inherit;
+}
+
+html.dark .messages-empty h3 {
+  color: #fff;
+}
+
+/* Consolidated modal dark mode - see end of file */
+html.dark .form-label {
+  color: #94a3b8 !important;
+}
+
+html.dark .form-input {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #fff !important;
+}
+
+html.dark .form-input:focus {
+  border-color: #3b82f6 !important;
+  background: #0f172a !important;
+}
+
+
+html.dark .tm-type-chip {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+html.dark .tm-type-chip.active {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: #3b82f6;
+}
+
+/* Dashboard and Attendance Stat Icons Dark Mode */
+html.dark .td-stat-icon {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #fff !important;
+}
+
+html.dark .ta-stat-icon-box {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+  color: #f1f5f9 !important;
+}
+
+html.dark .ta-stat-icon-gray {
+  background: rgba(148, 163, 184, 0.1) !important;
+  color: #94a3b8 !important;
+}
+
+html.dark .ta-stat-icon-yellow {
+  background: rgba(234, 179, 8, 0.1) !important;
+  color: #eab308 !important;
+}
+
+html.dark .ta-stat-icon-green {
+  background: rgba(34, 197, 94, 0.1) !important;
+  color: #22c95e !important;
+}
+
+/* Empty States Dark Mode */
+html.dark .empty-state-card {
+  background: #0f172a !important;
+  border-color: #1e293b !important;
+}
+
+html.dark .empty-state-icon {
+  background: #1e293b !important;
+  color: #64748b !important;
+}
+
+/* Chat Area Dark Mode Fixes */
+html.dark .chat-messages {
+  background: #0f172a !important;
+}
+
+html.dark .chat-bubble.mine {
+  background: #3b82f6 !important;
+  color: #fff !important;
+}
+
+html.dark .chat-bubble.theirs {
+  background: #1e293b !important;
+  color: #f1f5f9 !important;
+  border-color: #334155 !important;
+}
+
+html.dark .messenger-reply-bubble {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #94a3b8 !important;
+}
+
+/* Attendance Search Input Dark Mode */
+.ta-search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-glass) !important;
+  border-radius: 12px !important;
+  padding: 0 12px !important;
+  height: 40px !important;
+  transition: all 0.2s ease;
+}
+
+.ta-search-wrapper:focus-within {
+  border-color: var(--accent-blue) !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.td-search-icon {
+  color: var(--text-muted) !important;
+  margin-right: 10px !important;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.td-search-input {
+  background: transparent !important;
+  border: none !important;
+  color: var(--text-primary) !important;
+  font-size: 0.88rem !important;
+  width: 100% !important;
+  padding: 0 !important;
+  outline: none !important;
+  height: 100%;
+}
+
+.td-search-input::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 0.7;
+}
+
+/* Compact Table Overrides */
+.data-table th {
+  padding: 0.85rem 1rem !important;
+  font-size: 0.72rem !important;
+  background: var(--bg-secondary) !important;
+}
+
+.data-table td {
+  padding: 0.85rem 1rem !important;
+  font-size: 0.85rem !important;
+}
+
+@media (max-width: 768px) {
+
+  .data-table th,
+  .data-table td {
+    padding: 0.75rem 0.85rem !important;
+    font-size: 0.8rem !important;
+  }
+}
+
+html.dark .ta-search-wrapper {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+html.dark .td-search-input {
+  background: transparent !important;
+  color: #fff !important;
+}
+
+/* Attendance Table Course Info */
+.ta-table-course-name {
+  font-weight: 700 !important;
+  font-size: 0.88rem !important;
+  line-height: 1.2 !important;
+  margin-bottom: 2px !important;
+  color: var(--text-primary) !important;
+}
+
+.ta-table-course-meta {
+  font-size: 0.75rem !important;
+  color: var(--text-muted) !important;
+  font-weight: 500 !important;
+}
+
+@media (max-width: 768px) {
+  .ta-table-course-name {
+    font-size: 0.8rem !important;
+  }
+
+  .ta-table-course-meta {
+    font-size: 0.7rem !important;
+  }
+}
+
+/* Table Pagination Dark Mode */
+html.dark .ta-page-btn,
+html.dark .ta-page-num {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #94a3b8 !important;
+}
+
+html.dark .ta-page-num.active {
+  background: #3b82f6 !important;
+  color: #fff !important;
+  border-color: #3b82f6 !important;
+}
+
+html.dark .ta-page-btn:disabled {
+  opacity: 0.3 !important;
+}
+
+/* Course Create Preview & Toggles */
+html.dark .course-preview-box {
+  border: 2px solid #1e293b !important;
+}
+
+html.dark .tc-tabs {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+}
+
+html.dark .tc-tab.active {
+  background: #334155 !important;
+  color: #fff !important;
+}
+
+html.dark .tc-tab {
+  color: #94a3b8 !important;
+}
+
+html.dark .tc-view-toggle {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+}
+
+html.dark .tc-view-btn.active {
+  background: #334155 !important;
+  color: #3b82f6 !important;
+}
+
+html.dark .tc-view-btn {
+  color: #64748b !important;
+}
+
+/* Attendance Actions Dark Mode */
+html.dark .ta-reopen-btn {
+  background: #1e293b !important;
+  color: #3b82f6 !important;
+  border: 1px solid #334155 !important;
+}
+
+html.dark .ta-reopen-btn:hover {
+  background: #334155 !important;
+  border-color: #3b82f6 !important;
+}
+
+html.dark .ta-action-btn {
+  background: #1e293b !important;
+  color: #94a3b8 !important;
+  border: 1px solid #334155 !important;
+}
+
+html.dark .ta-action-btn:hover {
+  color: #fff !important;
+  background: #334155 !important;
+}
+
+/* Checkbox Dark Mode Fix */
+html.dark input[type="checkbox"] {
+  filter: invert(0.9) hue-rotate(180deg) brightness(1.2);
+}
+
+html.dark .checkbox-label {
+  color: #cbd5e1 !important;
+}
+
+/* Messages Sidebar & Empty States */
+html.dark .messages-empty-placeholder {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+  color: #94a3b8 !important;
+}
+
+/* Student Dashboard Specifics */
+html.dark .sd-stat-card {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+}
+
+html.dark .sd-stat-icon-wrap {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #fff !important;
+}
+
+html.dark .sd-schedule-panel,
+html.dark .sd-activity-panel {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+}
+
+html.dark .sd-course-card-bottom {
+  background: #1e293b !important;
+  border-top-color: #334155 !important;
+}
+
+html.dark .sd-attendance-bar-track {
+  background: #0f172a !important;
+}
+
+html.dark .sd-course-meta-row {
+  color: #94a3b8 !important;
+}
+
+html.dark .sd-link-btn {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+  color: #94a3b8 !important;
+}
+
+html.dark .sd-link-btn:hover {
+  background: #334155 !important;
+  color: #fff !important;
+}
+
+/* Student Materials & Assignments */
+html.dark .sm-material-card,
+html.dark .sa-assignment-card {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+  color: #fff !important;
+}
+
+html.dark .sm-sidebar-card,
+html.dark .sa-sidebar-card {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+}
+
+html.dark .sm-filter-chip,
+html.dark .sa-filter-chip {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+  color: #94a3b8 !important;
+}
+
+html.dark .sm-filter-chip.active,
+html.dark .sa-filter-chip.active {
+  background: #3b82f6 !important;
+  color: #fff !important;
+}
+
+/* Student Assignment Details */
+html.dark .sad-main-card {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+}
+
+html.dark .sad-instruction-box {
+  background: #0f172a !important;
+  border: 1px solid #334155 !important;
+}
+
+html.dark .sad-sidebar-tabs {
+  background: #1e293b !important;
+  border-bottom-color: #334155 !important;
+}
+
+html.dark .sad-tab.active {
+  color: #3b82f6 !important;
+  border-bottom-color: #3b82f6 !important;
+}
+
+html.dark .sad-tab {
+  color: #94a3b8 !important;
+}
+
+html.dark .sad-submission-area {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+}
+
+html.dark .sad-file-upload {
+  background: #0f172a !important;
+  border: 2px dashed #334155 !important;
+}
+
+/* Theme-Aware Hover States */
+.theme-hover-secondary:hover {
+  background: var(--bg-secondary) !important;
+}
+
+html.dark .theme-hover-secondary:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Messages Search & Empty States */
+html.dark .messages-search-wrap {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+}
+
+html.dark .messages-search-input {
+  background: transparent !important;
+  border: none !important;
+  color: #fff !important;
+}
+
+html.dark .messages-sidebar-empty {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+  color: #94a3b8 !important;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin: 1rem;
+  text-align: center;
+}
+
+html.dark .messages-empty-placeholder {
+  background: #0f172a !important;
+  border-color: #1e293b !important;
+  color: #64748b !important;
+}
+
+/* Student Join Button Fix */
+html.dark .sd-join-btn {
+  background: var(--accent-blue) !important;
+  color: #fff !important;
+}
+
+html.dark .sd-join-btn:hover {
+  background: #2563eb !important;
+}
+
+/* Navbar Search Fix */
+html.dark .top-navbar-search {
+  background: transparent !important;
+  border: none !important;
+}
+
+html.dark .search-input {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid #334155 !important;
+  color: #fff !important;
+}
+
+html.dark .search-icon {
+  color: #94a3b8 !important;
+}
+
+html.dark .top-navbar-profile:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   COMPREHENSIVE DARK MODE FIX — Unified Modal & Component Overrides
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Modal: Unified background consistency ─────────────────── */
+html.dark .modal {
+  background-color: var(--bg-card) !important;
+  border-color: var(--border-glass) !important;
+  color: var(--text-primary) !important;
+}
+
+html.dark .modal-header {
+  background: var(--bg-card) !important;
+  border-bottom-color: #334155 !important;
+}
+
+html.dark .modal-footer,
+html.dark .modal-actions {
+  background: var(--bg-card) !important;
+  border-top-color: #334155 !important;
+}
+
+html.dark .modal-scroll-area {
+  background: var(--bg-card) !important;
+}
+
+html.dark .modal-title {
+  color: #f1f5f9 !important;
+}
+
+html.dark .modal-close {
+  color: #94a3b8 !important;
+}
+
+html.dark .modal-close:hover {
+  color: #fff !important;
+}
+
+/* ── Cover Selector Dark Mode ──────────────────────────────── */
+html.dark .cover-options-grid {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+html.dark .cover-upload-zone {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+html.dark .cover-upload-zone:hover {
+  background: #1e293b !important;
+  border-color: #3b82f6 !important;
+}
+
+html.dark .cover-selector-tabs {
+  border-bottom-color: #334155 !important;
+}
+
+html.dark .cover-tab {
+  color: #64748b !important;
+}
+
+html.dark .cover-tab.active {
+  color: #3b82f6 !important;
+  border-bottom-color: #3b82f6 !important;
+}
+
+html.dark .cover-preview {
+  border-color: #334155 !important;
+}
+
+/* ── Day Chips Dark Mode ───────────────────────────────────── */
+html.dark .day-chip {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #94a3b8 !important;
+}
+
+html.dark .day-chip:hover {
+  background: #0f172a !important;
+  border-color: #3b82f6 !important;
+  color: #fff !important;
+}
+
+html.dark .day-chip.selected {
+  background: #3b82f6 !important;
+  border-color: #3b82f6 !important;
+  color: #fff !important;
+}
+
+/* ── Forward/Grading Modal inline bg overrides ─────────────── */
+html.dark .modal-window-responsive {
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+}
+
+/* ── Teacher Materials: course dropdown ─────────────────────── */
+html.dark .tm-course-dropdown,
+html.dark [style*="background: '#fff'"] {
+  background: var(--bg-card) !important;
+}
+
+/* ── Assignment cards in Teacher Materials ──────────────────── */
+html.dark .theme-card h3,
+html.dark .theme-card h4 {
+  color: var(--text-primary) !important;
+}
+
+/* ── Admin Delete Confirmation Icon ────────────────────────── */
+html.dark .premium-card .shadow-lg[style*="background: '#fef2f2'"] {
+  background: rgba(239, 68, 68, 0.1) !important;
+  border-color: rgba(239, 68, 68, 0.2) !important;
+}
+
+/* ── Table hover states in dark mode ───────────────────────── */
+html.dark tr:hover td {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* ── Fix hardcoded light backgrounds in expanded panels ────── */
+html.dark .theme-card [style*="background: '#f8fafc'"],
+html.dark .theme-card [style*="background: '#fff'"] {
+  background: var(--bg-secondary) !important;
+}
+
+/* ── Student attendance bar track ──────────────────────────── */
+html.dark .sd-attendance-bar-track {
+  background: #0f172a !important;
+}
+
+/* ── Feedback/warning boxes ────────────────────────────────── */
+html.dark [style*="background: '#fffbeb'"] {
+  background: rgba(245, 158, 11, 0.1) !important;
+  border-color: rgba(245, 158, 11, 0.2) !important;
+  color: #fbbf24 !important;
+}
+
+/* ── Progress bars ─────────────────────────────────────────── */
+html.dark [style*="background: '#f1f5f9'"] {
+  background: #0f172a !important;
+}
+
+/* ── Mobile Access Restriction ────────────────────────────── */
+.mobile-restriction-screen {
+  min-height: 100vh;
+  background: radial-gradient(circle at 50% 50%, #0f172a 0%, #020617 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  color: #fff;
+  font-family: inherit;
+  position: relative;
+  overflow: hidden;
+}
+
+.mobile-restriction-icon-box {
+  width: 100px;
+  height: 100px;
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+  box-shadow: 0 0 40px rgba(59, 130, 246, 0.1);
+}
+
+.mobile-restriction-icon-box svg {
+  color: #3b82f6;
+}
+
+.mobile-restriction-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  letter-spacing: -0.025em;
+}
+
+.mobile-restriction-text {
+  color: #94a3b8;
+  max-width: 400px;
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.mobile-restriction-warning {
+  background: rgba(245, 158, 11, 0.05);
+  border: 1px solid rgba(245, 158, 11, 0.1);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  display: flex;
+  gap: 1rem;
+  text-align: left;
+  max-width: 360px;
+  margin-bottom: 2rem;
+}
+
+.mobile-restriction-warning p {
+  font-size: 0.8rem;
+  color: rgba(251, 191, 36, 0.8);
+  margin: 0;
+}
+
+.mobile-restriction-btn {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mobile-restriction-btn:hover {
+  background: #334155;
+  transform: translateY(-1px);
+}
+
+.mobile-restriction-footer {
+  position: absolute;
+  bottom: 2rem;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #475569;
+  font-weight: 800;
+}
+
