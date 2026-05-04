@@ -148,6 +148,7 @@ const TeacherDashboard: React.FC = () => {
   const [reopenDuration, setReopenDuration] = useState('10');
   const [reopeningId, setReopeningId] = useState<number | null>(null);
   const [coverTab, setCoverTab] = useState<'colors' | 'presets' | 'upload'>('colors');
+  const [submitting, setSubmitting] = useState(false);
   const coverInputRef = useRef<HTMLInputElement>(null);
 
   const handleCoverUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -224,6 +225,8 @@ const TeacherDashboard: React.FC = () => {
 
   const startSession = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
     try {
       const res = await teacherApi.createAttendance({
         courseId: Number(attendForm.courseId),
@@ -238,6 +241,7 @@ const TeacherDashboard: React.FC = () => {
       showAlert('Success', `Attendance session started! Code: ${code}`, 'success');
       loadDashboard();
     } catch (err: any) { showApiError(err, 'Error creating session'); }
+    finally { setSubmitting(false); }
   };
 
   const closeSession = async (id: number) => {
@@ -272,6 +276,8 @@ const TeacherDashboard: React.FC = () => {
 
   const createCourse = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
     try {
       await teacherApi.createCourse({ ...courseForm, schedule: buildSchedule() });
       setShowCreateCourse(false);
@@ -282,6 +288,7 @@ const TeacherDashboard: React.FC = () => {
       showAlert('Success', 'Course created successfully!', 'success');
       loadDashboard();
     } catch (err: any) { showApiError(err, 'Error creating course'); }
+    finally { setSubmitting(false); }
   };
 
   const toggleDay = (day: string) => {
@@ -629,7 +636,7 @@ const TeacherDashboard: React.FC = () => {
               )}
               <div className="modal-actions" style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', marginTop: '1.5rem' }}>
                 <button type="button" className="btn btn-secondary" onClick={() => setShowAttendance(false)} style={{ width: 'auto' }}>Cancel</button>
-                <button type="submit" className="btn btn-primary" style={{ width: 'auto' }}>Start Session</button>
+                <button type="submit" className="btn btn-primary" style={{ width: 'auto' }} disabled={submitting}>{submitting ? 'Starting.' : 'Start Session'}</button>
               </div>
             </form>
           </div>
@@ -733,7 +740,7 @@ const TeacherDashboard: React.FC = () => {
               </div>
               <div className="modal-actions">
                 <button type="button" className="btn btn-secondary transition-colors" onClick={() => setShowCreateCourse(false)}>Cancel</button>
-                <button type="submit" className="btn btn-primary shadow-sm hover:shadow-md transition-all active:scale-95" style={{ width: 'auto' }}>Create Course</button>
+                <button type="submit" className="btn btn-primary shadow-sm hover:shadow-md transition-all active:scale-95" style={{ width: 'auto' }} disabled={submitting}>{submitting ? 'Creating.' : 'Create Course'}</button>
               </div>
             </form>
           </div>

@@ -146,7 +146,6 @@ public class DashboardAnalyticsService {
         LocalDateTime current = startDate;
         while (current.isBefore(endDate)) {
             LocalDateTime next = getNextInterval(current, granularity);
-            // If this is the last interval, use endDate as the ceiling
             LocalDateTime ceiling = next.isAfter(endDate) ? endDate : next;
             long count = userRepository.countByCreatedAtBefore(ceiling);
             
@@ -160,6 +159,16 @@ public class DashboardAnalyticsService {
             current = next;
         }
 
+        // Ensure we have a final point at exactly endDate to show current status
+        if (data.isEmpty() || !data.get(data.size() - 1).getTimestamp().isEqual(endDate)) {
+            AnalyticsDataDto finalPoint = new AnalyticsDataDto();
+            finalPoint.setMetricName("user_growth");
+            finalPoint.setTimestamp(endDate);
+            finalPoint.setValue(userRepository.count());
+            finalPoint.setGranularity(granularity);
+            data.add(finalPoint);
+        }
+
         return data;
     }
 
@@ -170,7 +179,6 @@ public class DashboardAnalyticsService {
         LocalDateTime current = startDate;
         while (current.isBefore(endDate)) {
             LocalDateTime next = getNextInterval(current, granularity);
-            // If this is the last interval, cap it at endDate
             LocalDateTime ceiling = next.isAfter(endDate) ? endDate : next;
             long count = loginAttemptRepository.countBySuccessAndAttemptedAtBetween(true, current, ceiling);
             
@@ -182,6 +190,19 @@ public class DashboardAnalyticsService {
             data.add(point);
             
             current = next;
+        }
+
+        // Add today's activity as the last point
+        if (data.isEmpty() || !data.get(data.size() - 1).getTimestamp().isEqual(endDate)) {
+            LocalDateTime todayStart = endDate.toLocalDate().atStartOfDay();
+            long count = loginAttemptRepository.countBySuccessAndAttemptedAtBetween(true, todayStart, endDate);
+            
+            AnalyticsDataDto finalPoint = new AnalyticsDataDto();
+            finalPoint.setMetricName("login_activity");
+            finalPoint.setTimestamp(endDate);
+            finalPoint.setValue(count);
+            finalPoint.setGranularity(granularity);
+            data.add(finalPoint);
         }
 
         return data;

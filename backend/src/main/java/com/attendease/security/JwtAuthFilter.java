@@ -49,7 +49,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     }
 
                     List<SimpleGrantedAuthority> authorities = List.of(
-                            new SimpleGrantedAuthority("ROLE_" + role.toUpperCase())
+                            new SimpleGrantedAuthority("ROLE_" + (role != null ? role.toUpperCase() : "UNKNOWN"))
                     );
 
                     UsernamePasswordAuthenticationToken authentication =

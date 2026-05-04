@@ -107,8 +107,14 @@ public class AuthController {
         String email = body.get("email");
         String code = body.get("code");
         
+        if (email == null || email.isBlank() || code == null || code.isBlank()) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("Email and verification code are required"));
+        }
+        
         AuthResponse authResponse = authService.verifyEmail(email, code, httpRequest);
-        setTokenCookie(httpResponse, authResponse.getAccessToken());
+        if (authResponse.getAccessToken() != null) {
+            setTokenCookie(httpResponse, authResponse.getAccessToken());
+        }
         
         return ResponseEntity.ok(ApiResponse.success("Email verified successfully", authResponse));
     }
@@ -116,6 +122,9 @@ public class AuthController {
     @PostMapping("/resend-code")
     public ResponseEntity<ApiResponse<Void>> resendCode(@RequestBody java.util.Map<String, String> body) {
         String email = body.get("email");
+        if (email == null || email.isBlank()) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("Email is required"));
+        }
         authService.resendVerificationCode(email);
         return ResponseEntity.ok(ApiResponse.success("Verification code resent", null));
     }
@@ -123,6 +132,9 @@ public class AuthController {
     @PostMapping("/forgot-password")
     public ResponseEntity<ApiResponse<Void>> forgotPassword(@RequestBody java.util.Map<String, String> body) {
         String email = body.get("email");
+        if (email == null || email.isBlank()) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("Email is required"));
+        }
         authService.forgotPassword(email);
         return ResponseEntity.ok(ApiResponse.success("Password reset code sent to your email", null));
     }
@@ -137,9 +149,12 @@ public class AuthController {
     }
 
     private void setTokenCookie(HttpServletResponse response, String token) {
+        if (token == null || token.isBlank()) {
+            return;
+        }
         Cookie cookie = new Cookie("access_token", token);
         cookie.setHttpOnly(true);
-        cookie.setSecure(false); // Set to true in production with HTTPS
+        cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setMaxAge(900); // 15 minutes
         response.addCookie(cookie);

@@ -109,10 +109,29 @@ public class TeacherController {
         // Total students (across all courses)
         long totalStudents = 0;
         long totalSessions = 0;
+        List<Map<String, Object>> courseListWithStats = new ArrayList<>();
+
         for (Course c : courses) {
-            totalStudents += enrollmentRepository.countByCourseIdAndStatus(c.getId(), "active");
+            long count = enrollmentRepository.countByCourseIdAndStatus(c.getId(), "active");
+            totalStudents += count;
             totalSessions += attendanceSessionRepository.findByCourseId(c.getId()).size();
+            
+            // Create a map for the course that includes the count
+            Map<String, Object> courseMap = new HashMap<>();
+            courseMap.put("id", c.getId());
+            courseMap.put("courseCode", c.getCourseCode());
+            courseMap.put("courseName", c.getCourseName());
+            courseMap.put("description", c.getDescription());
+            courseMap.put("joinCode", c.getJoinCode());
+            courseMap.put("section", c.getSection());
+            courseMap.put("schedule", c.getSchedule());
+            courseMap.put("room", c.getRoom());
+            courseMap.put("coverColor", c.getCoverColor());
+            courseMap.put("status", c.getStatus());
+            courseMap.put("enrollmentCount", count);
+            courseListWithStats.add(courseMap);
         }
+        data.put("courses", courseListWithStats);
         data.put("totalStudents", totalStudents);
         data.put("totalSessions", totalSessions);
         data.put("teacherName", teacher.getFirstName());
@@ -122,9 +141,24 @@ public class TeacherController {
 
     // ── Courses CRUD ───────────────────────────────────────────────────
     @GetMapping("/courses")
-    public ResponseEntity<ApiResponse<List<Course>>> getCourses(@AuthenticationPrincipal User teacher) {
-        return ResponseEntity.ok(ApiResponse.success(
-                courseRepository.findByTeacherIdAndStatusNot(teacher.getId(), "deleted")));
+    public ResponseEntity<ApiResponse<List<Map<String, Object>>>> getCourses(@AuthenticationPrincipal User teacher) {
+        List<Course> courses = courseRepository.findByTeacherIdAndStatusNot(teacher.getId(), "deleted");
+        List<Map<String, Object>> data = courses.stream().map(c -> {
+            Map<String, Object> m = new HashMap<>();
+            m.put("id", c.getId());
+            m.put("courseCode", c.getCourseCode());
+            m.put("courseName", c.getCourseName());
+            m.put("description", c.getDescription());
+            m.put("joinCode", c.getJoinCode());
+            m.put("section", c.getSection());
+            m.put("schedule", c.getSchedule());
+            m.put("room", c.getRoom());
+            m.put("coverColor", c.getCoverColor());
+            m.put("status", c.getStatus());
+            m.put("enrollmentCount", enrollmentRepository.countByCourseIdAndStatus(c.getId(), "active"));
+            return m;
+        }).toList();
+        return ResponseEntity.ok(ApiResponse.success(data));
     }
 
     @PostMapping("/courses")

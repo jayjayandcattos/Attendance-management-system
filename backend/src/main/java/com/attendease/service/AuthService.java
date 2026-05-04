@@ -31,7 +31,7 @@ public class AuthService {
     private final AuditService auditService;
     private final LoginSecurityService loginSecurityService;
     private final EmailService emailService;
-    private final java.util.Random random = new java.util.Random();
+    private final java.security.SecureRandom secureRandom = new java.security.SecureRandom();
 
     private static final int MAX_ATTEMPTS = 5;
     private static final int LOCKOUT_MINUTES = 15;
@@ -130,7 +130,7 @@ public class AuthService {
                 .mfaEnabled(false)
                 .build();
 
-        String code = String.format("%06d", random.nextInt(1000000));
+        String code = String.format("%06d", secureRandom.nextInt(1000000));
         user.setVerificationCode(code);
         user.setEmailCodeExpiry(LocalDateTime.now().plusMinutes(5));
 
@@ -243,7 +243,7 @@ public class AuthService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UnauthorizedException("User not found"));
 
-        String code = String.format("%06d", random.nextInt(1000000));
+        String code = String.format("%06d", secureRandom.nextInt(1000000));
         user.setVerificationCode(code);
         user.setEmailCodeExpiry(LocalDateTime.now().plusMinutes(5));
         userRepository.save(user);
@@ -253,7 +253,7 @@ public class AuthService {
 
     @Transactional
     public void sendPasswordChangeVerification(User user) {
-        String code = String.format("%06d", random.nextInt(1000000));
+        String code = String.format("%06d", secureRandom.nextInt(1000000));
         user.setVerificationCode(code);
         user.setEmailCodeExpiry(LocalDateTime.now().plusMinutes(5));
         userRepository.save(user);
@@ -266,7 +266,7 @@ public class AuthService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("No account found with this email"));
 
-        String code = String.format("%06d", random.nextInt(1000000));
+        String code = String.format("%06d", secureRandom.nextInt(1000000));
         user.setVerificationCode(code);
         user.setEmailCodeExpiry(LocalDateTime.now().plusMinutes(5));
         userRepository.save(user);

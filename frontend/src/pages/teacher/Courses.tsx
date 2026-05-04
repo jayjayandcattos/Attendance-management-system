@@ -68,6 +68,7 @@ const TeacherCourses: React.FC = () => {
   const [coverTab, setCoverTab] = useState<'colors' | 'presets' | 'upload'>('colors');
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const coverInputRef = useRef<HTMLInputElement>(null);
 
   const loadCourses = () => {
@@ -81,6 +82,8 @@ const TeacherCourses: React.FC = () => {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
     try {
       const payload = { ...form, schedule: buildSchedule() };
       if (isEditing && editingId) {
@@ -94,6 +97,7 @@ const TeacherCourses: React.FC = () => {
       resetForm();
       loadCourses();
     } catch (err: any) { showApiError(err); }
+    finally { setSubmitting(false); }
   };
 
   const resetForm = () => {
@@ -167,6 +171,8 @@ const TeacherCourses: React.FC = () => {
 
   const handleNewSession = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
     try {
       const res = await teacherApi.createAttendance({ courseId: Number(sessionForm.courseId), sessionTitle: sessionForm.sessionTitle, duration: Number(sessionForm.duration), allowLate: sessionForm.allowLate, lateMinutes: Number(sessionForm.lateMinutes) });
       setShowNewSession(false);
@@ -174,6 +180,7 @@ const TeacherCourses: React.FC = () => {
       const code = res.data?.data?.attendanceCode || '';
       showAlert('Success', `Session started! Code: ${code}`, 'success');
     } catch (err: any) { showApiError(err); }
+    finally { setSubmitting(false); }
   };
 
 
@@ -420,8 +427,8 @@ const TeacherCourses: React.FC = () => {
               </div>
               <div className="modal-actions" style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
                 <button type="button" className="btn btn-secondary transition-colors" onClick={() => setShowModal(false)} style={{ width: 'auto' }}>Cancel</button>
-                <button type="submit" className="btn btn-primary shadow-sm hover:shadow-md transition-all active:scale-95" style={{ width: 'auto' }}>
-                  {isEditing ? 'Save Changes' : 'Create Course'}
+                <button type="submit" className="btn btn-primary shadow-sm hover:shadow-md transition-all active:scale-95" style={{ width: 'auto' }} disabled={submitting}>
+                  {submitting ? 'Saving.' : (isEditing ? 'Save Changes' : 'Create Course')}
                 </button>
               </div>
             </form>
@@ -458,8 +465,8 @@ const TeacherCourses: React.FC = () => {
               )}
               <div className="modal-actions" style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
                 <button type="button" className="btn btn-secondary transition-colors" onClick={() => setShowNewSession(false)} style={{ width: 'auto' }}>Cancel</button>
-                <button type="submit" className="btn btn-primary shadow-sm hover:shadow-md transition-all active:scale-95" style={{ width: 'auto' }}>
-                  <Plus size={16} className="mr-1" /> Start Session Now
+                <button type="submit" className="btn btn-primary shadow-sm hover:shadow-md transition-all active:scale-95" style={{ width: 'auto' }} disabled={submitting}>
+                  {submitting ? 'Starting.' : <><Plus size={16} className="mr-1" /> Start Session Now</>}
                 </button>
               </div>
             </form>

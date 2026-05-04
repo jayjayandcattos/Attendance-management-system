@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Terminal, 
-  Shield, 
-  CheckCircle, 
-  AlertCircle, 
-  Activity, 
-  Globe, 
-  Zap, 
-  Database, 
-  Cpu, 
-  MemoryStick as Memory, 
+import {
+  Terminal,
+  Shield,
+  CheckCircle,
+  AlertCircle,
+  Activity,
+  Globe,
+  Zap,
+  Database,
+  Cpu,
+  MemoryStick as Memory,
   HardDrive,
   RefreshCw,
   Search,
@@ -24,7 +24,7 @@ import DashboardLayout from '../../components/DashboardLayout';
 import { adminApi } from '../../api';
 
 const SystemConsole: React.FC = () => {
-  const [logs, setLogs] = useState<{t: string, m: string, s: 'info' | 'warn' | 'error' | 'debug'}[]>(() => {
+  const [logs, setLogs] = useState<{ t: string, m: string, s: 'info' | 'warn' | 'error' | 'debug' }[]>(() => {
     const saved = sessionStorage.getItem('system_console_logs');
     return saved ? JSON.parse(saved) : [];
   });
@@ -32,16 +32,16 @@ const SystemConsole: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [maintenance, setMaintenance] = useState(false);
   const [activeTab, setActiveTab] = useState<'console' | 'ops'>('console');
-  const [opsLoading, setOpsLoading] = useState<{[key: string]: boolean}>({});
+  const [opsLoading, setOpsLoading] = useState<{ [key: string]: boolean }>({});
   const [maintenanceLoading, setMaintenanceLoading] = useState(false);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [scheduledDate, setScheduledDate] = useState<string>('Sunday 02:00 AM');
   const terminalScrollRef = useRef<HTMLDivElement>(null);
-  
+
   // Set a fixed boot timestamp (approx 42 days ago from late April 2026)
   // this ensures the uptime persists and continues even after refresh
   const bootTimestamp = useRef(new Date('2026-03-17T04:00:00').getTime());
-  
+
   const calculateCurrentUptime = () => {
     return Math.floor((Date.now() - bootTimestamp.current) / 1000);
   };
@@ -97,8 +97,8 @@ const SystemConsole: React.FC = () => {
     }
 
     // Fetch actual health metrics
-    adminApi.getSystemHealth().then(res => setHealth(res.data.data)).catch(() => {});
-    adminApi.getSystemStatus().then(res => setMaintenance(res.data.data.maintenanceMode)).catch(() => {});
+    adminApi.getSystemHealth().then(res => setHealth(res.data.data)).catch(() => { });
+    adminApi.getSystemStatus().then(res => setMaintenance(res.data.data.maintenanceMode)).catch(() => { });
 
     // Live Activity Simulation
     const liveInterval = setInterval(() => {
@@ -112,7 +112,7 @@ const SystemConsole: React.FC = () => {
         { m: 'Warning: Latency spike detected in DB connection pool', s: 'warn' },
         { m: 'Disk space check: 84% available', s: 'info' }
       ];
-      
+
       const rand = Math.floor(Math.random() * activities.length);
       addLog(activities[rand].m, activities[rand].s as any);
     }, 4000);
@@ -144,16 +144,16 @@ const SystemConsole: React.FC = () => {
         </div>
         <div style={{ display: 'flex', gap: '0.85rem' }}>
           <div className="tab-switcher" style={{ background: 'rgba(30, 41, 59, 0.5)', padding: '0.4rem', borderRadius: '12px', display: 'flex', gap: '0.4rem' }}>
-            <button 
-              className={`btn btn-sm ${activeTab === 'console' ? 'btn-primary' : 'btn-ghost'}`} 
-              onClick={() => setActiveTab('console')} 
+            <button
+              className={`btn btn-sm ${activeTab === 'console' ? 'btn-primary' : 'btn-ghost'}`}
+              onClick={() => setActiveTab('console')}
               style={{ padding: '0.5rem 1rem', width: 'auto' }}
             >
               <Terminal size={16} /> Console
             </button>
-            <button 
-              className={`btn btn-sm ${activeTab === 'ops' ? 'btn-primary' : 'btn-ghost'}`} 
-              onClick={() => setActiveTab('ops')} 
+            <button
+              className={`btn btn-sm ${activeTab === 'ops' ? 'btn-primary' : 'btn-ghost'}`}
+              onClick={() => setActiveTab('ops')}
               style={{ padding: '0.5rem 1rem', width: 'auto' }}
             >
               <Settings size={16} /> Operations
@@ -168,9 +168,9 @@ const SystemConsole: React.FC = () => {
 
       <div className="admin-content-grid" style={{ gridTemplateColumns: '1fr 340px', gap: '1.5rem' }}>
         {activeTab === 'console' && (
-          <div className="premium-card" style={{ 
-            background: '#0f172a', 
-            color: '#cbd5e1', 
+          <div className="premium-card" style={{
+            background: '#0f172a',
+            color: '#cbd5e1',
             fontFamily: 'JetBrains Mono, Fira Code, monospace',
             padding: '0',
             overflow: 'hidden',
@@ -180,11 +180,11 @@ const SystemConsole: React.FC = () => {
             border: '1px solid #1e293b',
             boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2)'
           }}>
-            <div style={{ 
-              background: '#1e293b', 
-              padding: '0.75rem 1rem', 
-              display: 'flex', 
-              alignItems: 'center', 
+            <div style={{
+              background: '#1e293b',
+              padding: '0.75rem 1rem',
+              display: 'flex',
+              alignItems: 'center',
               justifyContent: 'space-between',
               borderBottom: '1px solid #334155'
             }}>
@@ -199,8 +199,8 @@ const SystemConsole: React.FC = () => {
                   root@system-vm: ~/logs/live.stream
                 </div>
               </div>
-              <button 
-                className="btn btn-xs btn-ghost" 
+              <button
+                className="btn btn-xs btn-ghost"
                 style={{ color: '#ef4444', height: '24px', padding: '0 0.5rem', opacity: opsLoading['threat'] ? 0.6 : 1 }}
                 disabled={opsLoading['threat']}
                 onClick={async () => {
@@ -220,13 +220,13 @@ const SystemConsole: React.FC = () => {
                 {opsLoading['threat'] ? 'Simulating...' : 'Simulate Threat'}
               </button>
             </div>
-            
-            <div 
+
+            <div
               ref={terminalScrollRef}
-              style={{ 
-                flex: 1, 
-                padding: '1.25rem', 
-                overflowY: 'auto', 
+              style={{
+                flex: 1,
+                padding: '1.25rem',
+                overflowY: 'auto',
                 fontSize: '0.85rem',
                 lineHeight: '1.6',
                 scrollBehavior: 'smooth'
@@ -235,10 +235,10 @@ const SystemConsole: React.FC = () => {
               {logs.map((log, i) => (
                 <div key={i} style={{ marginBottom: '2px', display: 'flex', gap: '0.75rem' }}>
                   <span style={{ color: '#475569', userSelect: 'none' }}>[{log.t}]</span>
-                  <span style={{ 
-                    color: log.s === 'error' ? '#ef4444' : 
-                          log.s === 'warn' ? '#fbbf24' : 
-                          log.s === 'debug' ? '#818cf8' : '#10b981',
+                  <span style={{
+                    color: log.s === 'error' ? '#ef4444' :
+                      log.s === 'warn' ? '#fbbf24' :
+                        log.s === 'debug' ? '#818cf8' : '#10b981',
                     fontWeight: 600
                   }}>
                     {log.s.toUpperCase()}
@@ -248,10 +248,10 @@ const SystemConsole: React.FC = () => {
               ))}
             </div>
 
-            <div style={{ 
-              background: '#1e293b', 
-              padding: '0.5rem 1rem', 
-              fontSize: '0.75rem', 
+            <div style={{
+              background: '#1e293b',
+              padding: '0.5rem 1rem',
+              fontSize: '0.75rem',
               color: '#64748b',
               display: 'flex',
               justifyContent: 'space-between'
@@ -278,10 +278,10 @@ const SystemConsole: React.FC = () => {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
-                    <span className={`badge badge-${maintenance ? 'danger' : 'success'}`} style={{ 
-                      padding: '0.4rem 0.8rem', 
-                      borderRadius: '8px', 
-                      fontSize: '0.75rem', 
+                    <span className={`badge badge-${maintenance ? 'danger' : 'success'}`} style={{
+                      padding: '0.4rem 0.8rem',
+                      borderRadius: '8px',
+                      fontSize: '0.75rem',
                       fontWeight: 800,
                       letterSpacing: '0.5px'
                     }}>
@@ -295,9 +295,9 @@ const SystemConsole: React.FC = () => {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <button 
-                  className={`btn btn-secondary ${opsLoading['cleanup'] ? 'loading' : ''}`} 
-                  style={{ padding: '1.5rem', opacity: opsLoading['cleanup'] ? 0.7 : 1 }} 
+                <button
+                  className={`btn btn-secondary ${opsLoading['cleanup'] ? 'loading' : ''}`}
+                  style={{ padding: '1.5rem', opacity: opsLoading['cleanup'] ? 0.7 : 1 }}
                   disabled={opsLoading['cleanup']}
                   onClick={async () => {
                     setOpsLoading(prev => ({ ...prev, cleanup: true }));
@@ -319,9 +319,9 @@ const SystemConsole: React.FC = () => {
                   </div>
                 </button>
 
-                <button 
-                  className={`btn btn-secondary ${opsLoading['schedule'] ? 'loading' : ''}`} 
-                  style={{ padding: '1.5rem', opacity: opsLoading['schedule'] ? 0.7 : 1 }} 
+                <button
+                  className={`btn btn-secondary ${opsLoading['schedule'] ? 'loading' : ''}`}
+                  style={{ padding: '1.5rem', opacity: opsLoading['schedule'] ? 0.7 : 1 }}
                   disabled={opsLoading['schedule']}
                   onClick={() => setShowScheduleModal(true)}
                 >
@@ -370,7 +370,7 @@ const SystemConsole: React.FC = () => {
               <Activity size={18} color="#2563eb" />
               Environment Status
             </h3>
-            
+
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -407,7 +407,7 @@ const SystemConsole: React.FC = () => {
           {/* Real-time Metrics */}
           <div className="premium-card" style={{ padding: '1.5rem' }}>
             <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '1.25rem' }}>Resource Usage</h3>
-            
+
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 700, marginBottom: '0.5rem' }}>
@@ -456,14 +456,14 @@ const SystemConsole: React.FC = () => {
           display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
           animation: 'fadeIn 0.3s ease',
         }}>
-          <div className="premium-card animate-scale-in" style={{ 
-            width: '450px', 
-            padding: '2rem', 
+          <div className="premium-card animate-scale-in" style={{
+            width: '450px',
+            padding: '2rem',
             border: '1px solid var(--border-glass)',
             boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
             position: 'relative'
           }}>
-            <button 
+            <button
               onClick={() => setShowScheduleModal(false)}
               style={{ position: 'absolute', top: '1.25rem', right: '1.25rem', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
             >
@@ -479,12 +479,12 @@ const SystemConsole: React.FC = () => {
                 <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Automate your maintenance window</p>
               </div>
             </div>
-            
+
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginBottom: '2.5rem' }}>
               <div style={{ background: 'var(--bg-secondary)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border-glass)' }}>
                 <label style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--text-muted)', display: 'block', marginBottom: '0.5rem', textTransform: 'uppercase' }}>Preferred Day</label>
-                <select 
-                  className="form-control" 
+                <select
+                  className="form-control"
                   style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', padding: 0, fontSize: '1rem', fontWeight: 600, cursor: 'pointer' }}
                   defaultValue={scheduledDate.split(' ')[0]}
                   id="sched-day"
@@ -497,9 +497,9 @@ const SystemConsole: React.FC = () => {
 
               <div style={{ background: 'var(--bg-secondary)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border-glass)' }}>
                 <label style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--text-muted)', display: 'block', marginBottom: '0.5rem', textTransform: 'uppercase' }}>Start Time</label>
-                <input 
-                  type="time" 
-                  className="form-control" 
+                <input
+                  type="time"
+                  className="form-control"
                   style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', padding: 0, fontSize: '1rem', fontWeight: 600 }}
                   id="sched-time"
                   defaultValue="02:00"
@@ -513,7 +513,7 @@ const SystemConsole: React.FC = () => {
                 const day = (document.getElementById('sched-day') as HTMLSelectElement).value;
                 const time = (document.getElementById('sched-time') as HTMLInputElement).value;
                 if (!time) return alert('Please select a valid time');
-                
+
                 const formattedTime = new Date(`2000-01-01T${time}`).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
                 setScheduledDate(`${day} ${formattedTime}`);
                 addLog(`System routine scheduled: ${day} at ${formattedTime}`, 'info');

@@ -46,6 +46,9 @@ public class Course {
     @Builder.Default
     private String status = "active";
 
+    @org.hibernate.annotations.Formula("(SELECT COUNT(*) FROM enrollments e WHERE e.course_id = id AND e.status = 'active')")
+    private Integer enrollmentCount;
+
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

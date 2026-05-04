@@ -163,6 +163,7 @@ public class StudentController {
     }
 
     @PostMapping("/courses/join")
+    @jakarta.transaction.Transactional
     public ResponseEntity<ApiResponse<Enrollment>> joinCourse(
             @RequestBody Map<String, String> body,
             @AuthenticationPrincipal User student, HttpServletRequest request) {
@@ -219,6 +220,7 @@ public class StudentController {
 
     // ── Attendance ─────────────────────────────────────────────────────
     @PostMapping("/attendance/submit")
+    @jakarta.transaction.Transactional
     public ResponseEntity<ApiResponse<AttendanceRecord>> submitAttendance(
             @RequestBody Map<String, Object> body,
             @AuthenticationPrincipal User student, HttpServletRequest request) {
