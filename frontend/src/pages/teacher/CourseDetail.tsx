@@ -742,7 +742,7 @@ const TeacherCourseDetail: React.FC = () => {
                 <div className="modal-overlay" onClick={() => setShowEdit(false)}>
                     <div className="modal shadow-2xl animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()} style={{ maxWidth: '600px' }}>
                         <div className="modal-header border-b pb-4">
-                            <h3 className="modal-title flex items-center gap-2"><Edit2 size={20} className="text-blue-500" /> Global Course Settings</h3>
+                            <h3 className="modal-title flex items-center gap-2"><Edit2 size={20} className="text-blue-500" /> Edit Course Details</h3>
                             <button className="modal-close hover:rotate-90 transition-transform" onClick={() => setShowEdit(false)}><X size={20} /></button>
                         </div>
                         <form onSubmit={handleUpdate} className="mt-6 space-y-6">

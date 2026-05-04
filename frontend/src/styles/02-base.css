@@ -240,10 +240,12 @@ a:hover {
 }
 
 .sidebar-link.active {
-  background: var(--sidebar-active);
+  background: rgba(59, 130, 246, 0.1);
   color: var(--accent-blue);
-  border-color: rgba(59, 130, 246, 0.2);
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.08);
+  border-left: 4px solid var(--accent-blue);
+  border-radius: 0 12px 12px 0;
+  margin-left: -1rem;
+  padding-left: calc(1rem - 4px); 
 }
 
 .sidebar-footer {

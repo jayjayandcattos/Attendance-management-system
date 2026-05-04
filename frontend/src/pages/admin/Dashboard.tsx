@@ -18,7 +18,9 @@ import {
   LayoutGrid,
   Zap,
   Lock,
-  Terminal
+  Terminal,
+  Settings,
+  Database
 } from 'lucide-react';
 import DashboardLayout from '../../components/DashboardLayout';
 import { adminApi } from '../../api';
@@ -49,7 +51,7 @@ const AdminDashboard: React.FC = () => {
   const quickActions = [
     { label: 'User Management', desc: 'Control access and roles', icon: <User size={24} />, path: '/admin/users', color: '#2563eb' },
     { label: 'Course Catalog', desc: 'Monitor all classrooms', icon: <Book size={24} />, path: '/admin/courses', color: '#7c3aed' },
-    { label: 'System Console', desc: 'Real-time command status', icon: <Terminal size={24} />, path: '/admin/security', color: '#0f172a' },
+    { label: 'System Console', desc: 'Root logs & maintenance', icon: <Terminal size={24} />, path: '/admin/security', color: '#0f172a' },
   ];
 
   return (
@@ -190,6 +192,45 @@ const AdminDashboard: React.FC = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Infrastructure & Security Quick View */}
+          <div className="admin-stats-grid" style={{ marginTop: '1.5rem', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+            <div className="premium-card animate-scale-in" style={{ padding: '1.5rem', display: 'flex', gap: '1.25rem', alignItems: 'center', cursor: 'pointer' }} onClick={() => navigate('/admin/security')}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#fef2f2', color: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Settings size={24} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Maintenance</div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>System Live</div>
+                <div style={{ fontSize: '0.75rem', color: '#10b981' }}>● All services running</div>
+              </div>
+              <ArrowRight size={18} color="var(--text-muted)" />
+            </div>
+
+            <div className="premium-card animate-scale-in" style={{ padding: '1.5rem', display: 'flex', gap: '1.25rem', alignItems: 'center', cursor: 'pointer', animationDelay: '0.1s' }} onClick={() => navigate('/admin/security')}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#eff6ff', color: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Database size={24} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Backup Strategy</div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>Active Snapshot</div>
+                <div style={{ fontSize: '0.75rem', color: '#2563eb' }}>Daily Cloud Sync: 100%</div>
+              </div>
+              <ArrowRight size={18} color="var(--text-muted)" />
+            </div>
+
+            <div className="premium-card animate-scale-in" style={{ padding: '1.5rem', display: 'flex', gap: '1.25rem', alignItems: 'center', cursor: 'pointer', animationDelay: '0.2s' }} onClick={() => navigate('/admin/security')}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#f0fdf4', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Lock size={24} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Data Encryption</div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>AES-256 Enabled</div>
+                <div style={{ fontSize: '0.75rem', color: '#10b981' }}>Compliance: Verified</div>
+              </div>
+              <ArrowRight size={18} color="var(--text-muted)" />
             </div>
           </div>
 

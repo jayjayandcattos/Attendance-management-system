@@ -3,7 +3,6 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import {
   User,
-  Settings,
   Shield,
   X,
   AlertCircle,
@@ -597,7 +596,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
               <div className="profile-tabs" style={{ marginBottom: '1.5rem' }}>
                 <button className={`profile-tab ${profileTab === 'info' ? 'active' : ''}`} onClick={() => { setProfileTab('info'); setProfileMsg(null); }}>
-                  <Settings size={14} style={{ marginRight: '6px', display: 'inline-block' }} />
+                   <User size={14} style={{ marginRight: '6px', display: 'inline-block' }} />
                   Personal Info
                 </button>
                 <button className={`profile-tab ${profileTab === 'security' ? 'active' : ''}`} onClick={() => { setProfileTab('security'); setProfileMsg(null); }}>

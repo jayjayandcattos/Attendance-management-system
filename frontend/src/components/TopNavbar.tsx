@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, LogOut, ChevronDown, User, Settings, Shield, Menu } from 'lucide-react';
+import { Search, LogOut, ChevronDown, User, Shield, Menu } from 'lucide-react';
 import { useAuth } from '../auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Avatar from './Avatar';
@@ -64,19 +64,6 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ searchQuery, onSearchChange, acti
               <div className="dropdown-divider" />
               <button className="dropdown-item" onClick={() => { setShowDropdown(false); onProfileClick?.(); }}>
                 <User size={16} /> My Profile
-              </button>
-              <button className="dropdown-item" onClick={() => { 
-                setShowDropdown(false); 
-                // Navigate to settings based on user role
-                if (user?.role === 'teacher') {
-                  navigate('/teacher/settings');
-                } else if (user?.role === 'student') {
-                  navigate('/student/settings');
-                } else if (user?.role === 'admin') {
-                  navigate('/admin/settings');
-                }
-              }}>
-                <Settings size={16} /> Settings
               </button>
               <div className="dropdown-divider" />
               <button className="dropdown-item logout" onClick={() => {

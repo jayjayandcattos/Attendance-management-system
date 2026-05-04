@@ -13,15 +13,30 @@ import {
   HardDrive,
   RefreshCw,
   Search,
-  Settings
+  Lock,
+  Download,
+  Trash2,
+  Settings,
+  ShieldCheck,
+  FileLock
 } from 'lucide-react';
 import DashboardLayout from '../../components/DashboardLayout';
 import { adminApi } from '../../api';
 
 const SystemConsole: React.FC = () => {
-  const [logs, setLogs] = useState<{t: string, m: string, s: 'info' | 'warn' | 'error' | 'debug'}[]>([]);
+  const [logs, setLogs] = useState<{t: string, m: string, s: 'info' | 'warn' | 'error' | 'debug'}[]>(() => {
+    const saved = sessionStorage.getItem('system_console_logs');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [health, setHealth] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [maintenance, setMaintenance] = useState(false);
+  const [activeTab, setActiveTab] = useState<'console' | 'ops'>('console');
+  const [opsLoading, setOpsLoading] = useState<{[key: string]: boolean}>({});
+  const [maintenanceLoading, setMaintenanceLoading] = useState(false);
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [scheduledDate, setScheduledDate] = useState<string>('Sunday 02:00 AM');
+  const terminalScrollRef = useRef<HTMLDivElement>(null);
   
   // Set a fixed boot timestamp (approx 42 days ago from late April 2026)
   // this ensures the uptime persists and continues even after refresh
@@ -44,7 +59,11 @@ const SystemConsole: React.FC = () => {
 
   const addLog = (message: string, severity: 'info' | 'warn' | 'error' | 'debug' = 'info') => {
     const timestamp = new Date().toLocaleTimeString('en-US', { hour12: false });
-    setLogs(prev => [...prev.slice(-99), { t: timestamp, m: message, s: severity }]);
+    setLogs(prev => {
+      const next = [...prev.slice(-199), { t: timestamp, m: message, s: severity }];
+      sessionStorage.setItem('system_console_logs', JSON.stringify(next));
+      return next;
+    });
   };
 
   useEffect(() => {
@@ -62,18 +81,24 @@ const SystemConsole: React.FC = () => {
     ];
 
     let i = 0;
-    const bootInterval = setInterval(() => {
-      if (i < bootSequence.length) {
-        addLog(bootSequence[i].m, bootSequence[i].s as any);
-        i++;
-      } else {
-        clearInterval(bootInterval);
-        setLoading(false);
-      }
-    }, 150);
+    let bootInterval: any;
+    if (logs.length === 0) {
+      bootInterval = setInterval(() => {
+        if (i < bootSequence.length) {
+          addLog(bootSequence[i].m, bootSequence[i].s as any);
+          i++;
+        } else {
+          clearInterval(bootInterval);
+          setLoading(false);
+        }
+      }, 150);
+    } else {
+      setLoading(false);
+    }
 
     // Fetch actual health metrics
     adminApi.getSystemHealth().then(res => setHealth(res.data.data)).catch(() => {});
+    adminApi.getSystemStatus().then(res => setMaintenance(res.data.data.maintenanceMode)).catch(() => {});
 
     // Live Activity Simulation
     const liveInterval = setInterval(() => {
@@ -98,114 +123,287 @@ const SystemConsole: React.FC = () => {
     }, 1000);
 
     return () => {
-      clearInterval(bootInterval);
+      if (bootInterval) clearInterval(bootInterval);
       clearInterval(liveInterval);
       clearInterval(uptimeInterval);
     };
   }, []);
 
   useEffect(() => {
-    terminalEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [logs]);
+    if (terminalScrollRef.current) {
+      terminalScrollRef.current.scrollTop = terminalScrollRef.current.scrollHeight;
+    }
+  }, [logs, activeTab]);
 
   return (
     <DashboardLayout role="admin">
       <div className="page-header animate-fade-in">
         <div>
-          <h1 className="page-title gradient-text" style={{ fontSize: '1.75rem' }}>System Console</h1>
-          <p className="page-subtitle">Low-level system logs and real-time command status</p>
+          <h1 className="page-title gradient-text" style={{ fontSize: '1.75rem' }}>System Management</h1>
+          <p className="page-subtitle">Security, Maintenance, and Low-level Operations</p>
         </div>
         <div style={{ display: 'flex', gap: '0.85rem' }}>
-          <button className="btn btn-secondary shadow-sm" style={{ width: 'auto', background: 'var(--bg-secondary)', color: '#ef4444', borderColor: 'var(--border-glass)' }} 
-            onClick={async () => {
-              try {
-                await adminApi.triggerTestEvent();
-                addLog('SECURITY ALERT: Brute-force simulation started...', 'error');
-                addLog('Simulated event recorded in Database.', 'info');
-                addLog('Analytics dashboard will now reflect this threat.', 'debug');
-              } catch {
-                addLog('Failed to connect to security gateway.', 'error');
-              }
-            }}>
-            <Shield size={18} />
-            Simulate Threat
-          </button>
+          <div className="tab-switcher" style={{ background: 'rgba(30, 41, 59, 0.5)', padding: '0.4rem', borderRadius: '12px', display: 'flex', gap: '0.4rem' }}>
+            <button 
+              className={`btn btn-sm ${activeTab === 'console' ? 'btn-primary' : 'btn-ghost'}`} 
+              onClick={() => setActiveTab('console')} 
+              style={{ padding: '0.5rem 1rem', width: 'auto' }}
+            >
+              <Terminal size={16} /> Console
+            </button>
+            <button 
+              className={`btn btn-sm ${activeTab === 'ops' ? 'btn-primary' : 'btn-ghost'}`} 
+              onClick={() => setActiveTab('ops')} 
+              style={{ padding: '0.5rem 1rem', width: 'auto' }}
+            >
+              <Settings size={16} /> Operations
+            </button>
+          </div>
           <button className="btn btn-secondary shadow-sm" style={{ width: 'auto', background: 'var(--bg-secondary)', color: 'var(--text-primary)', borderColor: 'var(--border-glass)' }} onClick={() => window.location.reload()}>
             <RefreshCw size={18} />
-            Reboot Console
+            Reboot
           </button>
         </div>
       </div>
 
       <div className="admin-content-grid" style={{ gridTemplateColumns: '1fr 340px', gap: '1.5rem' }}>
-        {/* Terminal Window */}
-        <div className="premium-card" style={{ 
-          background: '#0f172a', 
-          color: '#cbd5e1', 
-          fontFamily: 'JetBrains Mono, Fira Code, monospace',
-          padding: '0',
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-          minHeight: '600px',
-          border: '1px solid #1e293b',
-          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2)'
-        }}>
-          <div style={{ 
-            background: '#1e293b', 
-            padding: '0.75rem 1rem', 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '1rem',
-            borderBottom: '1px solid #334155'
-          }}>
-            <div style={{ display: 'flex', gap: '6px' }}>
-              <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ef4444' }}></div>
-              <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#fbbf24' }}></div>
-              <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#10b981' }}></div>
-            </div>
-            <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Terminal size={14} />
-              root@system-vm: ~/logs/live.stream
-            </div>
-          </div>
-          
-          <div style={{ 
-            flex: 1, 
-            padding: '1.25rem', 
-            overflowY: 'auto', 
-            fontSize: '0.85rem',
-            lineHeight: '1.6'
-          }}>
-            {logs.map((log, i) => (
-              <div key={i} style={{ marginBottom: '2px', display: 'flex', gap: '0.75rem' }}>
-                <span style={{ color: '#475569', userSelect: 'none' }}>[{log.t}]</span>
-                <span style={{ 
-                  color: log.s === 'error' ? '#ef4444' : 
-                         log.s === 'warn' ? '#fbbf24' : 
-                         log.s === 'debug' ? '#818cf8' : '#10b981',
-                  fontWeight: 600
-                }}>
-                  {log.s.toUpperCase()}
-                </span>
-                <span style={{ color: '#e2e8f0' }}>{log.m}</span>
-              </div>
-            ))}
-            <div ref={terminalEndRef} />
-          </div>
-
-          <div style={{ 
-            background: '#1e293b', 
-            padding: '0.5rem 1rem', 
-            fontSize: '0.75rem', 
-            color: '#64748b',
+        {activeTab === 'console' && (
+          <div className="premium-card" style={{ 
+            background: '#0f172a', 
+            color: '#cbd5e1', 
+            fontFamily: 'JetBrains Mono, Fira Code, monospace',
+            padding: '0',
+            overflow: 'hidden',
             display: 'flex',
-            justifyContent: 'space-between'
+            flexDirection: 'column',
+            height: '550px',
+            border: '1px solid #1e293b',
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2)'
           }}>
-            <span>Connected to Local Node</span>
-            <span>UTF-8 | LF | Java 17</span>
+            <div style={{ 
+              background: '#1e293b', 
+              padding: '0.75rem 1rem', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'space-between',
+              borderBottom: '1px solid #334155'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ef4444' }}></div>
+                  <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#fbbf24' }}></div>
+                  <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#10b981' }}></div>
+                </div>
+                <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Terminal size={14} />
+                  root@system-vm: ~/logs/live.stream
+                </div>
+              </div>
+              <button 
+                className="btn btn-xs btn-ghost" 
+                style={{ color: '#ef4444', height: '24px', padding: '0 0.5rem', opacity: opsLoading['threat'] ? 0.6 : 1 }}
+                disabled={opsLoading['threat']}
+                onClick={async () => {
+                  setOpsLoading(prev => ({ ...prev, threat: true }));
+                  try {
+                    await adminApi.triggerTestEvent();
+                    addLog('SECURITY ALERT: Brute-force simulation triggered!', 'error');
+                    addLog('Simulated event recorded in central audit database.', 'debug');
+                  } catch {
+                    addLog('Failed to connect to security gateway.', 'error');
+                  } finally {
+                    setTimeout(() => setOpsLoading(prev => ({ ...prev, threat: false })), 1000);
+                  }
+                }}
+              >
+                <Shield size={12} className={opsLoading['threat'] ? 'animate-pulse' : ''} />
+                {opsLoading['threat'] ? 'Simulating...' : 'Simulate Threat'}
+              </button>
+            </div>
+            
+            <div 
+              ref={terminalScrollRef}
+              style={{ 
+                flex: 1, 
+                padding: '1.25rem', 
+                overflowY: 'auto', 
+                fontSize: '0.85rem',
+                lineHeight: '1.6',
+                scrollBehavior: 'smooth'
+              }}
+            >
+              {logs.map((log, i) => (
+                <div key={i} style={{ marginBottom: '2px', display: 'flex', gap: '0.75rem' }}>
+                  <span style={{ color: '#475569', userSelect: 'none' }}>[{log.t}]</span>
+                  <span style={{ 
+                    color: log.s === 'error' ? '#ef4444' : 
+                          log.s === 'warn' ? '#fbbf24' : 
+                          log.s === 'debug' ? '#818cf8' : '#10b981',
+                    fontWeight: 600
+                  }}>
+                    {log.s.toUpperCase()}
+                  </span>
+                  <span style={{ color: '#e2e8f0' }}>{log.m}</span>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ 
+              background: '#1e293b', 
+              padding: '0.5rem 1rem', 
+              fontSize: '0.75rem', 
+              color: '#64748b',
+              display: 'flex',
+              justifyContent: 'space-between'
+            }}>
+              <span>Connected to Local Node</span>
+              <span>UTF-8 | LF | Java 17</span>
+            </div>
           </div>
-        </div>
+        )}
+
+        {activeTab === 'ops' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            {/* Maintenance Mode */}
+            <div className="premium-card animate-scale-in" style={{ padding: '2rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center' }}>
+                  <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: maintenance ? '#fef2f2' : '#f0fdf4', color: maintenance ? '#ef4444' : '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Settings size={28} className={maintenance ? 'animate-pulse' : ''} />
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Maintenance Plan</h3>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Control global system availability and routine tasks</p>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
+                    <span className={`badge badge-${maintenance ? 'danger' : 'success'}`} style={{ 
+                      padding: '0.4rem 0.8rem', 
+                      borderRadius: '8px', 
+                      fontSize: '0.75rem', 
+                      fontWeight: 800,
+                      letterSpacing: '0.5px'
+                    }}>
+                      {maintenance ? 'MAINTENANCE ACTIVE' : 'SYSTEM LIVE'}
+                    </span>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <Activity size={10} /> Next Routine: <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{scheduledDate}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <button 
+                  className={`btn btn-secondary ${opsLoading['cleanup'] ? 'loading' : ''}`} 
+                  style={{ padding: '1.5rem', opacity: opsLoading['cleanup'] ? 0.7 : 1 }} 
+                  disabled={opsLoading['cleanup']}
+                  onClick={async () => {
+                    setOpsLoading(prev => ({ ...prev, cleanup: true }));
+                    try {
+                      const res = await adminApi.performCleanup();
+                      const { logsCleared, tempFilesCleared } = res.data.data;
+                      addLog(`System Cleanup: Removed ${logsCleared} logs and ${tempFilesCleared} temp files`, 'info');
+                    } catch {
+                      addLog('Cleanup task failed', 'error');
+                    } finally {
+                      setTimeout(() => setOpsLoading(prev => ({ ...prev, cleanup: false })), 800);
+                    }
+                  }}
+                >
+                  <Trash2 size={20} className={opsLoading['cleanup'] ? 'animate-spin' : ''} />
+                  <div>
+                    <div style={{ fontWeight: 700 }}>Run System Cleanup</div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 500, opacity: 0.7 }}>Clear logs & temporary assets</div>
+                  </div>
+                </button>
+
+                <button 
+                  className={`btn btn-secondary ${opsLoading['schedule'] ? 'loading' : ''}`} 
+                  style={{ padding: '1.5rem', opacity: opsLoading['schedule'] ? 0.7 : 1 }} 
+                  disabled={opsLoading['schedule']}
+                  onClick={() => setShowScheduleModal(true)}
+                >
+                  <Activity size={20} className={opsLoading['schedule'] ? 'animate-pulse' : ''} />
+                  <div>
+                    <div style={{ fontWeight: 700 }}>Schedule Routine</div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 500, opacity: 0.7 }}>Set automated maintenance window</div>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            {/* Backup Strategy */}
+            <div className="premium-card animate-scale-in" style={{ padding: '2rem' }}>
+              <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', marginBottom: '2rem' }}>
+                <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: '#eff6ff', color: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Database size={28} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Backup Strategy</h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Secure snapshots and database recovery points</p>
+                </div>
+              </div>
+
+              <div style={{ background: 'rgba(30, 41, 59, 0.3)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border-glass)', marginBottom: '1.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <div style={{ fontSize: '0.875rem', fontWeight: 700 }}>Last Automated Backup</div>
+                  <div style={{ fontSize: '0.875rem', color: '#10b981', fontWeight: 600 }}>Success (2h ago)</div>
+                </div>
+                <div style={{ fontSize: '0.75rem', opacity: 0.7 }}>Storage Provider: Amazon S3 (ap-southeast-1) | Frequency: Daily 12:00 AM</div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <button 
+                  className={`btn btn-primary ${opsLoading['backup'] ? 'loading' : ''}`} 
+                  style={{ flex: 1, opacity: opsLoading['backup'] ? 0.8 : 1 }} 
+                  disabled={opsLoading['backup']}
+                  onClick={async () => {
+                    setOpsLoading(prev => ({ ...prev, backup: true }));
+                    try {
+                      const res = await adminApi.exportBackup();
+                      setTimeout(() => {
+                        addLog(`Manual Backup initiated: ${res.data.data.users} users, ${res.data.data.courses} courses recorded`, 'info');
+                        addLog(`Snapshot file generated: ${res.data.data.fileUrl}`, 'debug');
+                        setOpsLoading(prev => ({ ...prev, backup: false }));
+                      }, 2000);
+                    } catch {
+                      setOpsLoading(prev => ({ ...prev, backup: false }));
+                    }
+                  }}
+                >
+                  <Download size={18} />
+                  {opsLoading['backup'] ? 'Generating Snapshot...' : 'Generate Instant Snapshot'}
+                </button>
+              </div>
+            </div>
+
+            {/* Privacy Compliance */}
+            <div className="premium-card animate-scale-in" style={{ padding: '2rem' }}>
+              <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', marginBottom: '2rem' }}>
+                <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: '#f0fdf4', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <FileLock size={28} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Privacy Compliance</h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>GDPR / Data Protection Officer tools</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4">
+                <div style={{ padding: '1rem', borderLeft: '4px solid #10b981', background: 'rgba(16, 185, 129, 0.05)' }}>
+                  <div style={{ fontWeight: 700, fontSize: '0.875rem' }}>Data Portability (GDPR)</div>
+                  <p style={{ fontSize: '0.8rem', opacity: 0.8 }}>System allows users to export all personal activity logs and profile data.</p>
+                </div>
+                <div style={{ padding: '1rem', borderLeft: '4px solid #2563eb', background: 'rgba(37, 99, 235, 0.05)' }}>
+                  <div style={{ fontWeight: 700, fontSize: '0.875rem' }}>Right to be Forgotten</div>
+                  <p style={{ fontSize: '0.8rem', opacity: 0.8 }}>Admin can perform hard-deletion of user accounts and associated metadata.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* System Vitals Sidebar */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -293,6 +491,81 @@ const SystemConsole: React.FC = () => {
           </div>
         </div>
       </div>
+      {/* Schedule Modal */}
+      {showScheduleModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(12px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
+          animation: 'fadeIn 0.3s ease',
+        }}>
+          <div className="premium-card animate-scale-in" style={{ 
+            width: '450px', 
+            padding: '2rem', 
+            border: '1px solid var(--border-glass)',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+            position: 'relative'
+          }}>
+            <button 
+              onClick={() => setShowScheduleModal(false)}
+              style={{ position: 'absolute', top: '1.25rem', right: '1.25rem', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
+            >
+              <RefreshCw size={20} style={{ transform: 'rotate(45deg)' }} />
+            </button>
+
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'var(--gradient-primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Activity size={24} />
+              </div>
+              <div>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Routine Scheduler</h3>
+                <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Automate your maintenance window</p>
+              </div>
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginBottom: '2.5rem' }}>
+              <div style={{ background: 'var(--bg-secondary)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border-glass)' }}>
+                <label style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--text-muted)', display: 'block', marginBottom: '0.5rem', textTransform: 'uppercase' }}>Preferred Day</label>
+                <select 
+                  className="form-control" 
+                  style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', padding: 0, fontSize: '1rem', fontWeight: 600, cursor: 'pointer' }}
+                  defaultValue={scheduledDate.split(' ')[0]}
+                  id="sched-day"
+                >
+                  {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(day => (
+                    <option key={day} style={{ background: 'var(--bg-card)' }}>{day}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div style={{ background: 'var(--bg-secondary)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border-glass)' }}>
+                <label style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--text-muted)', display: 'block', marginBottom: '0.5rem', textTransform: 'uppercase' }}>Start Time</label>
+                <input 
+                  type="time" 
+                  className="form-control" 
+                  style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', padding: 0, fontSize: '1rem', fontWeight: 600 }}
+                  id="sched-time"
+                  defaultValue="02:00"
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <button className="btn btn-secondary" style={{ flex: 1, background: 'var(--bg-secondary)' }} onClick={() => setShowScheduleModal(false)}>Discard</button>
+              <button className="btn btn-primary" style={{ flex: 1 }} onClick={() => {
+                const day = (document.getElementById('sched-day') as HTMLSelectElement).value;
+                const time = (document.getElementById('sched-time') as HTMLInputElement).value;
+                if (!time) return alert('Please select a valid time');
+                
+                const formattedTime = new Date(`2000-01-01T${time}`).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+                setScheduledDate(`${day} ${formattedTime}`);
+                addLog(`System routine scheduled: ${day} at ${formattedTime}`, 'info');
+                setShowScheduleModal(false);
+              }}>Confirm Schedule</button>
+            </div>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 };

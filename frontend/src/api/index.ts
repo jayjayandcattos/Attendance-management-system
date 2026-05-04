@@ -51,6 +51,13 @@ export const adminApi = {
   getIPAccessList: () => api.get('/admin/security/ip-access'),
   addIPAccessEntry: (data: any) => api.post('/admin/security/ip-access', data),
   removeIPAccessEntry: (id: number) => api.delete(`/admin/security/ip-access/${id}`),
+
+  // Maintenance & Backup
+  getSystemStatus: () => api.get('/admin/system/status'),
+  toggleMaintenance: (enabled: boolean) => api.post('/admin/system/maintenance', { enabled }),
+  performCleanup: () => api.post('/admin/system/cleanup'),
+  exportBackup: () => api.get('/admin/system/backup/export'),
+  runEncryptionAudit: () => api.get('/admin/security/encryption-audit'),
 };
 
 export const teacherApi = {
@@ -109,10 +116,6 @@ export const teacherApi = {
   uploadAvatar: (data: FormData) =>
     api.post('/teacher/profile/avatar', data),
   deleteAvatar: () => api.delete('/teacher/profile/avatar'),
-
-  // Settings
-  getAttendanceSettings: () => api.get('/teacher/settings/attendance'),
-  updateAttendanceSettings: (data: any) => api.put('/teacher/settings/attendance', data),
 };
 
 export const studentApi = {
