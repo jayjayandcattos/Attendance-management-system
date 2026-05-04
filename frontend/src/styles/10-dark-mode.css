@@ -1100,6 +1100,19 @@ html.dark .sd-activity-panel {
   border: 1px solid #334155 !important;
 }
 
+html.dark .sd-schedule-item {
+  border-left-color: #334155;
+}
+
+html.dark .sd-schedule-item.highlight {
+  background: rgba(245, 158, 11, 0.08) !important;
+  border-left-color: #f59e0b !important;
+}
+
+html.dark .sd-schedule-item:hover {
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
 html.dark .sd-course-card-bottom {
   background: #1e293b !important;
   border-top-color: #334155 !important;
