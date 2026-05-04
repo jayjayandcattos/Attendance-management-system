@@ -37,13 +37,18 @@ html.dark .light-theme-only .form-input,
 html.dark .light-theme-only .form-label,
 html.dark .light-theme-only .login-card,
 html.dark .light-theme-only .register-card,
+html.dark .light-theme-only select,
+html.dark .light-theme-only option,
 .light-theme-only .form-input,
 .light-theme-only .form-label,
 .light-theme-only .login-card,
-.light-theme-only .register-card {
+.light-theme-only .register-card,
+.light-theme-only select,
+.light-theme-only option {
   background-color: #ffffff !important;
   color: #0f172a !important;
   border-color: #e2e8f0 !important;
+  color-scheme: light !important;
 }
 
 html.dark .light-theme-only .btn-primary {

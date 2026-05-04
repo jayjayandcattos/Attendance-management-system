@@ -278,7 +278,7 @@
 }
 
 .login-card .form-input {
-  background: #f8fafc !important;
+  background-color: #f8fafc !important;
   color: #0f172a !important;
   caret-color: #0f172a !important;
   border: 1px solid #e2e8f0 !important;
@@ -288,6 +288,15 @@
   padding: 0.85rem 1rem !important;
   font-size: 1rem !important;
   width: 100%;
+}
+
+.login-card select.form-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 1rem center !important;
+  background-size: 1.2em !important;
+  padding-right: 2.75rem !important;
 }
 
 .login-card .form-input::placeholder {
@@ -307,7 +316,11 @@
 
 .password-input-wrapper .form-input {
   width: 100%;
-  padding-right: 3rem;
+  padding-right: 3rem !important;
+}
+
+.password-input-wrapper .input-icon ~ .form-input {
+  padding-left: 3rem !important;
 }
 
 .password-toggle-btn {
