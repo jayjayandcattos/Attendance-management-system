@@ -5,7 +5,7 @@
 /* ── Message Context Menu ───────────────────────────────────── */
 .msg-context-menu {
   position: fixed;
-  z-index: 2000;
+  z-index: 4000;
   background: #2d2d2d;
   border: 1px solid #3d3d3d;
   border-radius: 12px;
@@ -72,7 +72,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 1999;
+  z-index: 3999;
   background: rgba(15, 23, 42, 0.4);
   backdrop-filter: blur(2px);
   display: flex;
@@ -187,11 +187,11 @@
   }
 
   .chat-message-row.theirs {
-    padding-right: 10%;
+    padding-right: 0;
   }
 
   .chat-message-row.mine {
-    padding-left: 10%;
+    padding-left: 0;
   }
 
   .msg-context-menu {
@@ -211,6 +211,59 @@
     height: 36px;
     border-radius: 8px;
   }
+
+  .chat-bubble-stack {
+    max-width: 50% !important;
+  }
+
+  .message-actions {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    flex-direction: row;
+    gap: 0.15rem;
+    padding: 0.15rem;
+    position: absolute !important;
+    top: 50% !important;
+    transform: translateY(-50%) scale(0.9) !important;
+    background: rgba(15, 23, 42, 0.75) !important;
+    backdrop-filter: blur(8px) !important;
+    border-radius: 12px;
+    z-index: 100;
+  }
+
+  .chat-message-row:hover .message-actions,
+  .chat-message-row:active .message-actions {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: translateY(-50%) scale(1) !important;
+  }
+
+  .message-actions.mine {
+    right: 100% !important;
+    margin-right: 4px !important;
+    flex-direction: row-reverse;
+  }
+
+  .message-actions.theirs {
+    left: 100% !important;
+    margin-left: 4px !important;
+  }
+
+  .message-action-btn {
+    width: 28px !important;
+    height: 28px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .message-action-btn svg {
+    width: 14px !important;
+    height: 14px !important;
+    color: #ffffff !important;
+  }
 }
 
 
@@ -221,6 +274,7 @@
   align-items: center;
   gap: 0.15rem;
   opacity: 0;
+  visibility: hidden;
   padding: 0.15rem 0.3rem;
   border-radius: 12px;
   position: absolute;
@@ -228,12 +282,13 @@
   z-index: 5;
   pointer-events: none;
   transform: translateY(-50%) scale(0.9);
-  transition: opacity 0.15s ease, transform 0.15s ease, background 0.15s ease;
+  transition: opacity 0.15s ease, visibility 0.15s ease, transform 0.15s ease, background 0.15s ease;
 }
 
 .chat-message-row:hover .message-actions {
   pointer-events: auto;
   opacity: 1;
+  visibility: visible;
   transform: translateY(-50%) scale(1);
 }
 
@@ -243,6 +298,7 @@
   left: auto;
   right: 100%;
   margin-right: 8px;
+  flex-direction: row-reverse;
 }
 
 .message-actions.theirs {
@@ -301,13 +357,14 @@
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  margin-bottom: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background: rgba(0, 0, 0, 0.06);
-  border-left: 3px solid rgba(0, 0, 0, 0.2);
+  margin-bottom: 0.4rem;
+  padding: 0.35rem 0.65rem;
+  background: rgba(15, 23, 42, 0.05);
+  border-left: 3px solid rgba(15, 23, 42, 0.2);
   border-radius: 8px;
   transition: all 0.2s;
   max-width: 100%;
+  backdrop-filter: blur(4px);
 }
 
 .messenger-reply-wrapper:hover {
@@ -315,9 +372,9 @@
 }
 
 .chat-bubble.mine .messenger-reply-wrapper {
-  background: rgba(255, 255, 255, 0.15);
-  border-left-color: rgba(255, 255, 255, 0.5);
-  color: white;
+  background: rgba(255, 255, 255, 0.12);
+  border-left-color: rgba(255, 255, 255, 0.7);
+  color: #ffffff;
 }
 
 .chat-bubble.mine .messenger-reply-wrapper:hover {
@@ -325,24 +382,29 @@
 }
 
 .messenger-reply-header {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 700;
   color: inherit;
-  opacity: 0.85;
+  opacity: 0.95;
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-bottom: 2px;
+  margin-bottom: 1px;
 }
 
 .messenger-reply-bubble {
   color: inherit;
-  font-size: 0.8rem;
-  opacity: 0.85;
+  font-size: 0.75rem;
+  opacity: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
+  font-weight: 500;
+}
+
+.chat-bubble.mine .messenger-reply-bubble {
+  color: #ffffff !important;
 }
 
 .chat-bubble {
@@ -408,4 +470,3 @@
     opacity: 1;
   }
 }
-

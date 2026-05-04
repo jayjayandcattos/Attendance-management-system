@@ -106,12 +106,6 @@
   }
 }
 
-.dashboard-layout.sidebar-open .main-content {
-  /* Only translate content if it's not mobile overlay mode? 
-     Actually, on mobile we use an overlay, so we don't need to translate main-content.
-  */
-}
-
 body.sidebar-open {
   overflow: hidden;
 }

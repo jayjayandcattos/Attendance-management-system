@@ -253,7 +253,7 @@
 /* ── Message Context Menu ───────────────────────────────────── */
 .msg-context-menu {
   position: fixed;
-  z-index: 2000;
+  z-index: 4000;
   background: #2d2d2d;
   border-radius: var(--radius-sm);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);

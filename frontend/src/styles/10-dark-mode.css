@@ -281,8 +281,8 @@ html.dark .ta-stat-icon-box {
 
 html.dark .ta-table-code,
 html.dark .ta-code-value {
-  background: #0f172a;
-  border-color: #334155;
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.2);
   color: #3b82f6;
 }
 

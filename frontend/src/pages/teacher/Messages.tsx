@@ -45,6 +45,7 @@ const TeacherMessages: React.FC = () => {
   const [showDms, setShowDms] = useState(true);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadingFile, setUploadingFile] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState<number | null>(null);
 
   const chatRef = useRef<HTMLDivElement>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -370,9 +371,6 @@ const TeacherMessages: React.FC = () => {
   };
 
   const handleDeleteForEveryone = async (messageId: number) => {
-    const ok = window.confirm('Delete this message for everyone?');
-    if (!ok) return;
-
     try {
       if (viewMode === 'group') {
         await teacherApi.deleteGroupMessage(messageId);
@@ -383,11 +381,11 @@ const TeacherMessages: React.FC = () => {
       }
 
       refreshConversations();
-      showAlert('Deleted', 'Message removed for everyone.', 'error');
     } catch (err) {
       showApiError(err);
     } finally {
       setContextMenu(null);
+      setShowDeleteModal(null);
     }
   };
 
@@ -721,14 +719,16 @@ const TeacherMessages: React.FC = () => {
                             >
                               <Reply size={16} />
                             </button>
-                            <button
-                              type="button"
-                              className="message-action-btn"
-                              title="More options"
-                              onClick={(e) => handleContextMenu(e, m.id)}
-                            >
-                              <MoreVertical size={16} />
-                            </button>
+                            {isMine && (
+                              <button
+                                type="button"
+                                className="message-action-btn"
+                                title="More options"
+                                onClick={(e) => handleContextMenu(e, m.id)}
+                              >
+                                <MoreVertical size={16} />
+                              </button>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -821,48 +821,32 @@ const TeacherMessages: React.FC = () => {
         </div>
       )}
 
-      {contextMenu && (
-        <div
-          ref={contextMenuRef}
-          className="msg-context-menu"
-          style={{
-            left: `${contextMenu.x}px`,
-            top: `${contextMenu.y}px`
-          }}
-        >
-          <button
-            className="context-menu-item"
-            onClick={() => {
-              const message = messages.find(m => m.id === contextMenu.messageId);
-              if (message) {
-                setPickerOpenFor(getMessageReactionKey(contextMenu.messageId));
-                setContextMenu(null);
-              }
+      {contextMenu && (() => {
+        const message = messages.find(m => m.id === contextMenu.messageId);
+        if (!message || !isOwnMessage(message)) return null;
+
+        return (
+          <div
+            ref={contextMenuRef}
+            className="msg-context-menu"
+            style={{
+              left: `${contextMenu.x}px`,
+              top: `${contextMenu.y}px`
             }}
           >
-            <Smile size={18} />
-            <span>React</span>
-          </button>
-          <button
-            className="context-menu-item"
-            onClick={() => handleReply(contextMenu.messageId)}
-          >
-            <Reply size={18} />
-            <span>Reply</span>
-          </button>
-          {isOwnMessage(messages.find(m => m.id === contextMenu.messageId)) && (
-            <>
-              <button
-                className="context-menu-item danger"
-                onClick={() => handleDeleteForEveryone(contextMenu.messageId)}
-              >
-                <Trash2 size={18} />
-                <span>Unsend</span>
-              </button>
-            </>
-          )}
-        </div>
-      )}
+            <button
+              className="context-menu-item danger"
+              onClick={() => {
+                setShowDeleteModal(contextMenu.messageId);
+                setContextMenu(null);
+              }}
+            >
+              <Trash2 size={18} />
+              <span>Unsend for everyone</span>
+            </button>
+          </div>
+        );
+      })()}
 
       {pickerOpenFor && (
         <div className="reaction-picker-overlay" onClick={() => setPickerOpenFor(null)}>
@@ -933,6 +917,30 @@ const TeacherMessages: React.FC = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showDeleteModal && (
+        <div className="modal-overlay" onClick={() => setShowDeleteModal(null)}>
+          <div className="premium-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px', textAlign: 'center' }}>
+            <div className="premium-modal-body" style={{ padding: '2rem' }}>
+              <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+                <Trash2 size={30} />
+              </div>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--text-primary)' }}>Unsend Message?</h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.5 }}>
+                This message will be removed for everyone in the chat. They may have already seen it.
+              </p>
+            </div>
+            <div className="premium-modal-footer" style={{ borderTop: 'none', paddingTop: 0 }}>
+              <button className="btn btn-secondary" onClick={() => setShowDeleteModal(null)} style={{ flex: 1, borderRadius: 12 }}>
+                Cancel
+              </button>
+              <button className="btn btn-primary" onClick={() => handleDeleteForEveryone(showDeleteModal)} style={{ flex: 1, borderRadius: 12, background: '#ef4444' }}>
+                Unsend
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -266,7 +266,9 @@ public class TeacherController {
             @RequestBody Map<String, Object> body,
             @AuthenticationPrincipal User teacher, HttpServletRequest request) {
 
-        Long courseId = Long.valueOf(body.get("courseId").toString());
+        Object courseIdObj = body.get("courseId");
+        if (courseIdObj == null) throw new BadRequestException("Course ID is required");
+        Long courseId = Long.valueOf(courseIdObj.toString());
         courseRepository.findById(java.util.Objects.requireNonNull(courseId))
                 .filter(c -> c.getTeacher().getId().equals(teacher.getId()))
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
@@ -585,7 +587,7 @@ public class TeacherController {
                 .course(material.getCourse())
                 .material(material)
                 .user(teacher)
-                .content(body.get("content").toString())
+                .content(body.get("content") != null ? body.get("content").toString() : "")
                 .isPrivate(body.containsKey("isPrivate") && (boolean) body.get("isPrivate"))
                 .build();
 
@@ -606,10 +608,12 @@ public class TeacherController {
         AssignmentSubmission submission = assignmentSubmissionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Submission not found"));
 
-        if (body.containsKey("grade"))
-            submission.setGrade(body.get("grade").toString());
-        if (body.containsKey("feedback"))
-            submission.setFeedback(body.get("feedback").toString());
+        if (body.containsKey("grade")) {
+            submission.setGrade(body.get("grade") != null ? String.valueOf(body.get("grade")) : null);
+        }
+        if (body.containsKey("feedback")) {
+            submission.setFeedback(body.get("feedback") != null ? String.valueOf(body.get("feedback")) : null);
+        }
         submission.setStatus("graded");
 
         return ResponseEntity.ok(ApiResponse.success("Submission graded",
@@ -641,19 +645,22 @@ public class TeacherController {
     public ResponseEntity<ApiResponse<Message>> sendMessage(
             @RequestBody Map<String, Object> body,
             @AuthenticationPrincipal User teacher, HttpServletRequest request) {
-        Long receiverId = Long.valueOf(body.get("receiverId").toString());
+        Object receiverIdObj = body.get("receiverId");
+        if (receiverIdObj == null) throw new BadRequestException("Receiver ID is required");
+        Long receiverId = Long.valueOf(String.valueOf(receiverIdObj));
+
         User receiver = userRepository.findById(java.util.Objects.requireNonNull(receiverId))
                 .orElseThrow(() -> new ResourceNotFoundException("Recipient not found"));
 
         Message msg = Message.builder()
                 .sender(teacher).receiver(receiver)
-                .subject(body.containsKey("subject") ? body.get("subject").toString() : null)
-                .content(body.get("content").toString())
-                .parentId(body.containsKey("parentId") ? Long.valueOf(body.get("parentId").toString()) : null)
-                .attachmentPath(body.containsKey("attachmentUrl") ? body.get("attachmentUrl").toString() : null)
-                .attachmentName(body.containsKey("attachmentName") ? body.get("attachmentName").toString() : null)
-                .attachmentType(body.containsKey("attachmentType") ? body.get("attachmentType").toString() : null)
-                .attachmentSize(body.containsKey("attachmentSize") ? Long.valueOf(body.get("attachmentSize").toString()) : null)
+                .subject(body.get("subject") != null ? String.valueOf(body.get("subject")) : null)
+                .content(body.get("content") != null ? String.valueOf(body.get("content")) : "")
+                .parentId(body.get("parentId") != null ? Long.valueOf(String.valueOf(body.get("parentId"))) : null)
+                .attachmentPath(body.get("attachmentUrl") != null ? String.valueOf(body.get("attachmentUrl")) : null)
+                .attachmentName(body.get("attachmentName") != null ? String.valueOf(body.get("attachmentName")) : null)
+                .attachmentType(body.get("attachmentType") != null ? String.valueOf(body.get("attachmentType")) : null)
+                .attachmentSize(body.get("attachmentSize") != null ? Long.valueOf(String.valueOf(body.get("attachmentSize"))) : null)
                 .build();
         msg = messageRepository.save(java.util.Objects.requireNonNull(msg));
         auditService.log(teacher, "send_dm", "message", msg.getId(), request);
@@ -664,19 +671,22 @@ public class TeacherController {
     public ResponseEntity<ApiResponse<CourseMessage>> sendGroupMessage(
             @RequestBody Map<String, Object> body,
             @AuthenticationPrincipal User teacher, HttpServletRequest request) {
-        Long courseId = Long.valueOf(body.get("courseId").toString());
+        Object courseIdObj = body.get("courseId");
+        if (courseIdObj == null) throw new BadRequestException("Course ID is required");
+        Long courseId = Long.valueOf(String.valueOf(courseIdObj));
+
         Course course = courseRepository.findById(java.util.Objects.requireNonNull(courseId))
                 .filter(c -> c.getTeacher().getId().equals(teacher.getId()))
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
 
         CourseMessage msg = CourseMessage.builder()
                 .course(course).sender(teacher)
-                .content(body.get("content").toString())
-                .parentId(body.containsKey("parentId") ? Long.valueOf(body.get("parentId").toString()) : null)
-                .attachmentPath(body.containsKey("attachmentUrl") ? body.get("attachmentUrl").toString() : null)
-                .attachmentName(body.containsKey("attachmentName") ? body.get("attachmentName").toString() : null)
-                .attachmentType(body.containsKey("attachmentType") ? body.get("attachmentType").toString() : null)
-                .attachmentSize(body.containsKey("attachmentSize") ? Long.valueOf(body.get("attachmentSize").toString()) : null)
+                .content(body.get("content") != null ? String.valueOf(body.get("content")) : "")
+                .parentId(body.get("parentId") != null ? Long.valueOf(String.valueOf(body.get("parentId"))) : null)
+                .attachmentPath(body.get("attachmentUrl") != null ? String.valueOf(body.get("attachmentUrl")) : null)
+                .attachmentName(body.get("attachmentName") != null ? String.valueOf(body.get("attachmentName")) : null)
+                .attachmentType(body.get("attachmentType") != null ? String.valueOf(body.get("attachmentType")) : null)
+                .attachmentSize(body.get("attachmentSize") != null ? Long.valueOf(String.valueOf(body.get("attachmentSize"))) : null)
                 .build();
         msg = courseMessageRepository.save(java.util.Objects.requireNonNull(msg));
         return ResponseEntity.ok(ApiResponse.success("Group message sent", msg));
@@ -686,14 +696,16 @@ public class TeacherController {
     public ResponseEntity<ApiResponse<Void>> broadcast(
             @RequestBody Map<String, Object> body,
             @AuthenticationPrincipal User teacher, HttpServletRequest request) {
-        Long courseId = Long.valueOf(body.get("courseId").toString());
+        Long courseId = body.get("courseId") != null ? Long.valueOf(String.valueOf(body.get("courseId"))) : null;
+        if (courseId == null) throw new BadRequestException("Course ID is required");
+
         Course course = courseRepository.findById(java.util.Objects.requireNonNull(courseId))
                 .filter(c -> c.getTeacher().getId().equals(teacher.getId()))
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
 
-        String subject = body.containsKey("subject") ? body.get("subject").toString()
+        String subject = body.get("subject") != null ? String.valueOf(body.get("subject"))
                 : "[" + course.getCourseName() + "] Announcement";
-        String content = body.get("content").toString();
+        String content = body.get("content") != null ? String.valueOf(body.get("content")) : "";
 
         List<Enrollment> enrollments = enrollmentRepository.findByCourseIdAndStatus(courseId, "active");
         for (Enrollment e : enrollments) {
@@ -830,7 +842,9 @@ public class TeacherController {
     public ResponseEntity<ApiResponse<Void>> markDmRead(
             @RequestBody Map<String, Object> body,
             @AuthenticationPrincipal User teacher) {
-        Long userId = Long.valueOf(body.get("userId").toString());
+        Object userIdObj = body.get("userId");
+        if (userIdObj == null) return ResponseEntity.ok(ApiResponse.success("No user to mark read", null));
+        Long userId = Long.valueOf(String.valueOf(userIdObj));
         messageRepository.markAsRead(userId, teacher.getId());
         return ResponseEntity.ok(ApiResponse.success("Messages marked as read", null));
     }

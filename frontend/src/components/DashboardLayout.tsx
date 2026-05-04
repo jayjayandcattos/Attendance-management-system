@@ -401,7 +401,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           width: '100vw',
           height: '100vh',
           background: 'rgba(0,0,0,0.25)',
-          zIndex: 200,
+          zIndex: 2001,
         }}
         onClick={() => setSidebarOpen(false)}
       />
@@ -409,7 +409,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       <aside
         id="sidebar-menu"
         className={`sidebar${sidebarOpen ? ' open' : ''}`}
-        style={sidebarOpen ? { zIndex: 201 } : {}}
+        style={sidebarOpen ? { zIndex: 2002 } : {}}
         aria-modal="true"
         role="dialog"
         tabIndex={sidebarOpen ? 0 : -1}

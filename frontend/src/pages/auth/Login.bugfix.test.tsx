@@ -2,7 +2,9 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { render } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import Login from './Login';
+// @ts-ignore
 import fs from 'fs';
+// @ts-ignore
 import path from 'path';
 
 /**
@@ -41,6 +43,7 @@ describe('Login Page Bug Condition Exploration', () => {
 
   beforeEach(() => {
     // Read the index.css file to check for the fix
+    // @ts-ignore
     const indexCssPath = path.join(__dirname, '../../index.css');
     indexCssContent = fs.readFileSync(indexCssPath, 'utf-8');
   });

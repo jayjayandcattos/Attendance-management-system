@@ -131,11 +131,17 @@ const TeacherCourses: React.FC = () => {
       coverColor: course.coverColor || '#3b82f6'
     });
     
-    // Simple schedule parsing
+    // Parse schedule: "MTWThF 9:00 AM - 10:30 AM" → selected days
     if (course.schedule) {
+      const spaceIdx = course.schedule.indexOf(' ');
+      let dayPart = spaceIdx > -1 ? course.schedule.substring(0, spaceIdx) : course.schedule;
       const foundDays: string[] = [];
-      DAYS.forEach(d => {
-        if (course.schedule.includes(d.key)) foundDays.push(d.key);
+      // Check longer keys first, remove matched to prevent 'T' matching inside 'Th'
+      [...DAYS].sort((a, b) => b.key.length - a.key.length).forEach(d => {
+        if (dayPart.includes(d.key)) {
+          foundDays.push(d.key);
+          dayPart = dayPart.replace(d.key, '');
+        }
       });
       setSelectedDays(foundDays);
     }
@@ -293,6 +299,9 @@ const TeacherCourses: React.FC = () => {
                       <span className="tc-list-students text-xs text-muted">{c.enrollmentCount || '0'} students</span>
                     </div>
                     <div className="tc-list-actions opacity-0 group-hover:opacity-100 transition-all flex gap-2">
+                      <button className="btn btn-secondary btn-sm transition-all hover:bg-gray-200" title="Edit" onClick={(e) => openEditModal(e, c)} style={{ width: 'auto' }}>
+                        <Edit2 size={14} className="mr-1" /> Edit
+                      </button>
                       {activeTab === 'active' ? (
                         <button className="btn btn-secondary btn-sm transition-all hover:bg-gray-200" onClick={(e) => handleArchive(e, c.id)} style={{ width: 'auto' }}>
                           <Archive size={14} className="mr-1" /> Archive
@@ -347,12 +356,12 @@ const TeacherCourses: React.FC = () => {
       {/* ── Create Course Modal ───────────────────────────── */}
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal shadow-2xl animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
-            <div className="modal-header border-b pb-4">
-              <h3 className="modal-title">{isEditing ? 'Edit Course' : 'Create New Course'}</h3>
-              <button className="modal-close hover:rotate-90 transition-transform" onClick={() => setShowModal(false)}><X size={20} /></button>
+          <div className="theme-card" style={{ width: '100%', maxWidth: '600px', borderRadius: '24px', overflow: 'hidden' }} onClick={e => e.stopPropagation()}>
+            <div className="modal-header" style={{ padding: '1.5rem', background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-glass)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 className="modal-title" style={{ margin: 0, fontWeight: 900, color: 'var(--text-primary)' }}>{isEditing ? 'Edit Course' : 'Create New Course'}</h3>
+              <button className="theme-btn-secondary" style={{ border: 'none', width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setShowModal(false)}><X size={20} /></button>
             </div>
-            <form onSubmit={handleCreate} className="mt-4">
+            <form onSubmit={handleCreate} style={{ padding: '1.5rem', maxHeight: '80vh', overflowY: 'auto' }} className="modal-scroll-area">
               <div className="form-group"><label className="form-label">Course Name</label><input className="form-input focus:ring-2 focus:ring-blue-100 transition-all" value={form.courseName} onChange={e => setForm({ ...form, courseName: e.target.value })} required placeholder="Introduction to Programming" /></div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div className="form-group"><label className="form-label">Course Code</label><input className="form-input font-mono focus:ring-2 focus:ring-blue-100 transition-all" value={form.courseCode} onChange={e => setForm({ ...form, courseCode: e.target.value })} required placeholder="CS101" /></div>
@@ -369,7 +378,7 @@ const TeacherCourses: React.FC = () => {
                     </div>
                   ))}
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1.5rem' }}>
                   <div><label className="form-label text-[10px] uppercase font-bold text-gray-400">Start Time</label><input className="form-input focus:ring-2 focus:ring-blue-100 transition-all" type="time" value={startTime} onChange={e => setStartTime(e.target.value)} /></div>
                   <div><label className="form-label text-[10px] uppercase font-bold text-gray-400">End Time</label><input className="form-input focus:ring-2 focus:ring-blue-100 transition-all" type="time" value={endTime} onChange={e => setEndTime(e.target.value)} /></div>
                 </div>
@@ -425,8 +434,8 @@ const TeacherCourses: React.FC = () => {
                   </div>
                 )}
               </div>
-              <div className="modal-actions border-t pt-4 mt-6">
-                <button type="button" className="btn btn-secondary transition-colors" onClick={() => setShowModal(false)}>Cancel</button>
+              <div className="modal-actions" style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+                <button type="button" className="btn btn-secondary transition-colors" onClick={() => setShowModal(false)} style={{ width: 'auto' }}>Cancel</button>
                 <button type="submit" className="btn btn-primary shadow-sm hover:shadow-md transition-all active:scale-95" style={{ width: 'auto' }}>
                   {isEditing ? 'Save Changes' : 'Create Course'}
                 </button>
@@ -439,9 +448,12 @@ const TeacherCourses: React.FC = () => {
       {/* ── New Session Modal ──────────────────────────────── */}
       {showNewSession && (
         <div className="modal-overlay" onClick={() => setShowNewSession(false)}>
-          <div className="modal shadow-2xl animate-in fade-in duration-200" onClick={e => e.stopPropagation()} style={{ maxWidth: '420px' }}>
-            <div className="modal-header border-b pb-4"><h3 className="modal-title">Start Attendance Session</h3><button className="modal-close hover:rotate-90 transition-transform" onClick={() => setShowNewSession(false)}><X size={20} /></button></div>
-            <form onSubmit={handleNewSession} className="mt-4">
+          <div className="theme-card" style={{ width: '100%', maxWidth: '500px', borderRadius: '24px', overflow: 'hidden' }} onClick={e => e.stopPropagation()}>
+            <div className="modal-header" style={{ padding: '1.5rem', background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-glass)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 className="modal-title" style={{ margin: 0, fontWeight: 900, color: 'var(--text-primary)' }}>Start Attendance Session</h3>
+              <button className="theme-btn-secondary" style={{ border: 'none', width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setShowNewSession(false)}><X size={20} /></button>
+            </div>
+            <form onSubmit={handleNewSession} style={{ padding: '1.5rem', maxHeight: '80vh', overflowY: 'auto' }} className="modal-scroll-area">
               <div className="form-group"><label className="form-label">Course</label>
                 <select className="form-input focus:ring-2 focus:ring-blue-100 transition-all" value={sessionForm.courseId} onChange={e => setSessionForm({ ...sessionForm, courseId: e.target.value })} required>
                   <option value="">Select course...</option>
@@ -460,8 +472,8 @@ const TeacherCourses: React.FC = () => {
                   <input className="form-input focus:ring-2 focus:ring-blue-100 transition-all" type="number" min="1" value={sessionForm.lateMinutes} onChange={e => setSessionForm({ ...sessionForm, lateMinutes: e.target.value })} />
                 </div>
               )}
-              <div className="modal-actions border-t pt-4 mt-6">
-                <button type="button" className="btn btn-secondary transition-colors" onClick={() => setShowNewSession(false)}>Cancel</button>
+              <div className="modal-actions" style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+                <button type="button" className="btn btn-secondary transition-colors" onClick={() => setShowNewSession(false)} style={{ width: 'auto' }}>Cancel</button>
                 <button type="submit" className="btn btn-primary shadow-sm hover:shadow-md transition-all active:scale-95" style={{ width: 'auto' }}>
                   <Plus size={16} className="mr-1" /> Start Session Now
                 </button>
