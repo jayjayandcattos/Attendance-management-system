@@ -435,19 +435,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         >
           <X size={24} />
         </button>
-        <div className="sidebar-brand" style={{
-          padding: '1.5rem 0 0.5rem 0',
-          margin: '-1rem -1rem 0.5rem -1rem',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          overflow: 'hidden',
-          width: 'calc(100% + 2rem)'
-        }}>
+        <div className="sidebar-brand">
           <img
             src={theme === 'dark' ? "/WHITEMODE.png" : "/logo.png"}
-            alt="System Logo"
+            alt="AttendEase"
+            className="sidebar-logo"
             style={{
               width: '140px',
               height: 'auto',

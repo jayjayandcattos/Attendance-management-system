@@ -479,10 +479,6 @@
     flex: 1;
     min-height: 300px;
   }
-
-  .chat-messages {
-    max-height: 40vh !important;
-  }
 }
 
 /* ── Admin Dashboard ───────────────────────────────────────── */
@@ -1600,6 +1596,8 @@
   .messages-sidebar.is-hidden-mobile {
     transform: translateX(-100%);
     pointer-events: none;
+    visibility: hidden;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.3s;
   }
 
   .messages-main {
@@ -1616,6 +1614,8 @@
   .messages-main.is-hidden-mobile {
     transform: translateX(100%);
     pointer-events: none;
+    visibility: hidden;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.3s;
   }
 
   .chat-header {
@@ -1643,6 +1643,7 @@
     padding: 1rem !important;
     flex: 1 !important;
     height: auto !important;
+    max-height: none !important;
     background: var(--bg-primary) !important;
     overflow-y: auto !important;
   }
@@ -1651,6 +1652,10 @@
     max-width: 85% !important;
     font-size: 0.85rem !important;
     padding: 0.65rem 0.85rem !important;
+  }
+
+  .chat-bubble.mine {
+    max-width: 100% !important;
   }
 
   .chat-input {
@@ -1672,7 +1677,7 @@
 }
 
 /* ── Prevent overflow on any screen ────────────────────────── */
-* {
+*:not(.messages-layout-fullscreen):not(.messages-sidebar):not(.messages-main) {
   max-width: 100vw;
 }
 

@@ -819,6 +819,82 @@ html.dark .messenger-reply-bubble {
   color: #94a3b8 !important;
 }
 
+/* ── Message Actions Dark Mode ─────────────────────────── */
+html.dark .message-actions.mine {
+  background: rgba(59, 130, 246, 0.15);
+}
+
+html.dark .message-actions.theirs {
+  background: rgba(148, 163, 184, 0.1);
+}
+
+html.dark .message-action-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+}
+
+html.dark .message-actions.mine .message-action-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #93c5fd;
+}
+
+html.dark .message-actions.theirs .message-action-btn {
+  background: rgba(255, 255, 255, 0.06);
+  color: #94a3b8;
+}
+
+html.dark .message-action-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ── Reaction Picker Dark Mode ─────────────────────────── */
+html.dark .reaction-picker-popup {
+  background: #1e293b;
+  border-color: #334155;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+}
+
+html.dark .reaction-emoji-btn-large:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ── Reaction Chips Dark Mode ──────────────────────────── */
+html.dark .reaction-chip {
+  border-color: #1e293b;
+  background: rgba(148, 163, 184, 0.12);
+  color: #93c5fd;
+}
+
+html.dark .reaction-chip.active {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.15);
+}
+
+/* ── Reply Preview Dark Mode ───────────────────────────── */
+html.dark .reply-preview {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+html.dark .reply-preview-content {
+  color: #94a3b8;
+}
+
+html.dark .reply-preview-sender {
+  color: #93c5fd;
+}
+
+html.dark .reply-preview-close:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #94a3b8;
+}
+
+/* ── Messenger Reply Wrapper Dark Mode ─────────────────── */
+html.dark .messenger-reply-wrapper {
+  background: rgba(255, 255, 255, 0.05);
+  border-left-color: rgba(255, 255, 255, 0.15);
+}
+
 /* Attendance Search Input Dark Mode */
 .ta-search-wrapper {
   position: relative;

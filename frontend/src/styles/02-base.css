@@ -1,78 +1,32 @@
 
+/* ── Dashboard Layout ───────────────────────────────────────── */
+:root {
+  --sidebar-width: 260px;
+}
+
 .dashboard-layout {
   display: flex;
   min-height: 100vh;
   background: var(--bg-primary);
   position: relative;
-}
-
-.dashboard-layout.sidebar-open .main-content {
-  transform: translateX(240px);
-  transition: transform 0.3s cubic-bezier(.4, 0, .2, 1);
-  will-change: transform;
+  touch-action: pan-y;
 }
 
 .sidebar {
-  width: 100%;
-  max-width: 100%;
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
   background: var(--sidebar-bg);
   border-right: 1px solid var(--sidebar-border);
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  position: relative;
+  position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
   z-index: 100;
-}
-
-/* Media queries for responsive design */
-@media (min-width: 640px) {
-  .sidebar {
-    width: 80%;
-    max-width: 320px;
-    position: fixed;
-  }
-}
-
-@media (min-width: 768px) {
-  .sidebar {
-    width: 60%;
-    max-width: 300px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .sidebar {
-    width: 20%;
-    max-width: 260px;
-  }
-}
-
-/* Sidebar footer adjustments */
-.sidebar-footer {
-  margin-top: auto;
-  padding: 1rem;
-  background: var(--sidebar-bg);
-  border-top: 1px solid var(--sidebar-border);
-}
-
-@media (max-width: 900px) {
-  .sidebar {
-    width: 80vw;
-    max-width: 320px;
-    transform: translateX(-100%);
-    transition: transform 0.3s cubic-bezier(.4, 0, .2, 1);
-  }
-
-  .sidebar.open {
-    transform: translateX(0);
-  }
-
-  .dashboard-layout.sidebar-open .main-content {
-    transform: translateX(80vw);
-  }
+  transition: transform 0.3s cubic-bezier(.4, 0, .2, 1);
+  overflow-x: hidden;
 }
 
 .main-container {
@@ -80,19 +34,8 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  margin-left: 260px;
-}
-
-@media (max-width: 1024px) {
-  .main-container {
-    margin-left: 240px;
-  }
-}
-
-@media (max-width: 900px) {
-  .main-container {
-    margin-left: 0;
-  }
+  margin-left: var(--sidebar-width);
+  transition: margin-left 0.3s ease;
 }
 
 .main-content {
@@ -101,14 +44,72 @@
   width: 100%;
 }
 
-@media (max-width: 900px) {
-  .main-content {
-    padding: 1rem;
+/* Media queries for responsive design */
+@media (max-width: 1200px) {
+  :root {
+    --sidebar-width: 240px;
   }
 }
 
-.mobile-menu-btn {
-  display: none;
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-width: 220px;
+  }
+  
+  .main-content {
+    padding: 1.5rem;
+  }
+}
+
+/* Responsive sidebar for mobile */
+@media (max-width: 900px) {
+  .dashboard-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 280px;
+    max-width: 80vw;
+    transform: translateX(-100%);
+    z-index: 201;
+    box-shadow: 2px 0 16px rgba(0, 0, 0, 0.08);
+    background: var(--sidebar-bg);
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .main-container {
+    margin-left: 0 !important;
+  }
+
+  .main-content {
+    padding: 1rem;
+  }
+
+  .mobile-menu-btn {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sidebar-footer {
+    position: sticky;
+    bottom: 0;
+    background: var(--sidebar-bg);
+    z-index: 202;
+    padding-bottom: 1rem;
+    margin-top: auto;
+  }
+}
+
+.dashboard-layout.sidebar-open .main-content {
+  /* Only translate content if it's not mobile overlay mode? 
+     Actually, on mobile we use an overlay, so we don't need to translate main-content.
+  */
 }
 
 body.sidebar-open {
@@ -189,116 +190,19 @@ a:hover {
   display: inline-block;
 }
 
-/* ── Dashboard Layout ───────────────────────────────────────── */
-.dashboard-layout {
-  display: flex;
-  min-height: 100vh;
-  touch-action: pan-y;
-}
-
-.sidebar {
-  width: 100%;
-  max-width: 100%;
-  background: var(--sidebar-bg);
-  border-right: 1px solid var(--sidebar-border);
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  z-index: 100;
-}
-
-/* Media queries for responsive design */
-@media (min-width: 640px) {
-  .sidebar {
-    width: 80%;
-    max-width: 320px;
-    position: fixed;
-  }
-}
-
-@media (min-width: 768px) {
-  .sidebar {
-    width: 60%;
-    max-width: 300px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .sidebar {
-    width: 20%;
-    max-width: 260px;
-  }
-}
-
-/* Responsive sidebar for mobile */
-@media (max-width: 900px) {
-  .dashboard-layout {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 80vw;
-    max-width: 320px;
-    transform: translateX(-100%);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 201;
-    box-shadow: 2px 0 16px rgba(0, 0, 0, 0.08);
-    background: var(--sidebar-bg);
-    max-height: 100vh;
-    overflow-y: auto;
-  }
-
-  .sidebar.open {
-    transform: translateX(0);
-  }
-
-  .sidebar-overlay {
-    display: block;
-  }
-
-  .main-content {
-    margin-left: 0 !important;
-    padding: 1rem;
-  }
-
-  .mobile-menu-btn {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .sidebar-close-btn {
-    display: block !important;
-  }
-
-  .sidebar-footer {
-    position: sticky;
-    bottom: 0;
-    background: var(--sidebar-bg);
-    z-index: 202;
-    padding-bottom: 1rem;
-    margin-top: auto;
-  }
-}
+/* ── Dashboard Content Components ─────────────────────────── */
 
 .sidebar-brand {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem;
+  margin: -1rem -1rem 1rem -1rem;
   border-bottom: 1px solid var(--sidebar-border);
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  background: var(--bg-card);
+  position: relative;
+  z-index: 10;
 }
 
 .sidebar-section-label {
@@ -324,25 +228,28 @@ a:hover {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.65rem 0.75rem;
-  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
   color: var(--sidebar-text);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.875rem;
-  transition: var(--transition);
+  transition: all 0.2s ease;
   text-decoration: none;
+  margin: 0.1rem 0;
+  border: 1px solid transparent;
 }
 
 .sidebar-link:hover {
-  background: #f3f4f6;
-  color: var(--text-primary);
+  background: rgba(59, 130, 246, 0.05);
+  color: var(--accent-blue);
+  transform: translateX(4px);
 }
 
 .sidebar-link.active {
   background: var(--sidebar-active);
   color: var(--accent-blue);
-  font-weight: 600;
-  border-left: 3px solid var(--accent-blue);
+  border-color: rgba(59, 130, 246, 0.2);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.08);
 }
 
 .sidebar-footer {
