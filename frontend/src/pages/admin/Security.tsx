@@ -334,50 +334,7 @@ const SystemConsole: React.FC = () => {
               </div>
             </div>
 
-            {/* Backup Strategy */}
-            <div className="premium-card animate-scale-in" style={{ padding: '2rem' }}>
-              <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', marginBottom: '2rem' }}>
-                <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: '#eff6ff', color: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Database size={28} />
-                </div>
-                <div>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Backup Strategy</h3>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Secure snapshots and database recovery points</p>
-                </div>
-              </div>
 
-              <div style={{ background: 'rgba(30, 41, 59, 0.3)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border-glass)', marginBottom: '1.5rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                  <div style={{ fontSize: '0.875rem', fontWeight: 700 }}>Last Automated Backup</div>
-                  <div style={{ fontSize: '0.875rem', color: '#10b981', fontWeight: 600 }}>Success (2h ago)</div>
-                </div>
-                <div style={{ fontSize: '0.75rem', opacity: 0.7 }}>Storage Provider: Amazon S3 (ap-southeast-1) | Frequency: Daily 12:00 AM</div>
-              </div>
-
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <button 
-                  className={`btn btn-primary ${opsLoading['backup'] ? 'loading' : ''}`} 
-                  style={{ flex: 1, opacity: opsLoading['backup'] ? 0.8 : 1 }} 
-                  disabled={opsLoading['backup']}
-                  onClick={async () => {
-                    setOpsLoading(prev => ({ ...prev, backup: true }));
-                    try {
-                      const res = await adminApi.exportBackup();
-                      setTimeout(() => {
-                        addLog(`Manual Backup initiated: ${res.data.data.users} users, ${res.data.data.courses} courses recorded`, 'info');
-                        addLog(`Snapshot file generated: ${res.data.data.fileUrl}`, 'debug');
-                        setOpsLoading(prev => ({ ...prev, backup: false }));
-                      }, 2000);
-                    } catch {
-                      setOpsLoading(prev => ({ ...prev, backup: false }));
-                    }
-                  }}
-                >
-                  <Download size={18} />
-                  {opsLoading['backup'] ? 'Generating Snapshot...' : 'Generate Instant Snapshot'}
-                </button>
-              </div>
-            </div>
 
             {/* Privacy Compliance */}
             <div className="premium-card animate-scale-in" style={{ padding: '2rem' }}>

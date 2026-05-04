@@ -24,10 +24,21 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -519,17 +530,110 @@ public class AdminController {
     }
 
     @GetMapping("/system/backup/export")
-    public ResponseEntity<ApiResponse<Map<String, Object>>> exportDataBackup() {
-        Map<String, Object> backup = new HashMap<>();
-        backup.put("exportDate", LocalDateTime.now());
-        backup.put("users", userRepository.count());
-        backup.put("courses", courseRepository.count());
-        backup.put("sessions", sessionRepository.count());
-        backup.put("records", recordRepository.count());
-        backup.put("status", "COMPLETED");
-        backup.put("fileUrl", "/api/admin/system/backup/download/latest.sql");
-        
-        return ResponseEntity.ok(ApiResponse.success("Database snapshot generated", backup));
+    public ResponseEntity<ApiResponse<Map<String, Object>>> exportDataBackup() throws IOException {
+        String backupDir = "uploads/backups";
+        String fileName = "backup_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".json";
+        Path dirPath = Paths.get(backupDir);
+        Files.createDirectories(dirPath);
+        Path filePath = dirPath.resolve(fileName);
+
+        // Build plain data maps to avoid JPA lazy-load / circular-reference issues
+        List<Map<String, Object>> usersData = userRepository.findAll().stream().map(u -> {
+            Map<String, Object> m = new HashMap<>();
+            m.put("id", u.getId());
+            m.put("firstName", u.getFirstName());
+            m.put("lastName", u.getLastName());
+            m.put("email", u.getEmail());
+            m.put("role", u.getRole());
+            m.put("status", u.getStatus());
+            m.put("department", u.getDepartment());
+            m.put("createdAt", u.getCreatedAt() != null ? u.getCreatedAt().toString() : null);
+            return m;
+        }).collect(java.util.stream.Collectors.toList());
+
+        List<Map<String, Object>> coursesData = courseRepository.findAll().stream().map(c -> {
+            Map<String, Object> m = new HashMap<>();
+            m.put("id", c.getId());
+            m.put("courseCode", c.getCourseCode());
+            m.put("courseName", c.getCourseName());
+            m.put("description", c.getDescription());
+            m.put("section", c.getSection());
+            m.put("schedule", c.getSchedule());
+            m.put("room", c.getRoom());
+            m.put("status", c.getStatus());
+            m.put("joinCode", c.getJoinCode());
+            m.put("coverColor", c.getCoverColor());
+            m.put("teacherId", c.getTeacher() != null ? c.getTeacher().getId() : null);
+            m.put("createdAt", c.getCreatedAt() != null ? c.getCreatedAt().toString() : null);
+            return m;
+        }).collect(java.util.stream.Collectors.toList());
+
+        List<Map<String, Object>> sessionsData = sessionRepository.findAll().stream().map(s -> {
+            Map<String, Object> m = new HashMap<>();
+            m.put("id", s.getId());
+            m.put("sessionTitle", s.getSessionTitle());
+            m.put("attendanceCode", s.getAttendanceCode());
+            m.put("status", s.getStatus());
+            m.put("durationMinutes", s.getDurationMinutes());
+            m.put("startTime", s.getStartTime() != null ? s.getStartTime().toString() : null);
+            m.put("endTime", s.getEndTime() != null ? s.getEndTime().toString() : null);
+            m.put("courseId", s.getCourse() != null ? s.getCourse().getId() : null);
+            m.put("teacherId", s.getTeacher() != null ? s.getTeacher().getId() : null);
+            m.put("allowLate", s.getAllowLate());
+            m.put("lateMinutes", s.getLateMinutes());
+            return m;
+        }).collect(java.util.stream.Collectors.toList());
+
+        List<Map<String, Object>> recordsData = recordRepository.findAll().stream().map(r -> {
+            Map<String, Object> m = new HashMap<>();
+            m.put("id", r.getId());
+            m.put("status", r.getStatus());
+            m.put("submittedAt", r.getSubmittedAt() != null ? r.getSubmittedAt().toString() : null);
+            m.put("ipAddress", r.getIpAddress());
+            m.put("notes", r.getNotes());
+            m.put("sessionId", r.getSession() != null ? r.getSession().getId() : null);
+            m.put("studentId", r.getStudent() != null ? r.getStudent().getId() : null);
+            m.put("courseId", r.getCourse() != null ? r.getCourse().getId() : null);
+            return m;
+        }).collect(java.util.stream.Collectors.toList());
+
+        // Write JSON file with plain data
+        Map<String, Object> backupData = new HashMap<>();
+        backupData.put("exportDate", LocalDateTime.now().toString());
+        backupData.put("users", usersData);
+        backupData.put("courses", coursesData);
+        backupData.put("sessions", sessionsData);
+        backupData.put("records", recordsData);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        mapper.writeValue(filePath.toFile(), backupData);
+
+        // Response
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "COMPLETED");
+        response.put("fileName", fileName);
+        response.put("fileUrl", "/uploads/backups/" + fileName);
+        response.put("users", usersData.size());
+        response.put("courses", coursesData.size());
+        response.put("sessions", sessionsData.size());
+        response.put("records", recordsData.size());
+        response.put("exportDate", LocalDateTime.now().toString());
+
+        return ResponseEntity.ok(ApiResponse.success("Database snapshot generated", response));
+    }
+
+    @GetMapping("/system/backup/download/{fileName}")
+    public ResponseEntity<Resource> downloadBackup(@PathVariable String fileName) {
+        Path filePath = Paths.get("uploads/backups", fileName);
+        if (!Files.exists(filePath)) {
+            return ResponseEntity.notFound().build();
+        }
+        Resource resource = new FileSystemResource(filePath);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(resource);
     }
 
     @GetMapping("/security/encryption-audit")
