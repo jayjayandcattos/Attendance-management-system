@@ -70,6 +70,7 @@ com\attendease\entity\Comment.class
 com\attendease\repository\SecurityConfigurationRepository.class
 com\attendease\dto\UserDto$UserDtoBuilder.class
 com\attendease\entity\DashboardWidgetPreference.class
+com\attendease\service\ProfanityFilterService.class
 com\attendease\service\DashboardAnalyticsService$1.class
 com\attendease\config\JacksonConfig.class
 com\attendease\entity\AttendanceRecord.class

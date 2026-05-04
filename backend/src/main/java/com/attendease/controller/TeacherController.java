@@ -5,6 +5,7 @@ import com.attendease.entity.*;
 import com.attendease.exception.BadRequestException;
 import com.attendease.exception.ResourceNotFoundException;
 import com.attendease.repository.*;
+import com.attendease.service.ProfanityFilterService;
 import com.attendease.service.AuditService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,7 @@ public class TeacherController {
     private final AuditService auditService;
     private final SecurityEventRepository securityEventRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ProfanityFilterService profanityFilterService;
 
     // ── Dashboard ──────────────────────────────────────────────────────
     @GetMapping("/dashboard")
@@ -652,10 +654,13 @@ public class TeacherController {
         User receiver = userRepository.findById(java.util.Objects.requireNonNull(receiverId))
                 .orElseThrow(() -> new ResourceNotFoundException("Recipient not found"));
 
+        String content = body.get("content") != null ? String.valueOf(body.get("content")) : "";
+        content = profanityFilterService.filter(content);
+
         Message msg = Message.builder()
                 .sender(teacher).receiver(receiver)
                 .subject(body.get("subject") != null ? String.valueOf(body.get("subject")) : null)
-                .content(body.get("content") != null ? String.valueOf(body.get("content")) : "")
+                .content(content)
                 .parentId(body.get("parentId") != null ? Long.valueOf(String.valueOf(body.get("parentId"))) : null)
                 .attachmentPath(body.get("attachmentUrl") != null ? String.valueOf(body.get("attachmentUrl")) : null)
                 .attachmentName(body.get("attachmentName") != null ? String.valueOf(body.get("attachmentName")) : null)
@@ -679,9 +684,12 @@ public class TeacherController {
                 .filter(c -> c.getTeacher().getId().equals(teacher.getId()))
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
 
+        String content = body.get("content") != null ? String.valueOf(body.get("content")) : "";
+        content = profanityFilterService.filter(content);
+
         CourseMessage msg = CourseMessage.builder()
                 .course(course).sender(teacher)
-                .content(body.get("content") != null ? String.valueOf(body.get("content")) : "")
+                .content(content)
                 .parentId(body.get("parentId") != null ? Long.valueOf(String.valueOf(body.get("parentId"))) : null)
                 .attachmentPath(body.get("attachmentUrl") != null ? String.valueOf(body.get("attachmentUrl")) : null)
                 .attachmentName(body.get("attachmentName") != null ? String.valueOf(body.get("attachmentName")) : null)
@@ -706,6 +714,7 @@ public class TeacherController {
         String subject = body.get("subject") != null ? String.valueOf(body.get("subject"))
                 : "[" + course.getCourseName() + "] Announcement";
         String content = body.get("content") != null ? String.valueOf(body.get("content")) : "";
+        content = profanityFilterService.filter(content);
 
         List<Enrollment> enrollments = enrollmentRepository.findByCourseIdAndStatus(courseId, "active");
         for (Enrollment e : enrollments) {

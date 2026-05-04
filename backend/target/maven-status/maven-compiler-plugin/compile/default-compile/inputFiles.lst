@@ -78,4 +78,5 @@ C:\codes\Attendance-management-system\backend\src\main\java\com\attendease\servi
 C:\codes\Attendance-management-system\backend\src\main\java\com\attendease\service\DashboardAnalyticsService.java
 C:\codes\Attendance-management-system\backend\src\main\java\com\attendease\service\EmailService.java
 C:\codes\Attendance-management-system\backend\src\main\java\com\attendease\service\LoginSecurityService.java
+C:\codes\Attendance-management-system\backend\src\main\java\com\attendease\service\ProfanityFilterService.java
 C:\codes\Attendance-management-system\backend\src\main\java\com\attendease\util\AesEncryptionUtil.java

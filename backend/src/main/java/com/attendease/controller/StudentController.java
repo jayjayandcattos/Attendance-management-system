@@ -6,6 +6,7 @@ import com.attendease.exception.BadRequestException;
 import com.attendease.exception.ResourceNotFoundException;
 import com.attendease.repository.*;
 import com.attendease.service.AuditService;
+import com.attendease.service.ProfanityFilterService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -46,6 +47,7 @@ public class StudentController {
     private final AuditService auditService;
     private final PasswordEncoder passwordEncoder;
     private final SecurityEventRepository securityEventRepository;
+    private final ProfanityFilterService profanityFilterService;
 
     // ── Dashboard ──────────────────────────────────────────────────────
     @GetMapping("/dashboard")
@@ -392,10 +394,13 @@ public class StudentController {
         User receiver = userRepository.findById(receiverId)
                 .orElseThrow(() -> new ResourceNotFoundException("Recipient not found"));
 
+        String content = body.get("content") != null ? String.valueOf(body.get("content")) : "";
+        content = profanityFilterService.filter(content);
+
         Message msg = Message.builder()
                 .sender(student).receiver(receiver)
                 .subject(body.get("subject") != null ? String.valueOf(body.get("subject")) : null)
-                .content(body.get("content") != null ? String.valueOf(body.get("content")) : "")
+                .content(content)
                 .parentId(body.get("parentId") != null ? Long.valueOf(String.valueOf(body.get("parentId"))) : null)
                 .attachmentPath(body.get("attachmentUrl") != null ? String.valueOf(body.get("attachmentUrl")) : null)
                 .attachmentName(body.get("attachmentName") != null ? String.valueOf(body.get("attachmentName")) : null)
@@ -607,9 +612,12 @@ public class StudentController {
                 .orElseThrow(() -> new BadRequestException("Not enrolled"));
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
+        String content = body.get("content") != null ? String.valueOf(body.get("content")) : "";
+        content = profanityFilterService.filter(content);
+
         CourseMessage msg = CourseMessage.builder()
                 .course(course).sender(student)
-                .content(body.get("content") != null ? String.valueOf(body.get("content")) : "")
+                .content(content)
                 .parentId(body.get("parentId") != null ? Long.valueOf(String.valueOf(body.get("parentId"))) : null)
                 .attachmentPath(body.get("attachmentUrl") != null ? String.valueOf(body.get("attachmentUrl")) : null)
                 .attachmentName(body.get("attachmentName") != null ? String.valueOf(body.get("attachmentName")) : null)
