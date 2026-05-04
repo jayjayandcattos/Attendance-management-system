@@ -301,6 +301,18 @@ const TeacherMaterials: React.FC = () => {
         } catch (err: any) { showApiError(err); }
     };
 
+    const toggleAssignmentStatus = async (m: any) => {
+        const action = m.isClosed ? 'reopen' : 'close';
+        showConfirm(`${action.charAt(0).toUpperCase() + action.slice(1)} Assignment`, `Are you sure you want to ${action} this assignment?`, async () => {
+            try {
+                if (m.isClosed) await teacherApi.reopenMaterial(m.id);
+                else await teacherApi.closeMaterial(m.id);
+                loadMaterials(selectedCourse!);
+                showAlert('Success', `Assignment ${action}ed successfully!`);
+            } catch (err: any) { showApiError(err); }
+        });
+    };
+
     const handlePreview = async (type: 'material' | 'submission', id: number, fileName: string) => {
         try {
             const res = type === 'material' ? await fileApi.downloadMaterial(id) : await fileApi.downloadSubmission(id);
@@ -488,6 +500,15 @@ const TeacherMaterials: React.FC = () => {
                                                         style={{ padding: '0.4rem 0.8rem', borderRadius: 8, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, fontWeight: 600, fontSize: '0.78rem', fontFamily: 'inherit', width: 'auto' }}>
                                                         <Trash2 size={13} /> Delete
                                                     </button>
+                                                    {m.type === 'assignment' && (
+                                                        <button 
+                                                            onClick={() => toggleAssignmentStatus(m)}
+                                                            className={`btn ${m.isClosed ? 'btn-primary' : 'btn-secondary'}`}
+                                                            style={{ padding: '0.4rem 0.8rem', borderRadius: 8, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, fontWeight: 600, fontSize: '0.78rem', fontFamily: 'inherit', width: 'auto', color: m.isClosed ? '#fff' : '#ef4444', borderColor: m.isClosed ? 'transparent' : '#fecaca' }}>
+                                                            {m.isClosed ? <Plus size={13} /> : <X size={13} />}
+                                                            {m.isClosed ? 'Reopen Assignment' : 'Close Assignment'}
+                                                        </button>
+                                                    )}
                                                     {m.type === 'link' && mLink && (
                                                         <a href={mLink} target="_blank" rel="noopener noreferrer"
                                                             className="btn btn-secondary"

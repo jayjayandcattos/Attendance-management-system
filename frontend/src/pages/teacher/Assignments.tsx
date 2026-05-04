@@ -60,6 +60,7 @@ const TeacherAssignments: React.FC = () => {
     const [feedbackVal, setFeedbackVal] = useState('');
     const [submissionFilter, setSubmissionFilter] = useState<'all' | 'submitted' | 'missing' | 'graded'>('all');
     const [selectedAssignment, setSelectedAssignment] = useState<any | null>(null);
+    const [editingId, setEditingId] = useState<number | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [previewType, setPreviewType] = useState<'image' | 'pdf' | 'other' | null>(null);
     const [previewName, setPreviewName] = useState('');
@@ -105,18 +106,37 @@ const TeacherAssignments: React.FC = () => {
         try { const r = await teacherApi.getSubmissions(m.id); setSubmissions(r.data.data || []); } catch { }
     };
 
+    const getLateInfo = (dueDate: string, submittedAt: string) => {
+        const diff = new Date(submittedAt).getTime() - new Date(dueDate).getTime();
+        if (diff <= 0) return null;
+        const mins = Math.floor(diff / 60000);
+        const hours = Math.floor(mins / 60);
+        const days = Math.floor(hours / 24);
+        if (days > 0) return `${days}d ${hours % 24}h late`;
+        if (hours > 0) return `${hours}h ${mins % 60}m late`;
+        return `${mins}m late`;
+    };
+
     const getFullSubmissionList = () => {
         return enrollments.map(e => {
             const student = e.student;
             const sub = submissions.find(s => s.student?.id === student.id);
-            let status: 'missing' | 'submitted' | 'graded' = 'missing';
+            let status: 'missing' | 'submitted' | 'graded' | 'late' = 'missing';
+            let lateInfo = null;
+
             if (sub) {
-                status = (sub.grade !== null && sub.grade !== undefined) ? 'graded' : 'submitted';
+                if (sub.status === 'late') status = 'late';
+                else if (sub.grade !== null && sub.grade !== undefined) status = 'graded';
+                else status = 'submitted';
+
+                if (selectedAssignment?.dueDate && sub.createdAt) {
+                    lateInfo = getLateInfo(selectedAssignment.dueDate, sub.createdAt);
+                }
             }
-            return { student, submission: sub, status };
+            return { student, submission: sub, status, lateInfo };
         }).filter(item => {
             if (submissionFilter === 'all') return true;
-            if (submissionFilter === 'submitted') return item.status === 'submitted' || item.status === 'graded';
+            if (submissionFilter === 'submitted') return item.status === 'submitted' || item.status === 'graded' || item.status === 'late';
             if (submissionFilter === 'missing') return item.status === 'missing';
             if (submissionFilter === 'graded') return item.status === 'graded';
             return true;
@@ -163,24 +183,47 @@ const TeacherAssignments: React.FC = () => {
 
         if (!title && file) title = file.name;
         if (!title) { showAlert('Error', 'Please enter a title or attach a file', 'error'); return; }
-        if (!selectedCourse) { showAlert('Error', 'No course selected', 'error'); return; }
+        if (!selectedCourse && !editingId) { showAlert('Error', 'No course selected', 'error'); return; }
 
         setSubmitting(true);
         const fd = new FormData();
-        fd.append('courseIds', targetCourses.join(','));
+        if (!editingId) fd.append('courseIds', targetCourses.join(','));
         fd.append('type', 'assignment');
         fd.append('title', title);
         if (description) fd.append('description', description);
         if (form.dueDate) fd.append('dueDate', form.dueDate);
         if (file) fd.append('file', file);
         try {
-            await teacherApi.createMaterial(fd);
+            if (editingId) {
+                const r = await teacherApi.updateMaterial(editingId, fd);
+                setSelectedAssignment(r.data.data);
+                showAlert('Success', 'Assignment updated!');
+            } else {
+                await teacherApi.createMaterial(fd);
+                showAlert('Success', 'Assignment posted!');
+            }
             setShowModal(false);
+            setEditingId(null);
             setForm({ content: '', dueDate: '' });
             setFile(null);
             if (selectedCourse) loadAssignments(selectedCourse);
-            showAlert('Success', 'Assignment posted!');
         } catch (err: any) { showApiError(err); } finally { setSubmitting(false); }
+    };
+
+    const toggleAssignmentStatus = async (m: any) => {
+        const action = m.isClosed ? 'reopen' : 'close';
+        setSelectedAssignment(null);
+        showConfirm(`${action.charAt(0).toUpperCase() + action.slice(1)} Assignment`, `Are you sure you want to ${action} this assignment?`, async () => {
+            try {
+                if (m.isClosed) await teacherApi.reopenMaterial(m.id);
+                else await teacherApi.closeMaterial(m.id);
+                if (selectedCourse) loadAssignments(selectedCourse);
+                const r = await teacherApi.getMaterials(selectedCourse!);
+                const updated = r.data.data.find((item: any) => item.id === m.id);
+                if (updated) setSelectedAssignment(updated);
+                showAlert('Success', `Assignment ${action}ed successfully!`);
+            } catch (err: any) { showApiError(err); }
+        });
     };
 
     const handleDelete = (id: number) => {
@@ -370,70 +413,72 @@ const TeacherAssignments: React.FC = () => {
                 </div>
             )}
 
-            {showModal && (
-                <div className="modal-overlay" style={{ position: 'fixed', inset: 0, zIndex: 1100, background: 'rgba(15,23,42,0.5)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }} onClick={() => setShowModal(false)}>
+            {showModal && createPortal(
+                <div className="modal-overlay" style={{ position: 'fixed', inset: 0, zIndex: 100000, background: 'rgba(15,23,42,0.5)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }} onClick={() => { setShowModal(false); setEditingId(null); setForm({ content: '', dueDate: '' }); }}>
                     <div className="theme-card" style={{ position: 'relative', width: '100%', maxWidth: '650px', maxHeight: '90vh', borderRadius: '24px', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', animation: 'scaleIn 0.3s ease-out' }} onClick={e => e.stopPropagation()}>
-
+                        
                         {/* Header */}
                         <div className="modal-header" style={{ padding: '1.5rem 2rem', background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-glass)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
                             <div>
-                                <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-primary)' }}>New Assignment</h3>
-                                <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: 'var(--text-muted)' }}>Post instructions and materials to your sections</p>
+                                <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-primary)' }}>{editingId ? 'Edit Assignment' : 'New Assignment'}</h3>
+                                <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: 'var(--text-muted)' }}>{editingId ? 'Modify assignment details and instructions' : 'Post instructions and materials to your sections'}</p>
                             </div>
-                            <button onClick={() => setShowModal(false)} className="theme-btn-secondary" style={{ borderRadius: '50%', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s', border: 'none' }}><X size={20} color="var(--text-muted)" /></button>
+                            <button onClick={() => { setShowModal(false); setEditingId(null); setForm({ content: '', dueDate: '' }); }} className="theme-btn-secondary" style={{ borderRadius: '50%', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s', border: 'none' }}><X size={20} color="var(--text-muted)" /></button>
                         </div>
 
                         <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
                             {/* Scrollable Body */}
                             <div style={{ flex: 1, overflowY: 'auto', padding: '2rem' }} className="modal-scroll-area">
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                                    <div>
-                                        <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 12, letterSpacing: '0.05em' }}>Title & Instructions</label>
+                                <div style={{ display: 'grid', gap: '2rem' }}>
+                                    {/* Assignment Content */}
+                                    <div className="form-group">
+                                        <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>Title & Instructions</label>
                                         <textarea
-                                            required
-                                            className="form-input"
-                                            style={{ width: '100%', borderRadius: 16, padding: '1.25rem', fontSize: '0.95rem', minHeight: 150, outline: 'none', transition: 'all 0.2s', fontFamily: 'inherit' }}
-                                            placeholder="Assignment title (first line)&#10;Detailed instructions..."
+                                            style={{ width: '100%', minHeight: '160px', padding: '1rem', borderRadius: '16px', border: '1px solid var(--border-glass)', background: 'var(--bg-card)', color: 'var(--text-primary)', fontSize: '0.95rem', resize: 'vertical', transition: 'all 0.2s', outline: 'none' }}
+                                            placeholder="Write assignment title here...&#10;Then instructions below..."
                                             value={form.content}
                                             onChange={e => setForm({ ...form, content: e.target.value })}
+                                            className="focus-ring"
                                         />
                                     </div>
 
-                                    <div className="responsive-modal-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '2rem' }}>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '2rem' }}>
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                                             <div>
                                                 <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 8, letterSpacing: '0.05em' }}>Due Date</label>
                                                 <input
                                                     type="datetime-local"
-                                                    className="form-input"
-                                                    style={{ width: '100%', borderRadius: 16, padding: '0.85rem 1.25rem', fontSize: '0.9rem', outline: 'none' }}
+                                                    style={{ width: '100%', padding: '0.85rem 1rem', borderRadius: '14px', border: '1px solid var(--border-glass)', background: 'var(--bg-card)', color: 'var(--text-primary)', fontSize: '0.9rem', outline: 'none' }}
                                                     value={form.dueDate}
                                                     onChange={e => setForm({ ...form, dueDate: e.target.value })}
+                                                    className="focus-ring"
                                                 />
                                             </div>
 
-                                            <div>
-                                                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 8, letterSpacing: '0.05em' }}>Target Sections</label>
-                                                <div style={{ maxHeight: '160px', overflowY: 'auto', padding: '1rem', background: 'var(--bg-secondary)', borderRadius: 16, border: '1px solid var(--border-glass)' }}>
-                                                    {courses.map(c => (
-                                                        <label key={c.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.6rem', borderRadius: 10, cursor: 'pointer', transition: 'all 0.2s', background: targetCourses.includes(c.id) ? 'rgba(59,130,246,0.1)' : 'transparent', marginBottom: '4px' }}>
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={targetCourses.includes(c.id)}
-                                                                onChange={(e) => {
-                                                                    if (e.target.checked) setTargetCourses([...targetCourses, c.id]);
-                                                                    else setTargetCourses(targetCourses.filter(id => id !== c.id));
-                                                                }}
-                                                                style={{ width: 18, height: 18, cursor: 'pointer' }}
-                                                            />
-                                                            <div style={{ fontSize: '0.85rem', fontWeight: 700, color: targetCourses.includes(c.id) ? 'var(--accent-blue)' : 'var(--text-primary)' }}>
-                                                                {c.courseCode} <span style={{ fontWeight: 500, opacity: 0.6 }}>· {c.section}</span>
-                                                            </div>
-                                                        </label>
-                                                    ))}
+                                            {!editingId && (
+                                                <div>
+                                                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 8, letterSpacing: '0.05em' }}>Target Sections</label>
+                                                    <div style={{ maxHeight: '160px', overflowY: 'auto', padding: '1rem', background: 'var(--bg-secondary)', borderRadius: 16, border: '1px solid var(--border-glass)' }}>
+                                                        {courses.map(c => (
+                                                            <label key={c.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.6rem', borderRadius: 10, cursor: 'pointer', transition: 'all 0.2s', background: targetCourses.includes(c.id) ? 'rgba(59,130,246,0.1)' : 'transparent', marginBottom: '4px' }}>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={targetCourses.includes(c.id)}
+                                                                    onChange={(e) => {
+                                                                        if (e.target.checked) setTargetCourses([...targetCourses, c.id]);
+                                                                        else setTargetCourses(targetCourses.filter(id => id !== c.id));
+                                                                    }}
+                                                                    style={{ width: 18, height: 18, cursor: 'pointer' }}
+                                                                />
+                                                                <div style={{ fontSize: '0.85rem', fontWeight: 700, color: targetCourses.includes(c.id) ? 'var(--accent-blue)' : 'var(--text-primary)' }}>
+                                                                    {c.courseCode} <span style={{ fontWeight: 500, opacity: 0.6 }}>· {c.section}</span>
+                                                                </div>
+                                                            </label>
+                                                        ))}
+                                                    </div>
+                                                    {targetCourses.length === 0 && <p style={{ fontSize: '0.7rem', color: '#ef4444', fontWeight: 700, marginTop: '8px' }}>* Select at least one section</p>}
                                                 </div>
-                                                {targetCourses.length === 0 && <p style={{ fontSize: '0.7rem', color: '#ef4444', fontWeight: 700, marginTop: '8px' }}>* Select at least one section</p>}
-                                            </div>
+                                            )}
                                         </div>
 
                                         <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -454,12 +499,12 @@ const TeacherAssignments: React.FC = () => {
 
                             {/* Footer */}
                             <div className="modal-actions" style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', padding: '1.5rem 2rem', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-glass)', flexShrink: 0 }}>
-                                <button type="button" onClick={() => setShowModal(false)} className="btn btn-secondary" style={{ padding: '0.85rem 2rem', borderRadius: 16, fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer', boxShadow: '0 2px 6px rgba(0,0,0,0.05)', width: 'auto' }}>Cancel</button>
-                                <button type="submit" disabled={submitting} className="btn btn-primary" style={{ padding: '0.85rem 2.5rem', borderRadius: 16, border: 'none', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer', boxShadow: '0 8px 20px rgba(59,130,246,0.3)', transition: 'all 0.2s', width: 'auto' }}>{submitting ? 'Creating...' : 'Create Assignment'}</button>
+                                <button type="button" onClick={() => { setShowModal(false); setEditingId(null); setForm({ content: '', dueDate: '' }); }} className="btn btn-secondary" style={{ padding: '0.85rem 2rem', borderRadius: 16, fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer', boxShadow: '0 2px 6px rgba(0,0,0,0.05)', width: 'auto' }}>Cancel</button>
+                                <button type="submit" disabled={submitting} className="btn btn-primary" style={{ padding: '0.85rem 2.5rem', borderRadius: 16, border: 'none', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer', boxShadow: '0 8px 20px rgba(59,130,246,0.3)', transition: 'all 0.2s', width: 'auto' }}>{submitting ? 'Saving...' : editingId ? 'Update Assignment' : 'Create Assignment'}</button>
                             </div>
                         </form>
                     </div>
-                </div>
+                </div>, document.body
             )}
 
             {/* Full Screen Assignment Detail Modal */}
@@ -471,12 +516,19 @@ const TeacherAssignments: React.FC = () => {
                             <ChevronRight size={18} style={{ transform: 'rotate(180deg)' }} /> <span>Back</span>
                         </button>
                         <div className="ta-detail-title-col" style={{ flex: 1 }}>
-                            <h2 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)' }}>{selectedAssignment.title}</h2>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                <h2 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)' }}>{selectedAssignment.title}</h2>
+                                {selectedAssignment.isClosed && <span style={{ fontSize: '0.65rem', fontWeight: 900, background: '#fee2e2', color: '#ef4444', padding: '2px 8px', borderRadius: 6, textTransform: 'uppercase' }}>Closed</span>}
+                            </div>
                             <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{selectedAssignment.dueDate ? `Due ${new Date(selectedAssignment.dueDate).toLocaleString()}` : 'No deadline'}</div>
                         </div>
-                        <button className="ta-detail-delete" onClick={() => { handleDelete(selectedAssignment.id); setSelectedAssignment(null); }} style={{ border: 'none', background: 'none', color: '#ef4444', fontWeight: 700, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                            <Trash2 size={18} /> <span>Delete Assignment</span>
-                        </button>
+                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                            <button className="btn btn-secondary" onClick={() => { setEditingId(selectedAssignment.id); setForm({ content: selectedAssignment.title + (selectedAssignment.description ? '\n' : '') + (selectedAssignment.description || ''), dueDate: selectedAssignment.dueDate?.substring(0, 16) || '' }); setShowModal(true); setSelectedAssignment(null); }} style={{ padding: '0.5rem 1rem', borderRadius: 10, fontSize: '0.85rem', fontWeight: 700, width: 'auto' }}>Edit</button>
+                            <button className={`btn ${selectedAssignment.isClosed ? 'btn-primary' : 'btn-secondary'}`} onClick={() => toggleAssignmentStatus(selectedAssignment)} style={{ padding: '0.5rem 1rem', borderRadius: 10, fontSize: '0.85rem', fontWeight: 700, width: 'auto', color: selectedAssignment.isClosed ? '#fff' : '#ef4444' }}>{selectedAssignment.isClosed ? 'Reopen' : 'Close Now'}</button>
+                            <button className="ta-detail-delete" onClick={() => { handleDelete(selectedAssignment.id); setSelectedAssignment(null); }} style={{ border: 'none', background: 'none', color: '#ef4444', fontWeight: 700, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                                <Trash2 size={18} /> <span>Delete</span>
+                            </button>
+                        </div>
                     </div>
 
                     {/* Content */}
@@ -493,16 +545,23 @@ const TeacherAssignments: React.FC = () => {
                             </div>
 
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                                {getFullSubmissionList().map(({ student, submission, status }) => (
+                                {getFullSubmissionList().map(({ student, submission, status, lateInfo }) => (
                                     <div key={student.id} className="theme-card ta-student-card" style={{ padding: '1rem 1.5rem', borderRadius: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                         <div className="ta-student-info" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                                             <Avatar firstName={student.firstName} lastName={student.lastName} size={40} />
                                             <div>
                                                 <div style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-primary)' }}>{student.firstName} {student.lastName}</div>
-                                                <div style={{ fontSize: '0.7rem', color: status === 'missing' ? '#ef4444' : '#10b981', fontWeight: 800, textTransform: 'uppercase' }}>
-                                                    {status === 'missing' ? (
-                                                        selectedAssignment.dueDate && new Date(selectedAssignment.dueDate) < new Date() ? 'MISSING' : ''
-                                                    ) : status}
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase' }}>
+                                                    <span style={{ color: status === 'missing' ? '#ef4444' : status === 'late' ? '#f59e0b' : '#10b981' }}>
+                                                        {status === 'missing' ? (
+                                                            selectedAssignment.dueDate && new Date(selectedAssignment.dueDate) < new Date() ? 'MISSING' : ''
+                                                        ) : status}
+                                                    </span>
+                                                    {lateInfo && (
+                                                        <span style={{ color: '#ef4444', background: '#fef2f2', padding: '2px 6px', borderRadius: 4, fontSize: '0.65rem' }}>
+                                                            {lateInfo}
+                                                        </span>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>

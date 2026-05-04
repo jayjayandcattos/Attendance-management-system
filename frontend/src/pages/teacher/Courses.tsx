@@ -14,15 +14,12 @@ import {
   Clock,
   BookOpen,
   ArrowRight,
-  Palette,
-  Image as ImageIcon,
   Upload
 } from 'lucide-react';
 import DashboardLayout from '../../components/DashboardLayout';
 import { teacherApi } from '../../api';
-import { useAuth } from '../../auth/AuthContext';
 import { showAlert, showConfirm, showApiError } from '../../utils/feedback';
-import { getCourseBg, adjustColor } from '../../utils/courseBg';
+import { getCourseBg } from '../../utils/courseBg';
 
 
 const DAYS = [
@@ -35,20 +32,7 @@ const DAYS = [
   { key: 'Sa', label: 'Sat' },
 ];
 
-const COURSE_GRADIENTS = [
-  'linear-gradient(135deg, #FF6B4A 0%, #FF4757 100%)',
-  'linear-gradient(135deg, #F4A742 0%, #E8950A 100%)',
-  'linear-gradient(135deg, #7B68EE 0%, #6C5CE7 100%)',
-  'linear-gradient(135deg, #4285F4 0%, #2563EB 100%)',
-  'linear-gradient(135deg, #34A853 0%, #059669 100%)',
-  'linear-gradient(135deg, #00BCD4 0%, #0891B2 100%)',
-  'linear-gradient(135deg, #9C27B0 0%, #7C3AED 100%)',
-  'linear-gradient(135deg, #FF5722 0%, #DC2626 100%)',
-];
-
 const CATEGORY_LABELS = ['ONGOING', 'SOCIAL SCIENCES', 'LEADERSHIP', 'ENGINEERING', 'COMPUTER SCIENCE', 'BUSINESS', 'EDUCATION', 'GENERAL'];
-
-const getCategory = (idx: number) => CATEGORY_LABELS[idx % CATEGORY_LABELS.length];
 
 function formatTime12(t: string): string {
   if (!t) return '';

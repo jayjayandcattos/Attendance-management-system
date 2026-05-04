@@ -15,6 +15,9 @@ public interface AuditLogRepository extends JpaRepository<AuditLog, Long> {
     Page<AuditLog> findByActionOrderByCreatedAtDesc(String action, Pageable pageable);
     Page<AuditLog> findByEntityTypeOrderByCreatedAtDesc(String entityType, Pageable pageable);
 
+    @Query("SELECT l FROM AuditLog l WHERE l.action IN ('login', 'logout') AND l.createdAt >= :start AND l.createdAt <= :end ORDER BY l.createdAt DESC")
+    java.util.List<AuditLog> findLoginLogoutBetween(@Param("start") java.time.LocalDateTime start, @Param("end") java.time.LocalDateTime end);
+
     @Query("""
             SELECT l
             FROM AuditLog l

@@ -354,12 +354,22 @@ public class StudentController {
             throw new BadRequestException("This material is not an assignment");
         }
 
+        if (Boolean.TRUE.equals(material.getIsClosed())) {
+            throw new BadRequestException("This assignment is closed and no longer accepting submissions.");
+        }
+
         // Check if already submitted
         AssignmentSubmission submission = assignmentSubmissionRepository.findByMaterialIdAndStudentId(materialId, student.getId())
                 .orElse(AssignmentSubmission.builder().material(material).student(student).build());
 
+        // Update status to late if submitted after due date
+        if (material.getDueDate() != null && material.getDueDate().isBefore(LocalDateTime.now())) {
+            submission.setStatus("late");
+        } else if (!"graded".equals(submission.getStatus())) {
+            submission.setStatus("submitted");
+        }
+
         submission.setContent(content);
-        submission.setStatus("submitted");
 
         if (file != null && !file.isEmpty()) {
             String uploadDir = "uploads/submissions/" + materialId;

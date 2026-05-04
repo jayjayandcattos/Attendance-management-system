@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 
 interface ModalProps {
   isOpen: boolean;
@@ -25,8 +26,8 @@ const Modal: React.FC<ModalProps> = ({
     }
   };
 
-  return (
-    <div className="modal-overlay" onClick={onClose}>
+  return createPortal(
+    <div className="modal-overlay" style={{ zIndex: 200000 }} onClick={onClose}>
       <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '400px' }}>
         <div className="modal-header">
           <h3 className="modal-title" style={{ color: getTypeColor() }}>{title}</h3>
@@ -54,7 +55,7 @@ const Modal: React.FC<ModalProps> = ({
           </button>
         </div>
       </div>
-    </div>
+    </div>, document.body
   );
 };
 

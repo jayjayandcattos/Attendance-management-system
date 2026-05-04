@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 import {
   User,
   Settings,
@@ -536,19 +537,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       )}
 
       {/* Profile Edit Modal */}
-      {showProfile && (
-        <div className="modal-overlay" style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 10000
-        }} onClick={() => setShowProfile(false)}>
-          <div className="premium-card modal animate-scale-in" onClick={e => e.stopPropagation()} style={{ maxWidth: '520px', maxHeight: '90vh', display: 'flex', flexDirection: 'column', padding: '0', overflow: 'hidden' }}>
+      {showProfile && createPortal(
+        <div className="modal-overlay" style={{ zIndex: 110000, position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.5)' }} onClick={() => setShowProfile(false)}>
+          <div className="theme-card profile-modal" onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: '650px', maxHeight: '90vh', borderRadius: '24px', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', animation: 'scaleIn 0.3s ease-out' }}>
             <div className="modal-header" style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border-glass)' }}>
               <h3 className="modal-title" style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)' }}>Edit Profile</h3>
               <button className="modal-close hover:rotate-90 transition-transform" onClick={() => setShowProfile(false)}><X size={20} /></button>
@@ -677,7 +668,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               </button>
             </div>
           </div>
-        </div>
+        </div>, document.body
       )}
 
       <Modal

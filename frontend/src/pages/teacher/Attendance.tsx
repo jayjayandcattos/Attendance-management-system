@@ -41,7 +41,6 @@ const BG_IMAGES = [
 ];
 
 const TeacherAttendance: React.FC = () => {
-  const navigate = useNavigate();
   const [sessions, setSessions] = useState<any[]>([]);
   const [courses, setCourses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,6 +65,8 @@ const TeacherAttendance: React.FC = () => {
   const [targetReopen, setTargetReopen] = useState<any>(null);
   const [reopenDuration, setReopenDuration] = useState('10');
   const [teacherSettings, setTeacherSettings] = useState<any>({ lateEnabled: true, lateMinutes: 15 });
+  const [showActivity, setShowActivity] = useState<any>(null);
+  const [activityLogs, setActivityLogs] = useState<any[]>([]);
   const itemsPerPage = 8;
 
   const load = () => {
@@ -147,6 +148,14 @@ const TeacherAttendance: React.FC = () => {
       setRecords(res.data.data || []);
       setShowRecords(session);
     } catch { setRecords([]); setShowRecords(session); }
+  };
+
+  const viewActivity = async (session: any) => {
+    try {
+      const res = await teacherApi.getSessionActivity(session.id);
+      setActivityLogs(res.data.data || []);
+      setShowActivity(session);
+    } catch (err: any) { showApiError(err); }
   };
 
   const handleCoverUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -292,6 +301,10 @@ const TeacherAttendance: React.FC = () => {
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><line x1="3" y1="9" x2="21" y2="9" /><line x1="9" y1="21" x2="9" y2="9" /></svg>
                       Records
                     </button>
+                    <button className="btn btn-secondary" onClick={() => viewActivity(s)} style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.4rem', border: '1px solid #fecaca', color: '#dc2626' }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                      Audit
+                    </button>
                     <button className="btn btn-danger" onClick={() => closeSession(s.id)} style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                       Close
@@ -360,6 +373,9 @@ const TeacherAttendance: React.FC = () => {
                               <button className="ta-reopen-btn" onClick={() => openReopenModal(s)}>REOPEN</button>
                               <button className="ta-action-btn" title="History" onClick={() => viewRecords(s)}>
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="1 4 1 10 7 10" /><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" /></svg>
+                              </button>
+                              <button className="ta-action-btn" title="Audit Activity" onClick={() => viewActivity(s)} style={{ color: '#ef4444' }}>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                               </button>
                             </>
                           )}
@@ -488,6 +504,76 @@ const TeacherAttendance: React.FC = () => {
                   {records.length === 0 && <tr><td colSpan={3} style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>No records</td></tr>}
                 </tbody>
               </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Activity Logs Modal ───────────────────────────── */}
+      {showActivity && (
+        <div className="modal-overlay" onClick={() => setShowActivity(null)}>
+          <div className="modal shadow-2xl" style={{ maxWidth: '800px', borderRadius: '24px' }} onClick={e => e.stopPropagation()}>
+            <div className="modal-header" style={{ padding: '1.5rem', background: '#fff1f2', borderBottom: '1px solid #fecaca' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div style={{ background: '#fee2e2', padding: '0.5rem', borderRadius: '12px' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </div>
+                <div>
+                  <h3 className="modal-title" style={{ margin: 0, color: '#991b1b' }}>Suspicious Activity Audit</h3>
+                  <p style={{ margin: 0, fontSize: '0.75rem', color: '#b91c1c' }}>Login/Logout activity during session window (±5 mins)</p>
+                </div>
+              </div>
+              <button className="modal-close" onClick={() => setShowActivity(null)}>×</button>
+            </div>
+            <div style={{ padding: '1.5rem' }}>
+              <div style={{ background: '#fef2f2', border: '1px solid #fee2e2', borderRadius: '16px', padding: '1rem', marginBottom: '1.5rem', fontSize: '0.85rem', color: '#991b1b' }}>
+                <strong>Tip:</strong> Look for multiple students logging in from the same IP address or students logging out immediately after marking attendance. This may indicate account sharing.
+              </div>
+              
+              <div className="data-table-wrapper" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Time</th>
+                      <th>Action</th>
+                      <th>Student</th>
+                      <th>IP Address</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {activityLogs.map((log: any) => (
+                      <tr key={log.id}>
+                        <td style={{ fontSize: '0.8rem', whiteSpace: 'nowrap' }}>{new Date(log.createdAt).toLocaleTimeString()}</td>
+                        <td>
+                          <span style={{ 
+                            padding: '4px 8px', borderRadius: '6px', fontSize: '0.7rem', fontWeight: 800,
+                            background: log.action === 'login' ? '#dcfce7' : '#fee2e2',
+                            color: log.action === 'login' ? '#166534' : '#991b1b',
+                            textTransform: 'uppercase'
+                          }}>
+                            {log.action}
+                          </span>
+                        </td>
+                        <td>
+                          <div style={{ fontWeight: 600 }}>{log.user?.firstName} {log.user?.lastName}</div>
+                          <div style={{ fontSize: '0.7rem', color: '#64748b' }}>{log.user?.email}</div>
+                        </td>
+                        <td style={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>{log.ipAddress}</td>
+                      </tr>
+                    ))}
+                    {activityLogs.length === 0 && (
+                      <tr>
+                        <td colSpan={4} style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
+                          No login/logout activity detected during this session.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div className="modal-footer" style={{ padding: '1rem 1.5rem', borderTop: '1px solid #fee2e2', background: '#fff1f2', textAlign: 'right' }}>
+              <button className="btn btn-secondary" onClick={() => setShowActivity(null)} style={{ width: 'auto' }}>Close Audit</button>
             </div>
           </div>
         </div>

@@ -36,6 +36,10 @@ public class AuthService {
     private static final int MAX_ATTEMPTS = 5;
     private static final int LOCKOUT_MINUTES = 15;
 
+    public AuditService getAuditService() {
+        return auditService;
+    }
+
     @Transactional
     public AuthResponse login(LoginRequest request, HttpServletRequest httpRequest) {
         // Check rate limiting

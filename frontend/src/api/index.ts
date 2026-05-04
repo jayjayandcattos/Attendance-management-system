@@ -70,11 +70,15 @@ export const teacherApi = {
     api.post(`/teacher/attendance/${id}/extend`, { extraMinutes }),
   getSessions: () => api.get('/teacher/attendance/sessions'),
   getRecords: (sessionId: number) => api.get(`/teacher/attendance/records/${sessionId}`),
+  getSessionActivity: (sessionId: number) => api.get(`/teacher/attendance/${sessionId}/activity`),
   updateRecord: (id: number, data: any) => api.put(`/teacher/attendance/records/${id}`, data),
 
   getMaterials: (courseId: number) => api.get('/teacher/materials', { params: { courseId } }),
   createMaterial: (data: FormData) => api.post('/teacher/materials', data),
   deleteMaterial: (id: number) => api.delete(`/teacher/materials/${id}`),
+  updateMaterial: (id: number, data: FormData) => api.put(`/teacher/materials/${id}`, data),
+  closeMaterial: (id: number) => api.put(`/teacher/materials/${id}/close`),
+  reopenMaterial: (id: number) => api.put(`/teacher/materials/${id}/reopen`),
   shareMaterial: (id: number, courseIds: string) => 
     api.post(`/teacher/materials/${id}/share`, null, { params: { courseIds } }),
   getComments: (materialId: number) => api.get(`/teacher/materials/${materialId}/comments`),

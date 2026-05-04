@@ -47,6 +47,7 @@ public class TeacherController {
     private final SecurityEventRepository securityEventRepository;
     private final PasswordEncoder passwordEncoder;
     private final ProfanityFilterService profanityFilterService;
+    private final AuditLogRepository auditLogRepository;
 
     // ── Dashboard ──────────────────────────────────────────────────────
     @GetMapping("/dashboard")
@@ -442,6 +443,31 @@ public class TeacherController {
         return ResponseEntity.ok(ApiResponse.success("Session reopened! New code: " + code, session));
     }
 
+    @GetMapping("/attendance/{id}/activity")
+    public ResponseEntity<ApiResponse<List<AuditLog>>> getSessionActivity(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User teacher) {
+
+        AttendanceSession session = attendanceSessionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Session not found"));
+
+        if (!session.getTeacher().getId().equals(teacher.getId())) {
+            throw new BadRequestException("You do not have access to this session's activity");
+        }
+
+        LocalDateTime start = session.getStartTime();
+        // If session is still active, use current time as end, otherwise use endTime
+        LocalDateTime end = session.getEndTime() != null ? session.getEndTime() : LocalDateTime.now();
+
+        // Buffer by 5 minutes before/after to catch edge cases
+        List<AuditLog> activities = auditLogRepository.findLoginLogoutBetween(
+                start.minusMinutes(5),
+                end.plusMinutes(5)
+        );
+
+        return ResponseEntity.ok(ApiResponse.success("Session activity retrieved", activities));
+    }
+
     @PostMapping("/attendance/{id}/extend")
     public ResponseEntity<ApiResponse<AttendanceSession>> extendSession(
             @PathVariable @org.springframework.lang.NonNull Long id, @RequestBody Map<String, Object> body,
@@ -623,23 +649,69 @@ public class TeacherController {
     }
 
     @DeleteMapping("/materials/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteMaterial(
-            @PathVariable @org.springframework.lang.NonNull Long id, @AuthenticationPrincipal User teacher,
-            HttpServletRequest request) {
-        CourseMaterial material = courseMaterialRepository.findById(id)
-                .filter(m -> m.getTeacher().getId().equals(teacher.getId()))
-                .orElseThrow(() -> new ResourceNotFoundException("Material not found"));
-
-        if (material.getFilePath() != null) {
-            try {
-                Files.deleteIfExists(Paths.get(material.getFilePath()));
-            } catch (IOException ignored) {
-            }
+    public ResponseEntity<ApiResponse<Void>> deleteMaterial(@PathVariable Long id, @AuthenticationPrincipal User teacher, HttpServletRequest request) {
+        CourseMaterial m = courseMaterialRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Material not found"));
+        if (!m.getCourse().getTeacher().getId().equals(teacher.getId())) throw new BadRequestException("Not your material");
+        if (m.getFilePath() != null) {
+            try { Files.deleteIfExists(Paths.get(m.getFilePath())); } catch (IOException ignored) {}
         }
-
-        courseMaterialRepository.delete(material);
+        courseMaterialRepository.delete(m);
         auditService.log(teacher, "delete_material", "course_material", id, request);
         return ResponseEntity.ok(ApiResponse.success("Material deleted", null));
+    }
+
+    @PutMapping("/materials/{id}")
+    public ResponseEntity<ApiResponse<CourseMaterial>> updateMaterial(
+            @PathVariable Long id,
+            @RequestParam("title") String title,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "dueDate", required = false) String dueDate,
+            @RequestParam(value = "file", required = false) MultipartFile file,
+            @AuthenticationPrincipal User teacher,
+            HttpServletRequest request) throws IOException {
+        CourseMaterial m = courseMaterialRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Material not found"));
+        if (!m.getCourse().getTeacher().getId().equals(teacher.getId())) throw new BadRequestException("Not your material");
+
+        m.setTitle(title);
+        m.setDescription(description);
+        m.setDueDate(dueDate != null && !dueDate.isEmpty() ? LocalDateTime.parse(dueDate) : null);
+
+        if (file != null && !file.isEmpty()) {
+            String uploadDir = "uploads/materials/" + m.getCourse().getId();
+            Path uploadPath = Paths.get(uploadDir);
+            Files.createDirectories(uploadPath);
+            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+            Files.copy(file.getInputStream(), uploadPath.resolve(fileName));
+            m.setFilePath(uploadDir + "/" + fileName);
+            m.setFileName(file.getOriginalFilename());
+            m.setFileSize((int) file.getSize());
+        }
+
+        m = courseMaterialRepository.save(m);
+        auditService.log(teacher, "update_material", "course_material", id, request);
+        return ResponseEntity.ok(ApiResponse.success("Material updated", m));
+    }
+
+    @PutMapping("/materials/{id}/close")
+    public ResponseEntity<ApiResponse<Void>> closeMaterial(@PathVariable Long id, @AuthenticationPrincipal User teacher, HttpServletRequest request) {
+        System.out.println("Closing material: " + id);
+        CourseMaterial m = courseMaterialRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Material not found"));
+        if (!m.getCourse().getTeacher().getId().equals(teacher.getId())) throw new BadRequestException("Not your material");
+        m.setIsClosed(true);
+        courseMaterialRepository.save(m);
+        auditService.log(teacher, "close_material", "course_material", id, request);
+        return ResponseEntity.ok(ApiResponse.success("Material closed", null));
+    }
+
+    @PutMapping("/materials/{id}/reopen")
+    public ResponseEntity<ApiResponse<Void>> reopenMaterial(@PathVariable Long id, @AuthenticationPrincipal User teacher, HttpServletRequest request) {
+        System.out.println("Reopening material: " + id);
+        CourseMaterial m = courseMaterialRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Material not found"));
+        if (!m.getCourse().getTeacher().getId().equals(teacher.getId())) throw new BadRequestException("Not your material");
+        m.setIsClosed(false);
+        courseMaterialRepository.save(m);
+        auditService.log(teacher, "reopen_material", "course_material", id, request);
+        return ResponseEntity.ok(ApiResponse.success("Material reopened", null));
     }
 
     // ── Messages ───────────────────────────────────────────────────────

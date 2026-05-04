@@ -348,6 +348,14 @@ const StudentAssignments: React.FC = () => {
                                                 {mySubmission.content && <div style={{ fontSize: '0.82rem', color: '#475569', background: 'var(--bg-secondary)', padding: '1rem', borderRadius: 12, marginTop: '1rem', fontStyle: 'italic', border: '1px solid var(--border-glass)' }}>"{mySubmission.content}"</div>}
                                                 {mySubmission.feedback && <div style={{ marginTop: '1.25rem', padding: '1.15rem', borderRadius: 14, background: '#fffbeb', border: '1px solid #fef3c7', fontSize: '0.82rem', color: '#92400e' }}><strong>Instructor Feedback:</strong><br/>{mySubmission.feedback}</div>}
                                             </div>
+                                        ) : selectedAssignment.isClosed ? (
+                                            <div style={{ textAlign: 'center', padding: '2rem 1rem', background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border-glass)' }}>
+                                                <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 48, height: 48, borderRadius: '50%', background: '#fef2f2', color: '#ef4444', marginBottom: '1rem' }}>
+                                                    <X size={24} />
+                                                </div>
+                                                <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)' }}>Assignment Officially Closed</h4>
+                                                <p style={{ margin: '0.5rem 0 0', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>The professor is no longer accepting submissions for this task.</p>
+                                            </div>
                                         ) : (
                                             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                                 <textarea style={{ width: '100%', border: '1px solid var(--border-glass)', borderRadius: 12, padding: '1rem', fontSize: '0.85rem', minHeight: 120, outline: 'none', resize: 'none', background: 'var(--bg-card)' }} placeholder="Type your answer or response here..." value={submitContent} onChange={e => setSubmitContent(e.target.value)} />

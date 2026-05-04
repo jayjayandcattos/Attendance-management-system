@@ -66,10 +66,12 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<Void>> logout(
             @AuthenticationPrincipal User user,
+            HttpServletRequest request,
             HttpServletResponse httpResponse) {
 
         if (user != null) {
             authService.logout(user.getId());
+            authService.getAuditService().log(user, "logout", "user", user.getId(), request);
         }
 
         // Clear cookies

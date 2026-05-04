@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '../../components/DashboardLayout';
 import Avatar from '../../components/Avatar';
 import { studentApi, fileApi } from '../../api';
 import { useAuth } from '../../auth/AuthContext';
 import { showAlert, showApiError } from '../../utils/feedback';
-import { Bell, FileText, Play, Link as LinkIcon, Download, X, Upload, ChevronRight, ChevronDown, BookOpen, ArrowUpRight, Share } from 'lucide-react';
+import { Bell, FileText, Play, Link as LinkIcon, Download, X, Upload, ChevronRight, ChevronDown, BookOpen, ArrowUpRight, Share, Clock } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════════════
    Helpers
@@ -259,7 +260,6 @@ const StudentMaterials: React.FC = () => {
         if (submitFile) fd.append('file', submitFile);
         try {
             await studentApi.submitHomework(fd);
-            showAlert('Success', 'Assignment turned in successfully!', 'success');
             const r = await studentApi.getSubmission(expandedId);
             setMySubmission(r.data.data || null);
             setSubmitFile(null);
@@ -556,52 +556,80 @@ const StudentMaterials: React.FC = () => {
                                                         <button onClick={() => setDetailTab('submissions')} style={{ paddingBottom: '0.75rem', border: 'none', background: 'none', fontSize: '0.85rem', fontWeight: 700, color: detailTab === 'submissions' ? '#3b82f6' : '#94a3b8', borderBottom: `2px solid ${detailTab === 'submissions' ? '#3b82f6' : 'transparent'}`, cursor: 'pointer' }}>My Submission</button>
                                                     </div>
 
-                                                    {detailTab === 'instructions' ? (
-                                                        <div style={{ animation: 'fadeIn .2s' }}>
-                                                            {m.description && <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{m.description}</p>}
-                                                            {ytId && <VideoPreview url={mLink} />}
-                                                            {m.fileName && <FileCard fileName={m.fileName} fileSize={m.fileSize} onDownload={() => handlePreview('material', m.id, m.fileName)} />}
-                                                        </div>
-                                                    ) : (
-                                                        <div style={{ animation: 'fadeIn .2s' }}>
-                                                            {mySubmission ? (
-                                                                <div style={{ background: 'var(--bg-secondary)', borderRadius: 16, padding: '1.25rem', border: '1px solid var(--border-glass)' }}>
-                                                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                                                                        <span style={{ fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', padding: '3px 8px', borderRadius: 6, background: mySubmission.status === 'graded' ? '#f0fdf4' : '#eff6ff', color: mySubmission.status === 'graded' ? '#16a34a' : '#3b82f6' }}>{mySubmission.status}</span>
-                                                                        {mySubmission.grade !== null && <span style={{ fontWeight: 900, color: 'var(--text-primary)' }}>{mySubmission.grade}/100</span>}
-                                                                    </div>
-                                                                    {mySubmission.fileName && <FileCard fileName={mySubmission.fileName} fileSize={mySubmission.fileSize} onDownload={() => handlePreview('submission', mySubmission.id, mySubmission.fileName)} />}
-                                                                    {mySubmission.content && <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', background: 'var(--bg-card)', padding: '0.75rem', borderRadius: 8, border: '1px solid var(--border-glass)' }}>{mySubmission.content}</p>}
-                                                                    {mySubmission.feedback && (
-                                                                        <div style={{ marginTop: '1rem', padding: '0.75rem', borderRadius: 8, background: '#fffbeb', border: '1px solid #fef3c7' }}>
-                                                                            <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#92400e', textTransform: 'uppercase', display: 'block', marginBottom: 4 }}>Feedback</span>
-                                                                            <p style={{ fontSize: '0.85rem', color: '#78350f', margin: 0 }}>{mySubmission.feedback}</p>
+                                                    <div style={{ animation: 'fadeIn .2s' }}>
+                                                        {detailTab === 'instructions' ? (
+                                                            <div>
+                                                                {m.description && <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{m.description}</p>}
+                                                                {ytId && <VideoPreview url={mLink} />}
+                                                                {m.fileName && <FileCard fileName={m.fileName} fileSize={m.fileSize} onDownload={() => handlePreview('material', m.id, m.fileName)} />}
+                                                            </div>
+                                                        ) : (
+                                                            <div style={{ animation: 'fadeIn .2s' }}>
+                                                                {mySubmission ? (
+                                                                    <div style={{ background: 'var(--bg-secondary)', borderRadius: 16, padding: '1.25rem', border: '1px solid var(--border-glass)' }}>
+                                                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                                                                            <span style={{ 
+                                                                                fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', padding: '3px 8px', borderRadius: 6, 
+                                                                                background: mySubmission.status === 'graded' ? '#f0fdf4' : mySubmission.status === 'late' ? '#fff7ed' : '#eff6ff', 
+                                                                                color: mySubmission.status === 'graded' ? '#16a34a' : mySubmission.status === 'late' ? '#d97706' : '#3b82f6' 
+                                                                            }}>{mySubmission.status}</span>
+                                                                            {mySubmission.grade !== null && <span style={{ fontWeight: 900, color: 'var(--text-primary)' }}>{mySubmission.grade}/100</span>}
                                                                         </div>
-                                                                    )}
-                                                                </div>
-                                                            ) : (
-                                                                <div style={{ background: 'var(--bg-secondary)', borderRadius: 16, padding: '1.25rem', border: '2px dashed var(--border-glass)' }}>
-                                                                    <textarea style={{ width: '100%', border: '1px solid var(--border-glass)', borderRadius: 12, padding: '0.75rem', fontSize: '0.85rem', minHeight: 100, marginBottom: '1rem', outline: 'none', background: 'var(--bg-card)', color: 'var(--text-primary)' }} placeholder="Write your submission content..." value={submitContent} onChange={e => setSubmitContent(e.target.value)} />
-                                                                    <div style={{ marginBottom: '1rem' }}>
-                                                                        {submitFile ? (
-                                                                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0.5rem', background: 'var(--bg-card)', borderRadius: 8, border: '1px solid var(--border-glass)' }}>
-                                                                                <FileText size={16} color="#3b82f6" />
-                                                                                <span style={{ fontSize: '0.8rem', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>{submitFile.name}</span>
-                                                                                <X size={14} color="#ef4444" style={{ cursor: 'pointer' }} onClick={() => setSubmitFile(null)} />
+                                                                        {mySubmission.fileName && <FileCard fileName={mySubmission.fileName} fileSize={mySubmission.fileSize} onDownload={() => handlePreview('submission', mySubmission.id, mySubmission.fileName)} />}
+                                                                        {mySubmission.content && <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', background: 'var(--bg-card)', padding: '0.75rem', borderRadius: 8, border: '1px solid var(--border-glass)' }}>{mySubmission.content}</p>}
+                                                                        {mySubmission.feedback && (
+                                                                            <div style={{ marginTop: '1rem', padding: '0.75rem', borderRadius: 8, background: '#fffbeb', border: '1px solid #fef3c7' }}>
+                                                                                <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#92400e', textTransform: 'uppercase', display: 'block', marginBottom: 4 }}>Feedback</span>
+                                                                                <p style={{ fontSize: '0.85rem', color: '#78350f', margin: 0 }}>{mySubmission.feedback}</p>
                                                                             </div>
-                                                                        ) : (
-                                                                            <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', color: '#3b82f6', fontWeight: 600, fontSize: '0.85rem' }}>
-                                                                                <input type="file" style={{ display: 'none' }} onChange={e => setSubmitFile(e.target.files?.[0] || null)} />
-                                                                                <Upload size={16} /> Attach File
-                                                                            </label>
                                                                         )}
                                                                     </div>
-                                                                    <button onClick={handleSubmit} disabled={submitting} style={{ width: '100%', padding: '0.75rem', background: '#3b82f6', color: '#fff', border: 'none', borderRadius: 12, fontWeight: 700, cursor: 'pointer' }}>{submitting ? 'Submitting...' : 'Submit Work'}</button>
+                                                                ) : (
+                                                                    m.isClosed ? (
+                                                                        <div style={{ textAlign: 'center', padding: '2rem 1rem' }}>
+                                                                            <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 48, height: 48, borderRadius: '50%', background: '#fef2f2', color: '#ef4444', marginBottom: '1rem' }}>
+                                                                                <X size={24} />
+                                                                            </div>
+                                                                            <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)' }}>Assignment Officially Closed</h4>
+                                                                            <p style={{ margin: '0.5rem 0 0', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>The professor is no longer accepting submissions for this task.</p>
+                                                                        </div>
+                                                                    ) : (
+                                                                        <>
+                                                                            {isPast && (
+                                                                                <div style={{ background: '#fff7ed', border: '1px solid #ffedd5', borderRadius: '12px', padding: '0.75rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#ea580c' }}>
+                                                                                    <Clock size={16} />
+                                                                                    <span style={{ fontSize: '0.8rem', fontWeight: 700 }}>This assignment is past its due date. Your submission will be marked as LATE.</span>
+                                                                                </div>
+                                                                            )}
+                                                                            <textarea 
+                                                                                style={{ width: '100%', border: '1px solid var(--border-glass)', borderRadius: 12, padding: '0.75rem', fontSize: '0.85rem', minHeight: 100, marginBottom: '1rem', outline: 'none', background: 'var(--bg-card)', color: 'var(--text-primary)' }} 
+                                                                                placeholder="Write your submission content..." 
+                                                                                value={submitContent} 
+                                                                                onChange={e => setSubmitContent(e.target.value)} 
+                                                                            />
+                                                                            <div style={{ marginBottom: '1rem' }}>
+                                                                                {submitFile ? (
+                                                                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0.5rem', background: 'var(--bg-card)', borderRadius: 8, border: '1px solid var(--border-glass)' }}>
+                                                                                        <FileText size={16} color="#3b82f6" />
+                                                                                        <span style={{ fontSize: '0.8rem', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>{submitFile.name}</span>
+                                                                                        <X size={14} color="#ef4444" style={{ cursor: 'pointer' }} onClick={() => setSubmitFile(null)} />
+                                                                                    </div>
+                                                                                ) : (
+                                                                                    <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', color: '#3b82f6', fontWeight: 600, fontSize: '0.85rem' }}>
+                                                                                        <input type="file" style={{ display: 'none' }} onChange={e => setSubmitFile(e.target.files?.[0] || null)} />
+                                                                                        <Upload size={16} /> Attach File
+                                                                                    </label>
+                                                                                )}
+                                                                            </div>
+                                                                            <button onClick={handleSubmit} disabled={submitting} style={{ width: '100%', padding: '0.75rem', background: isPast ? '#ea580c' : '#3b82f6', color: '#fff', border: 'none', borderRadius: 12, fontWeight: 700, cursor: 'pointer' }}>
+                                                                                {submitting ? 'Submitting...' : isPast ? 'Submit Late Work' : 'Submit Work'}
+                                                                            </button>
+                                                                        </>
+                                                                    ))}
                                                                 </div>
                                                             )}
                                                         </div>
-                                                    )}
-                                                </div>
+                                                    </div>
                                                 {/* Right: Private Comments */}
                                                 <div style={{ padding: '1.5rem', background: 'var(--bg-secondary)' }}>
                                                     <h4 style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '1rem' }}>Private Comments</h4>
