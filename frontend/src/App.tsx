@@ -45,8 +45,8 @@ function RootRedirect() {
     return raw;
   };
   if (loading) return <div className="loading-screen"><div className="spinner"></div></div>;
-  if (!user) return <Navigate to="/login" replace />;
-  return <Navigate to={`/${normalizeRole(user.role)}`} replace />;
+  if (!user) return <Navigate to={`/login${window.location.search}`} replace />;
+  return <Navigate to={`/${normalizeRole(user.role)}${window.location.search}`} replace />;
 }
 
 function App() {

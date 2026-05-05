@@ -30,13 +30,13 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowe
   }
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to={`/login${window.location.search}`} replace />;
   }
 
   const normalizedRole = normalizeRole(user.role);
 
   if (allowedRoles && !allowedRoles.includes(normalizedRole)) {
-    return <Navigate to={`/${normalizedRole || 'login'}`} replace />;
+    return <Navigate to={`/${normalizedRole || 'login'}${window.location.search}`} replace />;
   }
 
   return <>{children}</>;

@@ -20,7 +20,7 @@ import {
   QrCode,
   UserCheck
 } from 'lucide-react';
-import { QRCodeSVG } from 'qrcode.react';
+import { QRCodeCanvas } from 'qrcode.react';
 import DashboardLayout from '../../components/DashboardLayout';
 import { teacherApi } from '../../api';
 import { useAuth } from '../../auth/AuthContext';
@@ -784,11 +784,11 @@ const TeacherDashboard: React.FC = () => {
               </button>
             </div>
             <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div style={{ background: 'var(--bg-card)', padding: '1.5rem', borderRadius: '2rem', display: 'inline-block', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', border: '1px solid var(--border-glass)' }}>
-                <QRCodeSVG
+              <div style={{ background: '#fff', padding: '1.5rem', borderRadius: '2rem', display: 'inline-block', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', border: '1px solid var(--border-glass)' }}>
+                <QRCodeCanvas
                   value={`${window.location.origin}/student/dashboard?attendSessionId=${showQrModal.sessionId}&code=${showQrModal.code}`}
-                  size={240}
-                  level="H"
+                  size={300}
+                  level="M"
                   includeMargin={false}
                 />
               </div>

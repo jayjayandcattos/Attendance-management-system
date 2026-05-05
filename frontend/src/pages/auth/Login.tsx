@@ -35,7 +35,7 @@ const Login: React.FC = () => {
         navigate('/verify-email', { state: { email: result.email } });
       } else {
         const user = JSON.parse(localStorage.getItem('user') || '{}');
-        navigate(`/${user.role || ''}`);
+        navigate(`/${user.role || ''}${window.location.search}`);
       }
     } catch (err: any) {
       const msg = err.response?.data?.message || 'Login failed. Please try again.';

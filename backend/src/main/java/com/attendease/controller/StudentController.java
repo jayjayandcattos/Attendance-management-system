@@ -14,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import com.attendease.entity.SecurityEvent;
 import com.attendease.entity.SecurityEventType;
@@ -227,7 +228,16 @@ public class StudentController {
 
         Object sessionIdObj = body.get("sessionId");
         if (sessionIdObj == null) throw new BadRequestException("Session ID is required");
-        Long sessionId = Long.valueOf(String.valueOf(sessionIdObj));
+        Long sessionId;
+        try {
+            if (sessionIdObj instanceof Number) {
+                sessionId = ((Number) sessionIdObj).longValue();
+            } else {
+                sessionId = Long.valueOf(String.valueOf(sessionIdObj));
+            }
+        } catch (Exception e) {
+            throw new BadRequestException("Invalid session ID format");
+        }
 
         Object codeObj = body.get("attendanceCode");
         if (codeObj == null) throw new BadRequestException("Attendance code is required");

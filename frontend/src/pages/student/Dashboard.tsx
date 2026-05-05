@@ -6,7 +6,7 @@ import { getCourseBg, adjustColor } from '../../utils/courseBg';
 import { Html5Qrcode } from 'html5-qrcode';
 import { useAuth } from '../../auth/AuthContext';
 import { studentApi } from '../../api';
-import { showAlert } from '../../utils/feedback';
+import { showAlert, showApiError } from '../../utils/feedback';
 
 /* ── Gradient palette for course cards ─────────────────────── */
 const CARD_GRADIENTS = [
@@ -46,8 +46,14 @@ const StudentDashboard: React.FC = () => {
     const qId = searchParams.get('attendSessionId');
     const qCode = searchParams.get('code');
     if (qId && qCode) {
-      setAttendCode(qCode.toUpperCase());
-      setSelectedSession(Number(qId));
+      const sessionId = Number(qId);
+      const code = qCode.toUpperCase();
+      setAttendCode(code);
+      setSelectedSession(sessionId);
+      // Auto-submit if we have both and are not already submitting
+      if (!submitting) {
+        submitAttendanceWithValues(sessionId, code);
+      }
     }
   }, [searchParams]);
 
@@ -70,27 +76,76 @@ const StudentDashboard: React.FC = () => {
         try {
           await html5QrCode.start(
             { facingMode: facingMode },
-            { fps: 10, qrbox: { width: 250, height: 250 } },
-            (text) => {
+            { 
+              fps: 25, 
+              qrbox: (viewfinderWidth, viewfinderHeight) => {
+                const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+                const size = Math.floor(minEdge * 0.8);
+                return { width: size, height: size };
+              },
+                aspectRatio: 1.0,
+                disableFlip: false
+              },
+            (decodedText) => {
+              const text = decodedText.trim();
               if (scannerRef.current) {
                 scannerRef.current.stop().then(() => {
                    scannerRef.current?.clear();
                 }).catch(console.error);
               }
               setShowScanner(false);
+              
               try {
-                const url = new URL(text);
-                const qId = url.searchParams.get('attendSessionId');
-                const qCode = url.searchParams.get('code');
-                if (qId && qCode) {
-                  setAttendCode(qCode.toUpperCase());
-                  setSelectedSession(Number(qId));
-                  submitAttendanceWithValues(Number(qId), qCode.toUpperCase());
+                // Check if it's a full URL or just the params part
+                let url: URL;
+                if (text.startsWith('http')) {
+                  url = new URL(text);
                 } else {
-                  showAlert('Error', 'Invalid QR Code format', 'error');
+                  // Fallback for relative URLs or just params
+                  url = new URL(text, window.location.origin);
+                }
+                
+                const qId = url.searchParams.get('attendSessionId')?.trim();
+                const qCode = url.searchParams.get('code')?.trim();
+                
+                if (qId && qCode) {
+                  const sessionId = Number(qId);
+                  const code = qCode.toUpperCase();
+                  if (isNaN(sessionId) || sessionId <= 0) {
+                    showAlert('Error', 'Invalid Session ID in QR Code', 'error');
+                    return;
+                  }
+                  console.log('QR Scan Match:', { sessionId, code });
+                  setAttendCode(code);
+                  setSelectedSession(sessionId);
+                  submitAttendanceWithValues(sessionId, code);
+                } else {
+                  // Check if the scanned text ITSELF is the 6-digit code
+                  if (text.length === 6 && /^[A-Z0-9]+$/i.test(text)) {
+                    const code = text.toUpperCase();
+                    setAttendCode(code);
+                    if (selectedSession) {
+                      submitAttendanceWithValues(selectedSession, code);
+                    } else {
+                      showAlert('Info', 'Code detected. Please select a session to apply it.', 'alert');
+                    }
+                  } else {
+                    showAlert('Error', 'Invalid QR Code format', 'error');
+                  }
                 }
               } catch (e) {
-                showAlert('Error', 'Invalid QR Code URL', 'error');
+                // If URL parsing fails, maybe it's just the code?
+                if (text.length === 6 && /^[A-Z0-9]+$/i.test(text)) {
+                   const code = text.toUpperCase();
+                   setAttendCode(code);
+                   if (selectedSession) {
+                     submitAttendanceWithValues(selectedSession, code);
+                   } else {
+                     showAlert('Info', 'Code detected. Please select a session to apply it.', 'alert');
+                   }
+                } else {
+                  showAlert('Error', 'Could not read QR Code content', 'error');
+                }
               }
             },
             () => {} // ignore
@@ -122,7 +177,8 @@ const StudentDashboard: React.FC = () => {
       setSelectedSession(null);
       load(); // Refresh data instead of full page reload
     } catch (err: any) {
-      showAlert('Error', err.response?.data?.message || 'Failed to submit', 'error');
+      console.error('Attendance Submission Error:', err);
+      showApiError(err, 'Failed to submit attendance');
     } finally { setSubmitting(false); }
   };
 
