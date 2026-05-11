@@ -1,0 +1,636 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------------< com.attendease:attendease-backend >------------------
+[INFO] Building AttendEase Backend 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ attendease-backend ---
+[INFO] Deleting E:\code\Attendance-management-system\backend\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ attendease-backend ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 22 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ attendease-backend ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 81 source files with javac [debug parameters release 17] to target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[228,5] org.springframework.transaction.annotation.Transactional is not a repeatable annotation type
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/EmergencyUnlock.java:[31,17] cannot find symbol
+  symbol:   method setStatus(java.lang.String)
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/EmergencyUnlock.java:[32,17] cannot find symbol
+  symbol:   method setCurrentSessionId(<nulltype>)
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/security/JwtAuthFilter.java:[41,57] cannot find symbol
+  symbol:   method getStatus()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/security/JwtAuthFilter.java:[43,44] cannot find symbol
+  symbol:   method getRole()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/security/JwtAuthFilter.java:[45,82] cannot find symbol
+  symbol:   method getCurrentSessionId()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuditService.java:[25,32] cannot find symbol
+  symbol:   method builder()
+  location: class com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuditService.java:[38,96] cannot find symbol
+  symbol:   method getEmail()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuditService.java:[38,137] cannot find symbol
+  symbol:   method getIpAddress()
+  location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/ApiResponse.java:[17,27] cannot find symbol
+  symbol:   method <T>builder()
+  location: class com.attendease.dto.ApiResponse
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/ApiResponse.java:[25,27] cannot find symbol
+  symbol:   method <T>builder()
+  location: class com.attendease.dto.ApiResponse
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/ApiResponse.java:[34,27] cannot find symbol
+  symbol:   method <T>builder()
+  location: class com.attendease.dto.ApiResponse
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[134,36] cannot find symbol
+  symbol:   method getStatus()
+  location: variable course of type com.attendease.entity.Course
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[138,15] cannot find symbol
+  symbol:   method setStatus(java.lang.String)
+  location: variable course of type com.attendease.entity.Course
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[153,15] cannot find symbol
+  symbol:   method setStatus(java.lang.String)
+  location: variable course of type com.attendease.entity.Course
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[168,15] cannot find symbol
+  symbol:   method setStatus(java.lang.String)
+  location: variable course of type com.attendease.entity.Course
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[203,25] cannot find symbol
+  symbol:   method builder()
+  location: class com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[215,60] cannot find symbol
+  symbol:   method getId()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[230,48] cannot find symbol
+  symbol:   method setFirstName(java.lang.String)
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[231,47] cannot find symbol
+  symbol:   method setLastName(java.lang.String)
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[233,77] cannot find symbol
+  symbol:   method getId()
+  location: variable u of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[236,17] cannot find symbol
+  symbol:   method setEmail(java.lang.String)
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[238,43] cannot find symbol
+  symbol:   method setRole(java.lang.String)
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[239,45] cannot find symbol
+  symbol:   method setStatus(java.lang.String)
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[240,49] cannot find symbol
+  symbol:   method setDepartment(java.lang.String)
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[242,17] cannot find symbol
+  symbol:   method setPassword(java.lang.String)
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[246,60] cannot find symbol
+  symbol:   method getId()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[257,18] cannot find symbol
+  symbol:   method getId()
+  location: variable admin of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[332,38] cannot find symbol
+  symbol:   method getId()
+  location: variable admin of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[387,67] cannot find symbol
+  symbol:   method getId()
+  location: class com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[389,37] cannot find symbol
+  symbol:   method getFirstName()
+  location: class com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[389,75] cannot find symbol
+  symbol:   method getLastName()
+  location: class com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/DashboardAnalyticsService.java:[326,27] cannot find symbol
+  symbol:   method getAttemptedAt()
+  location: variable a of type com.attendease.entity.LoginAttempt
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/DashboardAnalyticsService.java:[327,27] cannot find symbol
+  symbol:   method getIpAddress()
+  location: variable a of type com.attendease.entity.LoginAttempt
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/DashboardAnalyticsService.java:[328,44] invalid method reference
+  cannot find symbol
+    symbol:   method getIpAddress()
+    location: class com.attendease.entity.LoginAttempt
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/DashboardAnalyticsService.java:[334,26] invalid method reference
+  cannot find symbol
+    symbol:   method getAttemptedAt()
+    location: class com.attendease.entity.LoginAttempt
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[46,33] cannot find symbol
+  symbol:   method getMfaEnabled()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[46,65] cannot find symbol
+  symbol:   method getMfaEnabled()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[31,23] cannot find symbol
+  symbol:   method builder()
+  location: class com.attendease.dto.UserDto
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[32,25] cannot find symbol
+  symbol:   method getId()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[33,28] cannot find symbol
+  symbol:   method getEmail()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[34,32] cannot find symbol
+  symbol:   method getFirstName()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[35,31] cannot find symbol
+  symbol:   method getLastName()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[37,27] cannot find symbol
+  symbol:   method getRole()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[38,29] cannot find symbol
+  symbol:   method getAvatar()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[39,32] cannot find symbol
+  symbol:   method getStudentId()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[40,33] cannot find symbol
+  symbol:   method getDepartment()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[41,34] cannot find symbol
+  symbol:   method getPhoneNumber()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[42,26] cannot find symbol
+  symbol:   method getBio()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[43,29] cannot find symbol
+  symbol:   method getGender()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[44,31] cannot find symbol
+  symbol:   method getBirthday()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[45,29] cannot find symbol
+  symbol:   method getStatus()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[47,32] cannot find symbol
+  symbol:   method getCreatedAt()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[48,32] cannot find symbol
+  symbol:   method getLastLogin()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[31,9] cannot find symbol
+  symbol:   class AuditLogDtoBuilder
+  location: class com.attendease.dto.AuditLogDto
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[31,49] cannot find symbol
+  symbol:   method builder()
+  location: class com.attendease.dto.AuditLogDto
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[32,24] cannot find symbol
+  symbol:   method getId()
+  location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[33,28] cannot find symbol
+  symbol:   method getAction()
+  location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[34,32] cannot find symbol
+  symbol:   method getEntityType()
+  location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[35,30] cannot find symbol
+  symbol:   method getEntityId()
+  location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[36,31] cannot find symbol
+  symbol:   method getOldValues()
+  location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[37,31] cannot find symbol
+  symbol:   method getNewValues()
+  location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[38,31] cannot find symbol
+  symbol:   method getIpAddress()
+  location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[39,31] cannot find symbol
+  symbol:   method getUserAgent()
+  location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[40,31] cannot find symbol
+  symbol:   method getCreatedAt()
+  location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[43,16] cannot find symbol
+  symbol:   method getUser()
+  location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[45,33] cannot find symbol
+  symbol:   method getUser()
+  location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[45,70] cannot find symbol
+  symbol:   method getUser()
+  location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[44,31] cannot find symbol
+  symbol:   method getUser()
+  location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[46,34] cannot find symbol
+  symbol:   method getUser()
+  location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[47,33] cannot find symbol
+  symbol:   method getUser()
+  location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[51,16] cannot find symbol
+  symbol:   method getOldValues()
+  location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[51,46] cannot find symbol
+  symbol:   method getNewValues()
+  location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[53,20] cannot find symbol
+  symbol:   method getOldValues()
+  location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[53,51] cannot find symbol
+  symbol:   method getOldValues()
+  location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[54,63] cannot find symbol
+  symbol:   method getOldValues()
+  location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[56,20] cannot find symbol
+  symbol:   method getNewValues()
+  location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[56,51] cannot find symbol
+  symbol:   method getNewValues()
+  location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[57,63] cannot find symbol
+  symbol:   method getNewValues()
+  location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AuthController.java:[30,26] cannot find symbol
+  symbol:   method isMfaRequired()
+  location: variable authResponse of type com.attendease.dto.AuthResponse
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AuthController.java:[31,54] cannot find symbol
+  symbol:   method getAccessToken()
+  location: variable authResponse of type com.attendease.dto.AuthResponse
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AuthController.java:[44,50] cannot find symbol
+  symbol:   method getAccessToken()
+  location: variable authResponse of type com.attendease.dto.AuthResponse
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AuthController.java:[59,50] cannot find symbol
+  symbol:   method getAccessToken()
+  location: variable authResponse of type com.attendease.dto.AuthResponse
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AuthController.java:[70,36] cannot find symbol
+  symbol:   method getId()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AuthController.java:[107,50] cannot find symbol
+  symbol:   method getAccessToken()
+  location: variable authResponse of type com.attendease.dto.AuthResponse
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[43,24] cannot find symbol
+  symbol:   method getEmail()
+  location: variable request of type com.attendease.dto.LoginRequest
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[49,55] cannot find symbol
+  symbol:   method getEmail()
+  location: variable request of type com.attendease.dto.LoginRequest
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[51,63] cannot find symbol
+  symbol:   method getEmail()
+  location: variable request of type com.attendease.dto.LoginRequest
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[55,34] cannot find symbol
+  symbol:   method getStatus()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[59,45] cannot find symbol
+  symbol:   method getPassword()
+  location: variable request of type com.attendease.dto.LoginRequest
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[59,65] cannot find symbol
+  symbol:   method getPassword()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[60,55] cannot find symbol
+  symbol:   method getEmail()
+  location: variable request of type com.attendease.dto.LoginRequest
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[65,51] cannot find symbol
+  symbol:   method getEmail()
+  location: variable request of type com.attendease.dto.LoginRequest
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[69,32] cannot find symbol
+  symbol:   method getRole()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[70,58] cannot find symbol
+  symbol:   method getId()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[71,17] cannot find symbol
+  symbol:   method setCurrentSessionId(java.lang.String)
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[75,13] cannot find symbol
+  symbol:   method setLastLogin(java.time.LocalDateTime)
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[78,53] cannot find symbol
+  symbol:   method getId()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[81,17] cannot find symbol
+  symbol:   method getMfaEnabled()
+  location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[81,49] cannot find symbol
+  symbol:   method getMfaEnabled()
+  location: variable user of type com.attendease.entity.User
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  7.298 s
+[INFO] Finished at: 2026-04-28T11:50:24+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project attendease-backend: Compilation failure: Compilation failure: 
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[228,5] org.springframework.transaction.annotation.Transactional is not a repeatable annotation type
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/EmergencyUnlock.java:[31,17] cannot find symbol
+[ERROR]   symbol:   method setStatus(java.lang.String)
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/EmergencyUnlock.java:[32,17] cannot find symbol
+[ERROR]   symbol:   method setCurrentSessionId(<nulltype>)
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/security/JwtAuthFilter.java:[41,57] cannot find symbol
+[ERROR]   symbol:   method getStatus()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/security/JwtAuthFilter.java:[43,44] cannot find symbol
+[ERROR]   symbol:   method getRole()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/security/JwtAuthFilter.java:[45,82] cannot find symbol
+[ERROR]   symbol:   method getCurrentSessionId()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuditService.java:[25,32] cannot find symbol
+[ERROR]   symbol:   method builder()
+[ERROR]   location: class com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuditService.java:[38,96] cannot find symbol
+[ERROR]   symbol:   method getEmail()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuditService.java:[38,137] cannot find symbol
+[ERROR]   symbol:   method getIpAddress()
+[ERROR]   location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/ApiResponse.java:[17,27] cannot find symbol
+[ERROR]   symbol:   method <T>builder()
+[ERROR]   location: class com.attendease.dto.ApiResponse
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/ApiResponse.java:[25,27] cannot find symbol
+[ERROR]   symbol:   method <T>builder()
+[ERROR]   location: class com.attendease.dto.ApiResponse
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/ApiResponse.java:[34,27] cannot find symbol
+[ERROR]   symbol:   method <T>builder()
+[ERROR]   location: class com.attendease.dto.ApiResponse
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[134,36] cannot find symbol
+[ERROR]   symbol:   method getStatus()
+[ERROR]   location: variable course of type com.attendease.entity.Course
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[138,15] cannot find symbol
+[ERROR]   symbol:   method setStatus(java.lang.String)
+[ERROR]   location: variable course of type com.attendease.entity.Course
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[153,15] cannot find symbol
+[ERROR]   symbol:   method setStatus(java.lang.String)
+[ERROR]   location: variable course of type com.attendease.entity.Course
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[168,15] cannot find symbol
+[ERROR]   symbol:   method setStatus(java.lang.String)
+[ERROR]   location: variable course of type com.attendease.entity.Course
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[203,25] cannot find symbol
+[ERROR]   symbol:   method builder()
+[ERROR]   location: class com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[215,60] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[230,48] cannot find symbol
+[ERROR]   symbol:   method setFirstName(java.lang.String)
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[231,47] cannot find symbol
+[ERROR]   symbol:   method setLastName(java.lang.String)
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[233,77] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable u of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[236,17] cannot find symbol
+[ERROR]   symbol:   method setEmail(java.lang.String)
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[238,43] cannot find symbol
+[ERROR]   symbol:   method setRole(java.lang.String)
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[239,45] cannot find symbol
+[ERROR]   symbol:   method setStatus(java.lang.String)
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[240,49] cannot find symbol
+[ERROR]   symbol:   method setDepartment(java.lang.String)
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[242,17] cannot find symbol
+[ERROR]   symbol:   method setPassword(java.lang.String)
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[246,60] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[257,18] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable admin of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[332,38] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable admin of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[387,67] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: class com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[389,37] cannot find symbol
+[ERROR]   symbol:   method getFirstName()
+[ERROR]   location: class com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AdminController.java:[389,75] cannot find symbol
+[ERROR]   symbol:   method getLastName()
+[ERROR]   location: class com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/DashboardAnalyticsService.java:[326,27] cannot find symbol
+[ERROR]   symbol:   method getAttemptedAt()
+[ERROR]   location: variable a of type com.attendease.entity.LoginAttempt
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/DashboardAnalyticsService.java:[327,27] cannot find symbol
+[ERROR]   symbol:   method getIpAddress()
+[ERROR]   location: variable a of type com.attendease.entity.LoginAttempt
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/DashboardAnalyticsService.java:[328,44] invalid method reference
+[ERROR]   cannot find symbol
+[ERROR]     symbol:   method getIpAddress()
+[ERROR]     location: class com.attendease.entity.LoginAttempt
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/DashboardAnalyticsService.java:[334,26] invalid method reference
+[ERROR]   cannot find symbol
+[ERROR]     symbol:   method getAttemptedAt()
+[ERROR]     location: class com.attendease.entity.LoginAttempt
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[46,33] cannot find symbol
+[ERROR]   symbol:   method getMfaEnabled()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[46,65] cannot find symbol
+[ERROR]   symbol:   method getMfaEnabled()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[31,23] cannot find symbol
+[ERROR]   symbol:   method builder()
+[ERROR]   location: class com.attendease.dto.UserDto
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[32,25] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[33,28] cannot find symbol
+[ERROR]   symbol:   method getEmail()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[34,32] cannot find symbol
+[ERROR]   symbol:   method getFirstName()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[35,31] cannot find symbol
+[ERROR]   symbol:   method getLastName()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[37,27] cannot find symbol
+[ERROR]   symbol:   method getRole()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[38,29] cannot find symbol
+[ERROR]   symbol:   method getAvatar()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[39,32] cannot find symbol
+[ERROR]   symbol:   method getStudentId()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[40,33] cannot find symbol
+[ERROR]   symbol:   method getDepartment()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[41,34] cannot find symbol
+[ERROR]   symbol:   method getPhoneNumber()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[42,26] cannot find symbol
+[ERROR]   symbol:   method getBio()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[43,29] cannot find symbol
+[ERROR]   symbol:   method getGender()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[44,31] cannot find symbol
+[ERROR]   symbol:   method getBirthday()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[45,29] cannot find symbol
+[ERROR]   symbol:   method getStatus()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[47,32] cannot find symbol
+[ERROR]   symbol:   method getCreatedAt()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/UserDto.java:[48,32] cannot find symbol
+[ERROR]   symbol:   method getLastLogin()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[31,9] cannot find symbol
+[ERROR]   symbol:   class AuditLogDtoBuilder
+[ERROR]   location: class com.attendease.dto.AuditLogDto
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[31,49] cannot find symbol
+[ERROR]   symbol:   method builder()
+[ERROR]   location: class com.attendease.dto.AuditLogDto
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[32,24] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[33,28] cannot find symbol
+[ERROR]   symbol:   method getAction()
+[ERROR]   location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[34,32] cannot find symbol
+[ERROR]   symbol:   method getEntityType()
+[ERROR]   location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[35,30] cannot find symbol
+[ERROR]   symbol:   method getEntityId()
+[ERROR]   location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[36,31] cannot find symbol
+[ERROR]   symbol:   method getOldValues()
+[ERROR]   location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[37,31] cannot find symbol
+[ERROR]   symbol:   method getNewValues()
+[ERROR]   location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[38,31] cannot find symbol
+[ERROR]   symbol:   method getIpAddress()
+[ERROR]   location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[39,31] cannot find symbol
+[ERROR]   symbol:   method getUserAgent()
+[ERROR]   location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[40,31] cannot find symbol
+[ERROR]   symbol:   method getCreatedAt()
+[ERROR]   location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[43,16] cannot find symbol
+[ERROR]   symbol:   method getUser()
+[ERROR]   location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[45,33] cannot find symbol
+[ERROR]   symbol:   method getUser()
+[ERROR]   location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[45,70] cannot find symbol
+[ERROR]   symbol:   method getUser()
+[ERROR]   location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[44,31] cannot find symbol
+[ERROR]   symbol:   method getUser()
+[ERROR]   location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[46,34] cannot find symbol
+[ERROR]   symbol:   method getUser()
+[ERROR]   location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[47,33] cannot find symbol
+[ERROR]   symbol:   method getUser()
+[ERROR]   location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[51,16] cannot find symbol
+[ERROR]   symbol:   method getOldValues()
+[ERROR]   location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[51,46] cannot find symbol
+[ERROR]   symbol:   method getNewValues()
+[ERROR]   location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[53,20] cannot find symbol
+[ERROR]   symbol:   method getOldValues()
+[ERROR]   location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[53,51] cannot find symbol
+[ERROR]   symbol:   method getOldValues()
+[ERROR]   location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[54,63] cannot find symbol
+[ERROR]   symbol:   method getOldValues()
+[ERROR]   location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[56,20] cannot find symbol
+[ERROR]   symbol:   method getNewValues()
+[ERROR]   location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[56,51] cannot find symbol
+[ERROR]   symbol:   method getNewValues()
+[ERROR]   location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/dto/AuditLogDto.java:[57,63] cannot find symbol
+[ERROR]   symbol:   method getNewValues()
+[ERROR]   location: variable log of type com.attendease.entity.AuditLog
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AuthController.java:[30,26] cannot find symbol
+[ERROR]   symbol:   method isMfaRequired()
+[ERROR]   location: variable authResponse of type com.attendease.dto.AuthResponse
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AuthController.java:[31,54] cannot find symbol
+[ERROR]   symbol:   method getAccessToken()
+[ERROR]   location: variable authResponse of type com.attendease.dto.AuthResponse
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AuthController.java:[44,50] cannot find symbol
+[ERROR]   symbol:   method getAccessToken()
+[ERROR]   location: variable authResponse of type com.attendease.dto.AuthResponse
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AuthController.java:[59,50] cannot find symbol
+[ERROR]   symbol:   method getAccessToken()
+[ERROR]   location: variable authResponse of type com.attendease.dto.AuthResponse
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AuthController.java:[70,36] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/controller/AuthController.java:[107,50] cannot find symbol
+[ERROR]   symbol:   method getAccessToken()
+[ERROR]   location: variable authResponse of type com.attendease.dto.AuthResponse
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[43,24] cannot find symbol
+[ERROR]   symbol:   method getEmail()
+[ERROR]   location: variable request of type com.attendease.dto.LoginRequest
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[49,55] cannot find symbol
+[ERROR]   symbol:   method getEmail()
+[ERROR]   location: variable request of type com.attendease.dto.LoginRequest
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[51,63] cannot find symbol
+[ERROR]   symbol:   method getEmail()
+[ERROR]   location: variable request of type com.attendease.dto.LoginRequest
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[55,34] cannot find symbol
+[ERROR]   symbol:   method getStatus()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[59,45] cannot find symbol
+[ERROR]   symbol:   method getPassword()
+[ERROR]   location: variable request of type com.attendease.dto.LoginRequest
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[59,65] cannot find symbol
+[ERROR]   symbol:   method getPassword()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[60,55] cannot find symbol
+[ERROR]   symbol:   method getEmail()
+[ERROR]   location: variable request of type com.attendease.dto.LoginRequest
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[65,51] cannot find symbol
+[ERROR]   symbol:   method getEmail()
+[ERROR]   location: variable request of type com.attendease.dto.LoginRequest
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[69,32] cannot find symbol
+[ERROR]   symbol:   method getRole()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[70,58] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[71,17] cannot find symbol
+[ERROR]   symbol:   method setCurrentSessionId(java.lang.String)
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[75,13] cannot find symbol
+[ERROR]   symbol:   method setLastLogin(java.time.LocalDateTime)
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[78,53] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[81,17] cannot find symbol
+[ERROR]   symbol:   method getMfaEnabled()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] /E:/code/Attendance-management-system/backend/src/main/java/com/attendease/service/AuthService.java:[81,49] cannot find symbol
+[ERROR]   symbol:   method getMfaEnabled()
+[ERROR]   location: variable user of type com.attendease.entity.User
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

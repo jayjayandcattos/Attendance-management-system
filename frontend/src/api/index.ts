@@ -1,4 +1,5 @@
 import api from './axiosInstance';
+export { api };
 
 export const authApi = {
   login: (email: string, password: string) =>

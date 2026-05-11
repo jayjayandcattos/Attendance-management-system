@@ -1,0 +1,2 @@
+ALTER TABLE messages ADD COLUMN IF NOT EXISTS parent_id BIGINT;
+ALTER TABLE course_messages ADD COLUMN IF NOT EXISTS parent_id BIGINT;

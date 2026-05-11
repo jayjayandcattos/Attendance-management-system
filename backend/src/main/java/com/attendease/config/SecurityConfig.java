@@ -34,7 +34,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                // Static resources (avatars, uploads)
+                // Static resources (Frontend, avatars, uploads)
+                .requestMatchers("/", "/index.html", "/*.js", "/*.css", "/assets/**", "/bg/**", "/icons/**", "/favicon.ico", "/*.png", "/*.jpg").permitAll()
                 .requestMatchers("/uploads/**").permitAll()
 
                 // Admin endpoints
