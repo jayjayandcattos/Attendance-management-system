@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Users, 
-  GraduationCap, 
-  BookOpen, 
-  ClipboardList, 
-  Archive, 
-  Trash2, 
-  User, 
-  Book, 
+import {
+  Users,
+  GraduationCap,
+  BookOpen,
+  ClipboardList,
+  Archive,
+  Trash2,
+  User,
+  Book,
   FileText,
   Plus,
   ArrowRight,
@@ -108,8 +108,8 @@ const AdminDashboard: React.FC = () => {
                   <div
                     key={i}
                     className="admin-action-card group"
-                    style={{ 
-                      background: 'var(--bg-primary)', 
+                    style={{
+                      background: 'var(--bg-primary)',
                       border: '1px solid var(--border-glass)',
                       padding: '1.25rem',
                       borderRadius: 'var(--radius-md)',
@@ -142,7 +142,7 @@ const AdminDashboard: React.FC = () => {
                   All Systems Optimal
                 </div>
               </div>
-              
+
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
                 <div className="admin-health-item">
                   <div className="admin-health-label">
@@ -181,10 +181,10 @@ const AdminDashboard: React.FC = () => {
                   </div>
                   <div style={{ display: 'flex', gap: '4px', height: '24px', alignItems: 'flex-end', marginTop: '4px' }}>
                     {[40, 60, 30, 80, 50, 70, 90, 60, 40, 70, 50, 80].map((h, i) => (
-                      <div key={i} className="animate-pulse" style={{ 
-                        flex: 1, 
-                        height: `${h}%`, 
-                        background: i > 8 ? '#10b981' : 'var(--border-glass)', 
+                      <div key={i} className="animate-pulse" style={{
+                        flex: 1,
+                        height: `${h}%`,
+                        background: i > 8 ? '#10b981' : 'var(--border-glass)',
                         borderRadius: '2px',
                         animationDelay: `${i * 0.1}s`
                       }}></div>
@@ -278,9 +278,9 @@ const AdminDashboard: React.FC = () => {
                       </td>
                       <td style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>{u.email}</td>
                       <td>
-                        <span className={`badge badge-${u.role}`} style={{ 
-                          padding: '0.25rem 0.75rem', 
-                          borderRadius: '6px', 
+                        <span className={`badge badge-${u.role}`} style={{
+                          padding: '0.25rem 0.75rem',
+                          borderRadius: '6px',
                           fontWeight: 700,
                           fontSize: '0.65rem'
                         }}>{u.role.toUpperCase()}</span>

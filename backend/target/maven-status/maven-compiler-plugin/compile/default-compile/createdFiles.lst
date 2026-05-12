@@ -13,6 +13,7 @@ com\attendease\exception\GlobalExceptionHandler.class
 com\attendease\entity\RefreshToken$RefreshTokenBuilder.class
 com\attendease\dto\DashboardStatsDto$StatCard.class
 com\attendease\entity\Enrollment$EnrollmentBuilder.class
+com\attendease\config\SpaErrorController.class
 com\attendease\exception\UnauthorizedException.class
 com\attendease\config\CorsConfig.class
 com\attendease\entity\Comment$CommentBuilder.class

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Search, LogOut, ChevronDown, User, Shield, Menu } from 'lucide-react';
+import { Search, LogOut, ChevronDown, User, Menu } from 'lucide-react';
 import { useAuth } from '../auth/AuthContext';
-import { useNavigate } from 'react-router-dom';
+
 import Avatar from './Avatar';
 
 interface TopNavbarProps {
@@ -13,9 +13,8 @@ interface TopNavbarProps {
   onMenuClick?: () => void;
 }
 
-const TopNavbar: React.FC<TopNavbarProps> = ({ searchQuery, onSearchChange, actions, onProfileClick, onLogoutClick, onMenuClick }) => {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+const TopNavbar: React.FC<TopNavbarProps> = ({ searchQuery, onSearchChange, actions, onProfileClick, onMenuClick }) => {
+  const { user } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
 
   return (

@@ -7,11 +7,11 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: true,
-    port: 5173,
+    port: 5220,
     allowedHosts: true, // for ngrok
     proxy: {
       '/api': {
-        target: 'http://192.168.100.41:8080',
+        target: 'http://localhost:8138',
         changeOrigin: true,
       }
     }

@@ -6,13 +6,13 @@
  */
 
 import React, { useState } from 'react';
-import { 
-  usePageTracking, 
-  useClickTracking, 
+import {
+  usePageTracking,
+  useClickTracking,
   useFileTracking,
   useFormTracking,
   useModalTracking,
-  useSearchTracking 
+  useSearchTracking
 } from '../hooks/useActivityTracking';
 
 const ActivityTrackingExample: React.FC = () => {
@@ -21,7 +21,7 @@ const ActivityTrackingExample: React.FC = () => {
 
   // 2. TRACK CLICKS
   const { trackClick } = useClickTracking();
-  
+
   const handleButtonClick = () => {
     trackClick('Create Course Button', 'button', { section: 'dashboard' });
     // ... your actual button logic
@@ -34,7 +34,7 @@ const ActivityTrackingExample: React.FC = () => {
 
   // 3. TRACK FILE ACCESS
   const { trackFileView, trackFileDownload, trackFileOpen } = useFileTracking();
-  
+
   const handleFileView = (file: any) => {
     trackFileView(file.name, file.id);
     // ... open file viewer
@@ -47,10 +47,10 @@ const ActivityTrackingExample: React.FC = () => {
 
   // 4. TRACK FORM SUBMISSIONS
   const { trackFormSubmit } = useFormTracking();
-  
+
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    trackFormSubmit('Create Course Form', { 
+    trackFormSubmit('Create Course Form', {
       courseCode: 'CS101',
       // Don't include sensitive data like passwords!
     });
@@ -60,7 +60,7 @@ const ActivityTrackingExample: React.FC = () => {
   // 5. TRACK SEARCH
   const { trackSearch } = useSearchTracking();
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     trackSearch(query, 'course-search');
@@ -70,7 +70,7 @@ const ActivityTrackingExample: React.FC = () => {
   // 6. TRACK MODAL OPENS
   const { trackModalOpen } = useModalTracking();
   const [showModal, setShowModal] = useState(false);
-  
+
   const openModal = () => {
     trackModalOpen('Create Course Modal', 'dashboard');
     setShowModal(true);
@@ -79,7 +79,7 @@ const ActivityTrackingExample: React.FC = () => {
   return (
     <div>
       <h1>Activity Tracking Examples</h1>
-      
+
       {/* Example 1: Track button clicks */}
       <button onClick={handleButtonClick}>
         Create Course (Tracked)
@@ -108,8 +108,8 @@ const ActivityTrackingExample: React.FC = () => {
       </form>
 
       {/* Example 5: Track search */}
-      <input 
-        type="search" 
+      <input
+        type="search"
         value={searchQuery}
         onChange={(e) => handleSearch(e.target.value)}
         placeholder="Search courses (Tracked)"

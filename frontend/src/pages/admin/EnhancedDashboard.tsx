@@ -4,8 +4,8 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   AreaChart, Area
 } from 'recharts';
-import { 
-  Users, BookOpen, Activity, Shield, TrendingUp, TrendingDown, 
+import {
+  Users, BookOpen, Activity, Shield, TrendingUp, TrendingDown,
   Minus, AlertTriangle, CheckCircle, Clock, Server, Database,
   Cpu, HardDrive
 } from 'lucide-react';
@@ -225,11 +225,10 @@ const EnhancedDashboard: React.FC = () => {
                     <p className="text-sm font-medium text-gray-600">{stat.label}</p>
                     <p className="text-3xl font-bold text-gray-900 mt-2">{stat.value.toLocaleString()}</p>
                     <div className="flex items-center mt-2 space-x-1">
-                      <span className={`flex items-center text-sm font-medium ${
-                        stat.trendDirection === 'UP' ? 'text-green-600' :
-                        stat.trendDirection === 'DOWN' ? 'text-red-600' :
-                        'text-gray-600'
-                      }`}>
+                      <span className={`flex items-center text-sm font-medium ${stat.trendDirection === 'UP' ? 'text-green-600' :
+                          stat.trendDirection === 'DOWN' ? 'text-red-600' :
+                            'text-gray-600'
+                        }`}>
                         {getTrendIcon(stat.trendDirection)}
                         <span className="ml-1">{Math.abs(stat.trend).toFixed(1)}%</span>
                       </span>
@@ -256,32 +255,32 @@ const EnhancedDashboard: React.FC = () => {
               <AreaChart data={userGrowth}>
                 <defs>
                   <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={COLORS.blue} stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor={COLORS.blue} stopOpacity={0}/>
+                    <stop offset="5%" stopColor={COLORS.blue} stopOpacity={0.3} />
+                    <stop offset="95%" stopColor={COLORS.blue} stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis 
-                  dataKey="timestamp" 
+                <XAxis
+                  dataKey="timestamp"
                   stroke="#9CA3AF"
                   tick={{ fontSize: 12 }}
                 />
                 <YAxis stroke="#9CA3AF" tick={{ fontSize: 12 }} />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: 'white', 
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'white',
                     border: '1px solid #e5e7eb',
                     borderRadius: '8px',
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                   }}
                 />
-                <Area 
-                  type="monotone" 
-                  dataKey="value" 
-                  stroke={COLORS.blue} 
+                <Area
+                  type="monotone"
+                  dataKey="value"
+                  stroke={COLORS.blue}
                   strokeWidth={2}
-                  fillOpacity={1} 
-                  fill="url(#colorUsers)" 
+                  fillOpacity={1}
+                  fill="url(#colorUsers)"
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -293,15 +292,15 @@ const EnhancedDashboard: React.FC = () => {
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={loginActivity}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis 
-                  dataKey="timestamp" 
+                <XAxis
+                  dataKey="timestamp"
                   stroke="#9CA3AF"
                   tick={{ fontSize: 12 }}
                 />
                 <YAxis stroke="#9CA3AF" tick={{ fontSize: 12 }} />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: 'white', 
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'white',
                     border: '1px solid #e5e7eb',
                     borderRadius: '8px',
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
@@ -347,9 +346,9 @@ const EnhancedDashboard: React.FC = () => {
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis type="number" stroke="#9CA3AF" tick={{ fontSize: 12 }} />
                 <YAxis dataKey="name" type="category" stroke="#9CA3AF" tick={{ fontSize: 12 }} />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: 'white', 
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'white',
                     border: '1px solid #e5e7eb',
                     borderRadius: '8px',
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
@@ -365,7 +364,7 @@ const EnhancedDashboard: React.FC = () => {
         {systemHealth && (
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <h3 className="text-lg font-semibold text-gray-900 mb-6">System Health</h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
               {/* CPU */}
               <div className="space-y-2">
@@ -380,12 +379,11 @@ const EnhancedDashboard: React.FC = () => {
                 </div>
                 <div className="text-2xl font-bold text-gray-900">{systemHealth.cpu.usage.toFixed(1)}%</div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className={`h-2 rounded-full ${
-                      systemHealth.cpu.status === 'CRITICAL' ? 'bg-red-600' :
-                      systemHealth.cpu.status === 'WARNING' ? 'bg-yellow-600' :
-                      'bg-green-600'
-                    }`}
+                  <div
+                    className={`h-2 rounded-full ${systemHealth.cpu.status === 'CRITICAL' ? 'bg-red-600' :
+                        systemHealth.cpu.status === 'WARNING' ? 'bg-yellow-600' :
+                          'bg-green-600'
+                      }`}
                     style={{ width: `${systemHealth.cpu.usage}%` }}
                   ></div>
                 </div>
@@ -405,12 +403,11 @@ const EnhancedDashboard: React.FC = () => {
                 </div>
                 <div className="text-2xl font-bold text-gray-900">{systemHealth.memory.percentage.toFixed(1)}%</div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className={`h-2 rounded-full ${
-                      systemHealth.memory.status === 'CRITICAL' ? 'bg-red-600' :
-                      systemHealth.memory.status === 'WARNING' ? 'bg-yellow-600' :
-                      'bg-green-600'
-                    }`}
+                  <div
+                    className={`h-2 rounded-full ${systemHealth.memory.status === 'CRITICAL' ? 'bg-red-600' :
+                        systemHealth.memory.status === 'WARNING' ? 'bg-yellow-600' :
+                          'bg-green-600'
+                      }`}
                     style={{ width: `${systemHealth.memory.percentage}%` }}
                   ></div>
                 </div>
@@ -430,12 +427,11 @@ const EnhancedDashboard: React.FC = () => {
                 </div>
                 <div className="text-2xl font-bold text-gray-900">{systemHealth.disk.percentage.toFixed(1)}%</div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className={`h-2 rounded-full ${
-                      systemHealth.disk.status === 'CRITICAL' ? 'bg-red-600' :
-                      systemHealth.disk.status === 'WARNING' ? 'bg-yellow-600' :
-                      'bg-green-600'
-                    }`}
+                  <div
+                    className={`h-2 rounded-full ${systemHealth.disk.status === 'CRITICAL' ? 'bg-red-600' :
+                        systemHealth.disk.status === 'WARNING' ? 'bg-yellow-600' :
+                          'bg-green-600'
+                      }`}
                     style={{ width: `${systemHealth.disk.percentage}%` }}
                   ></div>
                 </div>
@@ -455,7 +451,7 @@ const EnhancedDashboard: React.FC = () => {
                 </div>
                 <div className="text-2xl font-bold text-gray-900">{systemHealth.application.dbConnections}</div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
+                  <div
                     className="h-2 rounded-full bg-indigo-600"
                     style={{ width: `${(systemHealth.application.dbConnections / systemHealth.application.maxDbConnections) * 100}%` }}
                   ></div>
@@ -474,9 +470,9 @@ const EnhancedDashboard: React.FC = () => {
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                   <XAxis dataKey="timestamp" stroke="#9CA3AF" tick={{ fontSize: 12 }} />
                   <YAxis stroke="#9CA3AF" tick={{ fontSize: 12 }} />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: 'white', 
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'white',
                       border: '1px solid #e5e7eb',
                       borderRadius: '8px',
                       boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'

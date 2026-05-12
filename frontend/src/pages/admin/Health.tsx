@@ -129,8 +129,8 @@ const AdminHealth: React.FC = () => {
                 {overallStatus === 'HEALTHY'
                   ? 'Cloud infrastructure and core services are performing at peak efficiency.'
                   : overallStatus === 'WARNING'
-                  ? 'Increased latency detected on some nodes. Monitoring situation.'
-                  : 'Critical failure detected. Engineering team has been notified.'}
+                    ? 'Increased latency detected on some nodes. Monitoring situation.'
+                    : 'Critical failure detected. Engineering team has been notified.'}
               </p>
             </div>
           </div>

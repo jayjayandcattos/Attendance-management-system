@@ -793,7 +793,7 @@ const TeacherDashboard: React.FC = () => {
                 />
               </div>
               <p style={{ marginTop: '1.5rem', color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: 500 }}>Students can scan this code to mark their attendance automatically.</p>
-              
+
               <div style={{ marginTop: '1.5rem', padding: '1.25rem', background: 'rgba(59,130,246,0.1)', borderRadius: '20px', width: '100%' }}>
                 <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', fontWeight: 900, letterSpacing: '0.1em', color: 'var(--accent-blue)', opacity: 0.8 }}>Manual Join Code</span>
                 <div style={{ fontSize: '2.5rem', fontFamily: 'monospace', fontWeight: 900, letterSpacing: '0.2em', marginTop: '0.25rem', color: 'var(--text-primary)' }}>{showQrModal.code}</div>

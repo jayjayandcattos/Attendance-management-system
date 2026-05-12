@@ -36,7 +36,7 @@ public class SecurityConfig {
 
                 // Static resources (Frontend, avatars, uploads)
                 .requestMatchers("/", "/index.html", "/*.js", "/*.css", "/assets/**", "/bg/**", "/icons/**", "/favicon.ico", "/*.png", "/*.jpg").permitAll()
-                .requestMatchers("/uploads/**").permitAll()
+                .requestMatchers("/uploads/**", "/error").permitAll()
 
                 // Admin endpoints
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")

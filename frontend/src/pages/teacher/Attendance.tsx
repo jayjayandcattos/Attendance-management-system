@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { QRCodeCanvas } from 'qrcode.react';
 import { X, QrCode, Upload, MapPin } from 'lucide-react';
 import DashboardLayout from '../../components/DashboardLayout';

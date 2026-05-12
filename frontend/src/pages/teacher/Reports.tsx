@@ -97,7 +97,7 @@ const TeacherReports: React.FC = () => {
             <span className="tr-course-full">{selectedCourseObj ? `${selectedCourseObj.courseCode} • ${selectedCourseObj.section || 'Sec A'}` : 'Select course'}</span>
             <span className="tr-course-short">{selectedCourseObj ? selectedCourseObj.courseCode : 'Select'}</span>
           </span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9" /></svg>
           {showCourseDropdown && (
             <div className="tr-dropdown-menu" onClick={e => e.stopPropagation()} style={{ right: 0, left: 'auto', marginTop: '10px' }}>
               {courses.map(c => (
@@ -115,8 +115,8 @@ const TeacherReports: React.FC = () => {
   );
 
   return (
-    <DashboardLayout 
-      role="teacher" 
+    <DashboardLayout
+      role="teacher"
       searchQuery={searchQuery}
       onSearchChange={(q) => { setSearchQuery(q); setCurrentPage(1); }}
       actions={reportsActions}
@@ -140,7 +140,7 @@ const TeacherReports: React.FC = () => {
                 <div className="tr-stat-card">
                   <div className="tr-stat-header">
                     <div className="tr-stat-icon tr-stat-icon-blue">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
                     </div>
                     <span className="tr-stat-cat">CAPACITY</span>
                   </div>
@@ -151,7 +151,7 @@ const TeacherReports: React.FC = () => {
                 <div className="tr-stat-card">
                   <div className="tr-stat-header">
                     <div className="tr-stat-icon tr-stat-icon-orange">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 11 12 14 22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" /></svg>
                     </div>
                     <span className="tr-stat-cat">CONSISTENCY</span>
                   </div>
@@ -162,7 +162,7 @@ const TeacherReports: React.FC = () => {
                 <div className="tr-stat-card">
                   <div className="tr-stat-header">
                     <div className="tr-stat-icon tr-stat-icon-green">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
                     </div>
                     <span className="tr-stat-cat">PERFORMANCE</span>
                   </div>
@@ -183,7 +183,7 @@ const TeacherReports: React.FC = () => {
                   </div>
                   <div className="tr-table-actions">
                     <button className="ta-action-btn" title="Filter">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/></svg>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="4" y1="21" x2="4" y2="14" /><line x1="4" y1="10" x2="4" y2="3" /><line x1="12" y1="21" x2="12" y2="12" /><line x1="12" y1="8" x2="12" y2="3" /><line x1="20" y1="21" x2="20" y2="16" /><line x1="20" y1="12" x2="20" y2="3" /></svg>
                     </button>
                     <button className="ta-action-btn" title="More">⋮</button>
                   </div>

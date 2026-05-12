@@ -4,7 +4,7 @@ import DashboardLayout from '../../components/DashboardLayout';
 import Avatar from '../../components/Avatar';
 import { studentApi } from '../../api';
 import { useAuth } from '../../auth/AuthContext';
-import { showApiError, showAlert } from '../../utils/feedback';
+import { showApiError } from '../../utils/feedback';
 import { getCourseBg } from '../../utils/courseBg';
 
 const POLL_INTERVAL = 2000;
@@ -39,7 +39,7 @@ const StudentMessages: React.FC = () => {
   const [pickerOpenFor, setPickerOpenFor] = useState<string | null>(null);
   const [reactionsByMessage, setReactionsByMessage] = useState<Record<string, ReactionState>>({});
   const [contextMenu, setContextMenu] = useState<{ messageId: number; x: number; y: number } | null>(null);
-  const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout | null>(null);
+  const [longPressTimer, setLongPressTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [replyingTo, setReplyingTo] = useState<{ id: number; content: string; sender: string } | null>(null);
   const [showGroups, setShowGroups] = useState(true);
   const [showDms, setShowDms] = useState(true);
@@ -629,7 +629,7 @@ const StudentMessages: React.FC = () => {
                     const reactionKey = getMessageReactionKey(m.id);
                     const reactionState = reactionsByMessage[reactionKey];
                     const reactionEntries = Object.entries(reactionState?.counts ?? {});
-                    const pickerOpen = pickerOpenFor === reactionKey;
+
 
                     return (
                       <div

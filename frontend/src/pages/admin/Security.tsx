@@ -2,22 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   Terminal,
   Shield,
-  CheckCircle,
-  AlertCircle,
   Activity,
-  Globe,
   Zap,
   Database,
   Cpu,
   MemoryStick as Memory,
   HardDrive,
   RefreshCw,
-  Search,
-  Lock,
-  Download,
   Trash2,
   Settings,
-  ShieldCheck,
   FileLock
 } from 'lucide-react';
 import DashboardLayout from '../../components/DashboardLayout';
@@ -29,11 +22,9 @@ const SystemConsole: React.FC = () => {
     return saved ? JSON.parse(saved) : [];
   });
   const [health, setHealth] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
   const [maintenance, setMaintenance] = useState(false);
   const [activeTab, setActiveTab] = useState<'console' | 'ops'>('console');
   const [opsLoading, setOpsLoading] = useState<{ [key: string]: boolean }>({});
-  const [maintenanceLoading, setMaintenanceLoading] = useState(false);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [scheduledDate, setScheduledDate] = useState<string>('Sunday 02:00 AM');
   const terminalScrollRef = useRef<HTMLDivElement>(null);
@@ -47,7 +38,7 @@ const SystemConsole: React.FC = () => {
   };
 
   const [uptimeSeconds, setUptimeSeconds] = useState(calculateCurrentUptime());
-  const terminalEndRef = useRef<HTMLDivElement>(null);
+
 
   const formatUptimeValue = (totalSeconds: number) => {
     const d = Math.floor(totalSeconds / (24 * 3600));
@@ -89,11 +80,8 @@ const SystemConsole: React.FC = () => {
           i++;
         } else {
           clearInterval(bootInterval);
-          setLoading(false);
         }
       }, 150);
-    } else {
-      setLoading(false);
     }
 
     // Fetch actual health metrics

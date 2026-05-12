@@ -1,4 +1,4 @@
-import api from '../api';
+import { api } from '../api';
 
 interface ActivityLog {
   action: string;
@@ -9,7 +9,7 @@ interface ActivityLog {
 
 class ActivityTracker {
   private queue: ActivityLog[] = [];
-  private flushInterval: NodeJS.Timeout | null = null;
+  private flushInterval: ReturnType<typeof setInterval> | null = null;
   private readonly FLUSH_DELAY = 2000; // Send logs every 2 seconds
   private readonly MAX_QUEUE_SIZE = 10;
 

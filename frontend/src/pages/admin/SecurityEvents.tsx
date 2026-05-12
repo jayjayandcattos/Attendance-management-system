@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  ShieldAlert, 
-  ShieldCheck, 
-  Search, 
-  Filter, 
-  MapPin, 
-  Clock, 
-  User, 
+import {
+  ShieldAlert,
+  ShieldCheck,
+  Search,
+  Filter,
+  MapPin,
+  Clock,
+  User,
   AlertTriangle,
   CheckCircle2,
   ChevronRight,
@@ -24,7 +24,7 @@ const SecurityEvents: React.FC = () => {
 
   useEffect(() => {
     fetchEvents();
-    
+
     // Auto-Sync Engine (Every 10 seconds)
     const interval = setInterval(() => {
       fetchEvents(true); // Silent refresh
@@ -54,9 +54,9 @@ const SecurityEvents: React.FC = () => {
   };
 
   const filteredEvents = events.filter(e => {
-    const matchesSearch = e.description?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          e.userEmail?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          e.ipAddress?.includes(searchTerm);
+    const matchesSearch = e.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      e.userEmail?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      e.ipAddress?.includes(searchTerm);
     const matchesSeverity = filterSeverity === 'ALL' || e.severity === filterSeverity;
     return matchesSearch && matchesSeverity;
   });
@@ -77,7 +77,7 @@ const SecurityEvents: React.FC = () => {
         <div>
           <h1 className="page-title gradient-text" style={{ fontSize: '1.75rem' }}>Security Alerts</h1>
           <p className="page-subtitle" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span className="sync-indicator"></span> 
+            <span className="sync-indicator"></span>
             Live tracking of all high-severity system threats
           </p>
         </div>
@@ -85,21 +85,21 @@ const SecurityEvents: React.FC = () => {
 
       <div className="premium-card animate-fade-in" style={{ padding: '0', overflow: 'hidden' }}>
         {/* Filters Bar */}
-        <div style={{ 
-          padding: '1.25rem 1.5rem', 
-          borderBottom: '1px solid #f1f5f9', 
-          display: 'flex', 
-          justifyContent: 'space-between', 
+        <div style={{
+          padding: '1.25rem 1.5rem',
+          borderBottom: '1px solid #f1f5f9',
+          display: 'flex',
+          justifyContent: 'space-between',
           alignItems: 'center',
           background: 'var(--bg-secondary)'
         }}>
           <div style={{ display: 'flex', gap: '1rem', flex: 1 }}>
             <div className="search-input-wrap" style={{ maxWidth: '400px', width: '100%', position: 'relative', display: 'flex', alignItems: 'center' }}>
               <Search size={18} className="search-icon" />
-              <input 
-                type="text" 
-                placeholder="Search by IP, email, or description..." 
-                className="form-input" 
+              <input
+                type="text"
+                placeholder="Search by IP, email, or description..."
+                className="form-input"
                 style={{ paddingLeft: '2.75rem', borderRadius: '10px' }}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -107,13 +107,13 @@ const SecurityEvents: React.FC = () => {
             </div>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
               {['ALL', 'CRITICAL', 'HIGH', 'MEDIUM'].map(s => (
-                <button 
+                <button
                   key={s}
                   onClick={() => setFilterSeverity(s)}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    borderRadius: '8px', 
-                    fontSize: '0.75rem', 
+                  style={{
+                    padding: '0.5rem 1rem',
+                    borderRadius: '8px',
+                    fontSize: '0.75rem',
                     fontWeight: 700,
                     background: filterSeverity === s ? 'var(--accent)' : 'var(--bg-primary)',
                     color: filterSeverity === s ? '#fff' : 'var(--text-secondary)',
@@ -143,13 +143,13 @@ const SecurityEvents: React.FC = () => {
           ) : (
             <div className="alerts-list">
               {filteredEvents.map((event, i) => (
-                <div 
-                  key={event.id} 
+                <div
+                  key={event.id}
                   className={`alert-item ${event.acknowledged ? 'acknowledged' : ''}`}
-                  style={{ 
-                    padding: '1.5rem', 
-                    borderBottom: '1px solid #f1f5f9', 
-                    display: 'flex', 
+                  style={{
+                    padding: '1.5rem',
+                    borderBottom: '1px solid #f1f5f9',
+                    display: 'flex',
                     gap: '1.5rem',
                     background: event.acknowledged ? 'transparent' : 'rgba(239, 68, 68, 0.05)',
                     animation: 'fade-in 0.3s ease-out forwards',
@@ -157,11 +157,11 @@ const SecurityEvents: React.FC = () => {
                     position: 'relative'
                   }}
                 >
-                  <div style={{ 
-                    width: '48px', 
-                    height: '48px', 
-                    borderRadius: '12px', 
-                    background: event.acknowledged ? '#f8fafc' : `${getSeverityColor(event.severity)}15`, 
+                  <div style={{
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '12px',
+                    background: event.acknowledged ? '#f8fafc' : `${getSeverityColor(event.severity)}15`,
                     color: event.acknowledged ? '#94a3b8' : getSeverityColor(event.severity),
                     display: 'flex',
                     alignItems: 'center',
@@ -174,13 +174,13 @@ const SecurityEvents: React.FC = () => {
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <span style={{ 
-                          fontSize: '0.65rem', 
-                          fontWeight: 800, 
-                          padding: '0.2rem 0.6rem', 
-                          borderRadius: '4px', 
-                          background: getSeverityColor(event.severity), 
-                          color: '#fff' 
+                        <span style={{
+                          fontSize: '0.65rem',
+                          fontWeight: 800,
+                          padding: '0.2rem 0.6rem',
+                          borderRadius: '4px',
+                          background: getSeverityColor(event.severity),
+                          color: '#fff'
                         }}>
                           {event.severity}
                         </span>
@@ -214,7 +214,7 @@ const SecurityEvents: React.FC = () => {
 
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     {!event.acknowledged ? (
-                      <button 
+                      <button
                         onClick={() => handleAcknowledge(event.id)}
                         className="btn btn-sm btn-primary"
                         style={{ width: 'auto', background: '#0f172a', whiteSpace: 'nowrap' }}

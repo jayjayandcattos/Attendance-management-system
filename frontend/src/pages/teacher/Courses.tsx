@@ -32,7 +32,7 @@ const DAYS = [
   { key: 'Sa', label: 'Sat' },
 ];
 
-const CATEGORY_LABELS = ['ONGOING', 'SOCIAL SCIENCES', 'LEADERSHIP', 'ENGINEERING', 'COMPUTER SCIENCE', 'BUSINESS', 'EDUCATION', 'GENERAL'];
+
 
 function formatTime12(t: string): string {
   if (!t) return '';

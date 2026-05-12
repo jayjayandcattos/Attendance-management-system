@@ -27,7 +27,7 @@ spring:
             enable: true
 
   datasource:
-    url: jdbc:postgresql://192.168.100.41:5432/attendease_db
+    url: jdbc:postgresql://192.168.0.101:5432/attendease_db
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:Attend3@s3}
     driver-class-name: org.postgresql.Driver
@@ -55,7 +55,7 @@ spring:
       max-request-size: 10MB
 
 server:
-  port: 8080
+  port: 8138
 
 # Application-specific configuration
 app:
@@ -68,7 +68,7 @@ app:
     aes-secret-key: ${AES_SECRET:AttendEaseAES256SecretKey@Dev32!}
 
   cors:
-    allowed-origins: http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:5176,http://192.168.1.2:5173,http://192.168.137.1:5173,http://192.168.137.7:5173,http://192.168.1.122:5173,http://192.168.100.41:5173,http://192.168.100.41:8080,http://192.168.100.45:5173,https://*.ngrok-free.dev,http://192.168.100.45:5173,http://192.168.0.105:5173
+    allowed-origins: http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:5176,http://localhost:5220,http://localhost:8138,http://192.168.1.2:5173,http://192.168.137.1:5173,http://192.168.137.7:5173,http://192.168.1.122:5173,http://192.168.100.41:5173,http://192.168.100.41:8080,http://192.168.100.45:5173,https://*.ngrok-free.dev,http://192.168.100.45:5173,http://192.168.0.105:5173,http://192.168.0.101:8138,http://192.168.0.101:5220
 
   upload:
     dir: ./uploads
